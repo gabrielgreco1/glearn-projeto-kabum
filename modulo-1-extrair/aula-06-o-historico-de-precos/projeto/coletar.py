@@ -36,7 +36,7 @@ def pasta_do_dia(dia=None):
 
 
 def pedir(caminho):
-    """Pede um endereço da API e devolve o JSON. Para em qualquer resposta que não seja um JSON com status 200."""
+    """Pede um endereço da API e devolve os bytes da resposta. Para em qualquer resposta que não seja um JSON com status 200."""
     resposta = httpx.get(API + caminho, headers=CABECALHOS, timeout=30)
     time.sleep(PAUSA)
     tipo = resposta.headers.get("content-type", "")
