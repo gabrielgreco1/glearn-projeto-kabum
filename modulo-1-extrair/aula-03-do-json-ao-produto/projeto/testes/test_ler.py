@@ -15,6 +15,13 @@ def test_um_dicionario_por_produto_com_os_campos_como_vieram():
     assert produtos[0]["fabricante"] == "Fabricante A"
 
 
+def test_o_preco_da_oferta_vem_do_bloco_offer():
+    produtos = ler_pagina(AMOSTRA.read_bytes())
+    assert produtos[0]["oferta_price_with_discount"] == 855.0
+    assert produtos[0]["oferta_ends_at"] == 1795701540
+    assert produtos[1]["oferta_price_with_discount"] is None
+
+
 def test_produto_sem_fabricante_fica_com_o_campo_vazio():
     produtos = ler_pagina(AMOSTRA.read_bytes())
     assert produtos[1]["fabricante"] is None

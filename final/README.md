@@ -27,7 +27,7 @@ Tudo fica em `dados/`, que não vai para o Git:
 
 - `bronze/AAAA-MM-DD/pagina-001.json` a `pagina-004.json`: a resposta da API, como veio, uma pasta por dia.
 - `conferencia.csv`: uma linha por conferência, com o que faltou.
-- `precos.csv`: uma linha por produto por dia, com os campos como a API mandou.
+- `precos.csv`: uma linha por produto por dia, com os campos como a API mandou. O preço grande do cartão, quando o produto está em oferta, é o `oferta_price_with_discount`.
 - `ultima_recusa.html`: só aparece se o site recusar um pedido. É a resposta da recusa, para você ler.
 
 ## Regras de coleta
@@ -50,4 +50,5 @@ Tudo fica em `dados/`, que não vai para o Git:
 ## O que o projeto não faz
 
 - Os preços ficam como a API mandou, sem conversão nem limpeza. Isso é da etapa Transformar.
+- O preço Prime, que a loja mostra só para assinantes com login, não entra. O projeto não entra em conta nenhuma.
 - Nada roda sozinho: o programa roda quando você manda.

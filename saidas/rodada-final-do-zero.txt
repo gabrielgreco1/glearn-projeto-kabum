@@ -1,17 +1,19 @@
 $ uv run python rodar.py
-11:53:36 INFO etapa 1 de 3: as páginas da categoria
-11:53:41 INFO baixei a página 1: 906817 bytes em dados/bronze/2026-11-14/pagina-001.json
-11:53:45 INFO baixei a página 2: 961658 bytes em dados/bronze/2026-11-14/pagina-002.json
-11:53:50 INFO baixei a página 3: 841188 bytes em dados/bronze/2026-11-14/pagina-003.json
-11:53:55 INFO baixei a página 4: 932905 bytes em dados/bronze/2026-11-14/pagina-004.json
-11:53:55 INFO coleta do dia: 4 páginas em dados/bronze/2026-11-14
-11:53:55 INFO etapa 2 de 3: conferir a coleta
-11:53:55 INFO coleta: 472 produtos lidos, 472 diferentes; a API declara 472
-11:53:55 INFO repetidos entre páginas: nenhum
-11:53:59 INFO a página da loja mostra 472 produtos (status 200)
-11:53:59 INFO cobertura: 472 de 472, 100.0%; faltaram 0
-11:53:59 INFO etapa 3 de 3: o histórico de preços
-11:53:59 INFO gravei 472 linhas em dados/precos.csv, de 1 dia(s): 2026-11-14
+12:06:00 INFO etapa 1 de 3: as páginas da categoria
+12:06:00 INFO já tenho dados/bronze/2026-11-14/pagina-001.json, não peço de novo
+12:06:00 INFO já tenho dados/bronze/2026-11-14/pagina-002.json, não peço de novo
+12:06:00 INFO já tenho dados/bronze/2026-11-14/pagina-003.json, não peço de novo
+12:06:00 INFO já tenho dados/bronze/2026-11-14/pagina-004.json, não peço de novo
+12:06:00 INFO coleta do dia: 4 páginas em dados/bronze/2026-11-14
+12:06:00 INFO etapa 2 de 3: conferir a coleta
+12:06:00 INFO coleta: 472 produtos lidos, 472 diferentes; a API declara 472
+12:06:00 INFO repetidos entre páginas: nenhum
+12:06:03 INFO a página da loja mostra 473 produtos (status 200)
+12:06:03 INFO cobertura: 472 de 472, 100.0%; faltaram 0
+12:06:03 INFO etapa 3 de 3: o histórico de preços
+12:06:03 INFO gravei 472 linhas em dados/precos.csv, de 1 dia(s): 2026-11-14
 $ cat dados/conferencia.csv
 dia,lidos,diferentes,repetidos,declarado,loja,cobertura
-2026-11-14,472,472,0,472,472,1.000
+2026-11-14,472,472,0,472,473,1.000
+$ uv run pytest -q
+6 passed in 0.03s

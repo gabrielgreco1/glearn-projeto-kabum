@@ -4,7 +4,8 @@ import json
 import sys
 from pathlib import Path
 
-CAMPOS = ["id", "title", "price", "price_with_discount", "old_price", "discount_percentage", "available", "stock", "fabricante", "product_link"]
+CAMPOS = ["id", "title", "price", "price_with_discount", "old_price", "discount_percentage",
+          "oferta_price", "oferta_price_with_discount", "oferta_ends_at", "available", "stock", "fabricante", "product_link"]
 
 
 def ler_pagina(conteudo):
@@ -13,6 +14,7 @@ def ler_pagina(conteudo):
     produtos = []
     for item in resposta["data"]:
         atributos = item["attributes"]
+        oferta = atributos.get("offer") or {}  # só os produtos em oferta têm este bloco; o preço grande do cartão sai dele
         produtos.append({
             "id": item["id"],
             "title": atributos.get("title"),
@@ -20,6 +22,9 @@ def ler_pagina(conteudo):
             "price_with_discount": atributos.get("price_with_discount"),
             "old_price": atributos.get("old_price"),
             "discount_percentage": atributos.get("discount_percentage"),
+            "oferta_price": oferta.get("price"),
+            "oferta_price_with_discount": oferta.get("price_with_discount"),
+            "oferta_ends_at": oferta.get("ends_at"),
             "available": atributos.get("available"),
             "stock": atributos.get("stock"),
             "fabricante": (atributos.get("manufacturer") or {}).get("name"),

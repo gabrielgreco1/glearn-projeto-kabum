@@ -1,6 +1,6 @@
 $ uv run python tabela.py
-11:52:32 INFO gravei 451 linhas em dados/precos.csv, de 1 dia(s): 2026-11-14
-$ head -3 dados/precos.csv | cut -c1-160
-dia,id,title,price,price_with_discount,old_price,discount_percentage,available,stock,fabricante,product_link
-2026-11-14,300165,"Placa de Vídeo Afox NVIDIA GeForce GTX750, 2GB GDDR5, 128 Bits, HDMI, DVI, VGA - AF750-2048D5L4",833.0,833.0,0.0,0,True,1,Afox,placa-de-vide
-2026-11-14,928107,Placa De Vídeo Asrock Rx 9070 16gb 256bits - 90-ga5nzz-00uanf,6499.9,6499.9,0.0,0,True,2,ASRock,gpu-asrock-amd-radeon-rx-9070-challenger-16gb
+12:05:56 INFO gravei 451 linhas em dados/precos.csv, de 1 dia(s): 2026-11-14
+$ head -3 dados/precos.csv | cut -c1-200
+dia,id,title,price,price_with_discount,old_price,discount_percentage,oferta_price,oferta_price_with_discount,oferta_ends_at,available,stock,fabricante,product_link
+2026-11-14,300165,"Placa de Vídeo Afox NVIDIA GeForce GTX750, 2GB GDDR5, 128 Bits, HDMI, DVI, VGA - AF750-2048D5L4",833.0,833.0,0.0,0,,,,True,1,Afox,placa-de-video-afox-nvidia-geforce-gtx750-2gb-gddr
+2026-11-14,928107,Placa De Vídeo Asrock Rx 9070 16gb 256bits - 90-ga5nzz-00uanf,6499.9,6499.9,0.0,0,,,,True,2,ASRock,gpu-asrock-amd-radeon-rx-9070-challenger-16gb-256bits-90-ga5nzz-00uanf
