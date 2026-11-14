@@ -19,14 +19,14 @@ uv run python rodar.py
 uv run pytest
 ```
 
-Rode uma vez por dia. A rodada faz 4 pedidos à API e 1 à página da loja, com 3 segundos de pausa entre eles, e leva cerca de 20 segundos. Rodar de novo no mesmo dia não pede as páginas de novo.
+Rode uma vez por dia. A rodada faz 4 pedidos à API e 1 à página da loja, com 3 segundos de pausa entre eles, e leva cerca de 20 segundos. Rodar de novo no mesmo dia não pede nada de novo: as páginas da API e a página da loja já estão na pasta do dia.
 
 ## O que sai
 
 Tudo fica em `dados/`, que não vai para o Git:
 
-- `bronze/AAAA-MM-DD/pagina-001.json` a `pagina-004.json`: a resposta da API, como veio, uma pasta por dia.
-- `conferencia.csv`: uma linha por conferência, com o que faltou.
+- `bronze/AAAA-MM-DD/pagina-001.json` a `pagina-004.json`: a resposta da API, como veio, uma pasta por dia. Na mesma pasta, `loja.html`: a página da categoria, de onde sai o total que a loja mostra.
+- `conferencia.csv`: uma linha por dia de coleta, com o que faltou. Conferir de novo o mesmo dia troca a linha dele.
 - `precos.csv`: uma linha por produto por dia, com os campos como a API mandou. O preço grande do cartão, quando o produto está em oferta, é o `oferta_price_with_discount`.
 - `ultima_recusa.html`: só aparece se o site recusar um pedido. É a resposta da recusa, para você ler.
 
@@ -43,8 +43,8 @@ Tudo fica em `dados/`, que não vai para o Git:
 - O `links.next` da API trocou o tamanho da página de 60 para 40 na página 7. Seguido ao pé da letra, ele levou a 12 páginas, 613 linhas e só 468 produtos diferentes. O programa monta o endereço de cada página com o tamanho fixo e para no total que a primeira página declara.
 - A paginação da API perde produtos. A ordem padrão tem empates, e cada página desempata de um jeito: alguns produtos vêm em duas páginas e outros em nenhuma. Repetir a mesma página dá o mesmo resultado, então repetir a volta não resolve. Nas rodadas do dia, a cobertura ficou entre 92,4% e 100%.
 - O `robots.txt` da loja pede que programas não usem `sort`, então o programa não troca a ordem.
-- O programa tira os repetidos pelo `id`, mede a cobertura contra o total que a API declara e anota cada conferência em `dados/conferencia.csv`. Abaixo de 90%, ele para.
-- O filtro por fabricante fecharia a lacuna, porque cada fabricante cabe numa página só. Ele usa um texto em base64, que o curso ensina na aula E10-05. Este projeto não usa.
+- O programa tira os repetidos pelo `id`, mede a cobertura contra o total que a API declara e anota a conferência de cada dia em `dados/conferencia.csv`. Abaixo de 90%, ele para.
+- O filtro por fabricante fecharia a lacuna, porque cada fabricante cabe numa página só. Mas são 42 fabricantes na categoria: seriam dezenas de pedidos por dia em vez de 4, com uma lista de fabricantes que também muda. Este projeto não usa: mede a falta e anota.
 - A API aceita até 120 produtos por página (pedimos 500 e vieram 120). São 4 pedidos por dia.
 
 ## O que o projeto não faz

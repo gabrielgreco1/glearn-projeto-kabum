@@ -24,10 +24,11 @@ O README de cada pasta diz a ordem dos comandos. O projeto pronto está em [fina
 
 Em 14 de novembro de 2026, com Python 3.13, uv, httpx 0.28.1, python-dotenv 1.2.4 e pytest 9.2.0. As saídas estão em [saidas/](saidas).
 
-- Do zero (`rm -rf dados` e `uv run python rodar.py`): 4 pedidos à API e 1 à página da loja, 474 produtos, cobertura de 100%, em 22 segundos.
-- A sequência das aulas 2 a 7, minutos antes: 472 produtos lidos, 451 diferentes, cobertura de 95,6%. A falta vem do empate na ordem padrão da API; a aula 5 explica.
+- A sequência das aulas 2 a 7, às 13h59: 472 produtos lidos, 458 diferentes, cobertura de 97,0%. A falta vem do empate na ordem padrão da API; a aula 5 explica.
+- Do zero, três minutos depois (`rm -rf dados` e `uv run python rodar.py`): 4 pedidos à API e 1 à página da loja, 472 produtos lidos, 467 diferentes, cobertura de 98,9%, em 21 segundos.
+- Mais cedo, no mesmo dia, a cobertura foi de 95,6% e de 100% em duas rodadas de 120 por página.
 - Com 60 produtos por página, na primeira versão: o `links.next` levou a 12 páginas sobrepostas, e a cobertura variou entre 92,4% e 99,2% (`saidas/com-60-por-pagina/` e `saidas/armadilha-links-next*.txt`).
-- `uv run pytest`: 7 testes, sem internet.
+- `uv run pytest`: 8 testes, sem internet.
 
 ## Regras do projeto
 

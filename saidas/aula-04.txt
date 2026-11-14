@@ -1,9 +1,9 @@
 $ uv run python coletar.py
-11:52:13 INFO já tenho dados/bronze/2026-11-14/pagina-001.json, não peço de novo
-11:52:17 INFO baixei a página 2: 943430 bytes em dados/bronze/2026-11-14/pagina-002.json
-11:52:22 INFO baixei a página 3: 841188 bytes em dados/bronze/2026-11-14/pagina-003.json
-11:52:26 INFO baixei a página 4: 932905 bytes em dados/bronze/2026-11-14/pagina-004.json
-11:52:26 INFO coleta do dia: 4 páginas em dados/bronze/2026-11-14
+13:59:42 INFO já tenho dados/bronze/2026-11-14/pagina-001.json, não peço de novo
+13:59:46 INFO baixei a página 2: 955582 bytes em dados/bronze/2026-11-14/pagina-002.json
+13:59:50 INFO baixei a página 3: 872577 bytes em dados/bronze/2026-11-14/pagina-003.json
+13:59:54 INFO baixei a página 4: 936490 bytes em dados/bronze/2026-11-14/pagina-004.json
+13:59:54 INFO coleta do dia: 4 páginas em dados/bronze/2026-11-14
 $ uv run pytest -q
 ....                                                                     [100%]
-4 passed in 0.12s
+4 passed in 0.02s
