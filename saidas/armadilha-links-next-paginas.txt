@@ -1,0 +1,12 @@
+pagina-001.json pagina 1 tamanho 60 itens 60 next /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=2&page_size=60
+pagina-002.json pagina 2 tamanho 60 itens 60 next /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=3&page_size=60
+pagina-003.json pagina 3 tamanho 60 itens 60 next /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=4&page_size=60
+pagina-004.json pagina 4 tamanho 60 itens 60 next /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=5&page_size=60
+pagina-005.json pagina 5 tamanho 60 itens 60 next /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=6&page_size=60
+pagina-006.json pagina 6 tamanho 60 itens 60 next /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=7&page_size=60
+pagina-007.json pagina 7 tamanho 60 itens 60 next /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=8&page_size=40
+pagina-008.json pagina 8 tamanho 40 itens 40 next /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=9&page_size=40
+pagina-009.json pagina 9 tamanho 40 itens 40 next /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=10&page_size=40
+pagina-010.json pagina 10 tamanho 40 itens 40 next /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=11&page_size=40
+pagina-011.json pagina 11 tamanho 40 itens 40 next /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=12&page_size=40
+pagina-012.json pagina 12 tamanho 40 itens 33 next None

@@ -1,0 +1,9 @@
+$ uv run python conferir.py
+11:46:43 INFO coleta: 473 produtos lidos, 437 diferentes; a API declara 473
+11:46:43 INFO repetidos entre páginas: 580126 (2 vezes), 1053108 (2 vezes), 577171 (2 vezes), 1072429 (2 vezes), 747495 (2 vezes), 947242 (2 vezes), 697295 (2 vezes), 909695 (2 vezes), 1008147 (2 vezes), 1009192 (2 vezes), 381206 (2 vezes), 1078272 (2 vezes), 347012 (2 vezes), 617257 (2 vezes), 662252 (2 vezes), 277927 (2 vezes), 1069582 (2 vezes), 877565 (2 vezes), 877566 (2 vezes), 888143 (2 vezes), 988188 (2 vezes), 716196 (2 vezes), 941152 (2 vezes), 706620 (2 vezes), 573345 (2 vezes), 909962 (2 vezes), 692493 (2 vezes), 1072909 (2 vezes), 1051721 (2 vezes), 332863 (2 vezes), 754152 (2 vezes), 918004 (2 vezes), 420701 (2 vezes), 1032268 (2 vezes), 991784 (2 vezes), 753245 (2 vezes)
+11:46:47 INFO a página da loja mostra 473 produtos (status 200)
+11:46:47 INFO cobertura: 437 de 473, 92.4%
+A cobertura ficou em 92.4%, abaixo de 98%. Confira antes de seguir.
+$ uv run pytest -q
+.....                                                                    [100%]
+5 passed in 0.05s

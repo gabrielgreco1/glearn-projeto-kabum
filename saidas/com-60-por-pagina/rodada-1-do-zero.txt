@@ -1,0 +1,16 @@
+# 2026-11-14 11:43:03 -03 · rm -rf dados; uv run python rodar.py
+11:43:03 INFO etapa 1 de 3: as páginas da categoria
+11:43:07 INFO baixei a página 1: 346731 bytes em dados/bronze/2026-11-14/pagina-001.json
+11:43:11 INFO baixei a página 2: 557454 bytes em dados/bronze/2026-11-14/pagina-002.json
+11:43:15 INFO baixei a página 3: 447033 bytes em dados/bronze/2026-11-14/pagina-003.json
+11:43:18 INFO baixei a página 4: 427227 bytes em dados/bronze/2026-11-14/pagina-004.json
+11:43:23 INFO baixei a página 5: 554688 bytes em dados/bronze/2026-11-14/pagina-005.json
+11:43:26 INFO baixei a página 6: 376882 bytes em dados/bronze/2026-11-14/pagina-006.json
+11:43:30 INFO baixei a página 7: 560180 bytes em dados/bronze/2026-11-14/pagina-007.json
+11:43:34 INFO baixei a página 8: 372371 bytes em dados/bronze/2026-11-14/pagina-008.json
+11:43:34 INFO coleta do dia: 8 páginas em dados/bronze/2026-11-14
+11:43:34 INFO etapa 2 de 3: conferir a coleta
+11:43:34 INFO coleta: 472 produtos lidos, 469 diferentes; a API declara 473
+11:43:34 INFO repetidos entre páginas: {520115: 2, 1049711: 2, 944415: 2}
+11:43:38 INFO a página da loja mostra 472 produtos (status 200)
+A coleta tem 469 produtos diferentes e a API declara 473. Confira antes de seguir.

@@ -1,0 +1,20 @@
+# 2026-11-14 11:41:47 -03 · rm -rf dados; uv run python rodar.py
+11:41:47 INFO etapa 1 de 3: as páginas da categoria
+11:41:51 INFO baixei a página 1: 359979 bytes em dados/bronze/2026-11-14/pagina-001.json
+11:41:55 INFO baixei a página 2: 548660 bytes em dados/bronze/2026-11-14/pagina-002.json
+11:41:59 INFO baixei a página 3: 445553 bytes em dados/bronze/2026-11-14/pagina-003.json
+11:42:03 INFO baixei a página 4: 419101 bytes em dados/bronze/2026-11-14/pagina-004.json
+11:42:07 INFO baixei a página 5: 568219 bytes em dados/bronze/2026-11-14/pagina-005.json
+11:42:11 INFO baixei a página 6: 365226 bytes em dados/bronze/2026-11-14/pagina-006.json
+11:42:15 INFO baixei a página 7: 558485 bytes em dados/bronze/2026-11-14/pagina-007.json
+11:42:19 INFO baixei a página 8: 302103 bytes em dados/bronze/2026-11-14/pagina-008.json
+11:42:22 INFO baixei a página 9: 230527 bytes em dados/bronze/2026-11-14/pagina-009.json
+11:42:26 INFO baixei a página 10: 325524 bytes em dados/bronze/2026-11-14/pagina-010.json
+11:42:30 INFO baixei a página 11: 420226 bytes em dados/bronze/2026-11-14/pagina-011.json
+11:42:34 INFO baixei a página 12: 236073 bytes em dados/bronze/2026-11-14/pagina-012.json
+11:42:34 INFO coleta do dia: 12 páginas em dados/bronze/2026-11-14
+11:42:34 INFO etapa 2 de 3: conferir a coleta
+11:42:34 INFO coleta: 613 produtos lidos, 468 diferentes; a API declara 473
+11:42:34 INFO repetidos entre páginas: {1022775: 3, 578744: 3, 712426: 2, 520149: 3, 1053809: 2, 475651: 2, 692461: 2, 728352: 2, 573378: 2, 886159: 2, 1064263: 2, 907814: 2, 714573: 2, 716084: 2, 505868: 2, 264859: 2, 602323: 2, 776956: 2, 888143: 2, 1063823: 2, 941152: 2, 1003353: 2, 1069405: 2, 1078319: 2, 1072907: 2, 736653: 2, 1062771: 2, 1063824: 2, 1053106: 2, 1058239: 2, 1058238: 2, 1032759: 2, 1032763: 2, 1028642: 2, 909962: 2, 1048602: 2, 988188: 2, 994308: 2, 951841: 2, 1032395: 2, 1070111: 2, 1077061: 2, 1035561: 2, 1056507: 2, 728003: 2, 1049711: 2, 1031362: 2, 1072908: 3, 1072911: 3, 1062156: 2, 1088291: 2, 1087480: 2, 1042573: 2, 1050684: 2, 640283: 2, 946336: 2, 999970: 2, 1085473: 2, 573253: 2, 736834: 2, 1091871: 2, 1091977: 2, 1091982: 2, 1091978: 2, 1091979: 2, 1091984: 2, 1032165: 2, 217261: 2, 726589: 2, 573744: 2, 579784: 2, 701169: 2, 984610: 2, 728005: 2, 693864: 2, 1032573: 2, 1089151: 2, 887382: 2, 991786: 2, 1084522: 2, 1051721: 2, 505714: 2, 934699: 2, 857026: 2, 928110: 2, 1085248: 2, 1087179: 2, 1061643: 2, 1035377: 2, 1070458: 2, 1064793: 2, 894989: 2, 117364: 2, 777074: 2, 1063365: 2, 944415: 2, 1072431: 2, 551030: 2, 875474: 2, 643994: 2, 726691: 3, 939795: 2, 1069580: 2, 1077378: 2, 643995: 2, 505835: 2, 954620: 2, 1025148: 2, 903523: 2, 714567: 2, 770029: 2, 879371: 2, 881686: 2, 777076: 2, 714572: 2, 1086060: 3, 678225: 3, 714564: 3, 777075: 2, 802426: 2, 1078276: 2, 1078257: 2, 1070734: 2, 1078255: 2, 802427: 2, 878603: 2, 1078264: 2, 1053619: 2, 697894: 3, 751906: 2, 857022: 2, 714568: 2, 117379: 2, 726011: 2, 883147: 2}
+11:42:38 INFO a página da loja mostra 473 produtos (status 200)
+A coleta tem 468 produtos diferentes e a API declara 473. Confira antes de seguir.

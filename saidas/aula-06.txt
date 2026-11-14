@@ -1,0 +1,6 @@
+$ uv run python tabela.py
+11:48:47 INFO gravei 450 linhas em dados/precos.csv, de 1 dia(s): 2026-11-14
+$ head -3 dados/precos.csv | cut -c1-160
+dia,id,title,price,price_with_discount,old_price,discount_percentage,available,stock,fabricante,product_link
+2026-11-14,300165,"Placa de Vídeo Afox NVIDIA GeForce GTX750, 2GB GDDR5, 128 Bits, HDMI, DVI, VGA - AF750-2048D5L4",833.0,833.0,0.0,0,True,1,Afox,placa-de-vide
+2026-11-14,928107,Placa De Vídeo Asrock Rx 9070 16gb 256bits - 90-ga5nzz-00uanf,6499.9,6499.9,0.0,0,True,2,ASRock,gpu-asrock-amd-radeon-rx-9070-challenger-16gb

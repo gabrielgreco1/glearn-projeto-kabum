@@ -1,0 +1,9 @@
+# O contato de verdade fica só no seu computador.
+.env
+# O que o programa baixa e gera. O bronze é refeito pela coleta; o histórico é seu, mas fica fora do repositório.
+dados/
+# O ambiente que o uv cria e os restos do Python.
+.venv/
+__pycache__/
+.pytest_cache/
+.venv/

@@ -1,0 +1,6 @@
+$ uv run python coletar.py
+11:48:29 INFO baixei a página 1: 920585 bytes em dados/bronze/2026-11-14/pagina-001.json
+11:48:29 INFO a categoria tem 472 produtos em 4 páginas
+$ uv run python coletar.py
+11:48:29 INFO já tenho dados/bronze/2026-11-14/pagina-001.json, não peço de novo
+11:48:29 INFO a categoria tem 472 produtos em 4 páginas

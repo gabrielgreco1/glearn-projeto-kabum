@@ -1,0 +1,18 @@
+# 11:43:51 · uv run python rodar.py (as 8 páginas de hoje já estão em dados/)
+11:43:51 INFO etapa 1 de 3: as páginas da categoria
+11:43:51 INFO já tenho dados/bronze/2026-11-14/pagina-001.json, não peço de novo
+11:43:51 INFO já tenho dados/bronze/2026-11-14/pagina-002.json, não peço de novo
+11:43:51 INFO já tenho dados/bronze/2026-11-14/pagina-003.json, não peço de novo
+11:43:51 INFO já tenho dados/bronze/2026-11-14/pagina-004.json, não peço de novo
+11:43:51 INFO já tenho dados/bronze/2026-11-14/pagina-005.json, não peço de novo
+11:43:51 INFO já tenho dados/bronze/2026-11-14/pagina-006.json, não peço de novo
+11:43:51 INFO já tenho dados/bronze/2026-11-14/pagina-007.json, não peço de novo
+11:43:51 INFO já tenho dados/bronze/2026-11-14/pagina-008.json, não peço de novo
+11:43:51 INFO coleta do dia: 8 páginas em dados/bronze/2026-11-14
+11:43:51 INFO etapa 2 de 3: conferir a coleta
+11:43:51 INFO coleta: 472 produtos lidos, 469 diferentes; a API declara 473
+11:43:51 INFO repetidos entre páginas: 520115 (2 vezes), 1049711 (2 vezes), 944415 (2 vezes)
+11:43:55 INFO a página da loja mostra 472 produtos (status 200)
+11:43:55 INFO cobertura: 469 de 473, 99.2%
+11:43:55 INFO etapa 3 de 3: o histórico de preços
+11:43:55 INFO gravei 469 linhas em dados/precos.csv, de 1 dia(s): 2026-11-14

@@ -1,0 +1,9 @@
+[project]
+name = "projeto-kabum"
+version = "0.1.0"
+description = "Histórico de preços das placas de vídeo da Kabum, pela API de catálogo que a própria loja usa."
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "python-dotenv>=1.2.4",
+]
