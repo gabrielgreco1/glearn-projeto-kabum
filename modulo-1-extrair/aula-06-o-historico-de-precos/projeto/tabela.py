@@ -10,9 +10,10 @@ CSV = Path("dados/precos.csv")
 COLUNAS = ["dia", *CAMPOS]
 
 
-def montar():
+def montar(bronze=Path("dados/bronze")):
+    """Uma linha por produto por dia de coleta, a partir das pastas de dia do bronze."""
     linhas = []
-    for pasta in sorted(Path("dados/bronze").iterdir()):
+    for pasta in sorted(bronze.iterdir()):
         if not pasta.is_dir():
             continue
         vistos = set()
