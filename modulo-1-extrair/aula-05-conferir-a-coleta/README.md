@@ -2,7 +2,7 @@
 
 Aula na plataforma: https://learn.gabrielgreco.com/learn/trilha/pk-05-conferir-a-coleta-o-que-faltou
 
-O `conferir.py` mede a cobertura contra o total da API, olha o total da página da loja, lista os repetidos e anota cada conferência em `dados/conferencia.csv`.
+O `conferir.py` mede a cobertura contra o total da API, olha o total da página da loja, lista os repetidos e anota a conferência do dia em `dados/conferencia.csv`.
 
 A pasta `projeto/` mostra como a sua pasta `projeto-kabum/` deve estar no fim desta aula. Arquivos novos ou alterados nesta aula: conferir.py, testes/test_conferir.py, testes/amostra_loja.html.
 

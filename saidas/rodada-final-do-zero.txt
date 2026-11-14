@@ -1,21 +1,22 @@
 $ rm -rf dados
 $ uv run python rodar.py
-12:13:33 INFO etapa 1 de 3: as páginas da categoria
-12:13:38 INFO baixei a página 1: 889607 bytes em dados/bronze/2026-11-14/pagina-001.json
-12:13:42 INFO baixei a página 2: 987157 bytes em dados/bronze/2026-11-14/pagina-002.json
-12:13:46 INFO baixei a página 3: 842279 bytes em dados/bronze/2026-11-14/pagina-003.json
-12:13:50 INFO baixei a página 4: 947155 bytes em dados/bronze/2026-11-14/pagina-004.json
-12:13:50 INFO coleta do dia: 4 páginas em dados/bronze/2026-11-14
-12:13:50 INFO etapa 2 de 3: conferir a coleta
-12:13:50 INFO coleta: 474 produtos lidos, 474 diferentes; a API declara 474
-12:13:50 INFO repetidos entre páginas: nenhum
-12:13:54 INFO a página da loja mostra 474 produtos (status 200)
-12:13:54 INFO cobertura: 474 de 474, 100.0%; faltaram 0
-12:13:54 INFO etapa 3 de 3: o histórico de preços
-12:13:54 INFO gravei 474 linhas em dados/precos.csv, de 1 dia(s): 2026-11-14
+14:02:07 INFO etapa 1 de 3: as páginas da categoria
+14:02:11 INFO baixei a página 1: 864002 bytes em dados/bronze/2026-11-14/pagina-001.json
+14:02:16 INFO baixei a página 2: 956491 bytes em dados/bronze/2026-11-14/pagina-002.json
+14:02:20 INFO baixei a página 3: 872577 bytes em dados/bronze/2026-11-14/pagina-003.json
+14:02:24 INFO baixei a página 4: 936490 bytes em dados/bronze/2026-11-14/pagina-004.json
+14:02:24 INFO coleta do dia: 4 páginas em dados/bronze/2026-11-14
+14:02:24 INFO etapa 2 de 3: conferir a coleta
+14:02:24 INFO coleta: 472 produtos lidos, 467 diferentes; a API declara 472
+14:02:24 INFO repetidos entre páginas: 271841 (2 vezes), 578744 (2 vezes), 1022775 (2 vezes), 1072907 (2 vezes), 736653 (2 vezes)
+14:02:28 INFO a página da loja mostra 472 produtos
+14:02:28 INFO cobertura: 467 de 472, 98.9%; faltaram 5
+14:02:28 INFO etapa 3 de 3: o histórico de preços
+14:02:28 INFO gravei 467 linhas em dados/precos.csv, de 1 dia(s): 2026-11-14
+uv run python rodar.py  0.22s user 0.05s system 1% cpu 20.828 total
 $ cat dados/conferencia.csv
 dia,lidos,diferentes,repetidos,declarado,loja,cobertura
-2026-11-14,474,474,0,474,474,1.000
+2026-11-14,472,467,5,472,472,0.989
 $ uv run pytest -q
-.......                                                                  [100%]
-7 passed in 0.03s
+........                                                                 [100%]
+8 passed in 0.03s
