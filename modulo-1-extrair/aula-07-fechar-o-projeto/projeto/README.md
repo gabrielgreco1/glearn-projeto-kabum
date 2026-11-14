@@ -41,7 +41,7 @@ Tudo fica em `dados/`, que não vai para o Git:
 ## O que a rodada de 14 de novembro de 2026 mostrou
 
 - O `links.next` da API trocou o tamanho da página de 60 para 40 na página 7. Seguido ao pé da letra, ele levou a 12 páginas, 613 linhas e só 468 produtos diferentes. O programa monta o endereço de cada página com o tamanho fixo e para no total que a primeira página declara.
-- A paginação da API perde produtos. A ordem padrão tem empates, e cada página desempata de um jeito: alguns produtos vêm em duas páginas e outros em nenhuma. Repetir a mesma página dá o mesmo resultado, então repetir a volta não resolve. Nas rodadas do dia, a cobertura ficou entre 92,4% e 99,6%.
+- A paginação da API perde produtos. A ordem padrão tem empates, e cada página desempata de um jeito: alguns produtos vêm em duas páginas e outros em nenhuma. Repetir a mesma página dá o mesmo resultado, então repetir a volta não resolve. Nas rodadas do dia, a cobertura ficou entre 92,4% e 100%.
 - O `robots.txt` da loja pede que programas não usem `sort`, então o programa não troca a ordem.
 - O programa tira os repetidos pelo `id`, mede a cobertura contra o total que a API declara e anota cada conferência em `dados/conferencia.csv`. Abaixo de 90%, ele para.
 - O filtro por fabricante fecharia a lacuna, porque cada fabricante cabe numa página só. Ele usa um texto em base64, que o curso ensina na aula E10-05. Este projeto não usa.
