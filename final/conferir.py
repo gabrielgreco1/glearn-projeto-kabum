@@ -1,5 +1,9 @@
-"""Confere a coleta do dia: o total que a API declara, os produtos repetidos e o total que a página da loja mostra."""
+"""Confere a coleta do dia: o total que a API declara, os produtos repetidos e o total que a página da loja mostra.
 
+A paginação da API perde produtos: a ordem padrão tem empates, e cada página desempata de um jeito.
+Alguns produtos vêm em duas páginas e outros em nenhuma. A conferência mede quanto faltou e guarda o número."""
+
+import csv
 import json
 import re
 import time
@@ -12,7 +16,8 @@ from coletar import CABECALHOS, PAUSA, pasta_do_dia, registro
 from ler import ler_dia
 
 PAGINA_DA_LOJA = "https://www.kabum.com.br/hardware/placa-de-video-vga"
-COBERTURA_MINIMA = 0.98  # abaixo disso a coleta para: a lista anda enquanto é coletada, mas não tanto
+COBERTURA_MINIMA = 0.90  # nas rodadas de 14/11/2026 a cobertura ficou entre 92% e 99,6%
+REGISTRO = Path("dados/conferencia.csv")  # uma linha por conferência: o que faltou fica anotado
 
 
 def total_declarado(pasta):
@@ -31,6 +36,16 @@ def total_da_pagina(html):
     return dados["catalogServer"]["meta"]["totalItemsCount"]
 
 
+def anotar(dia, lidos, diferentes, repetidos, declarado, loja, cobertura):
+    """Acrescenta uma linha em dados/conferencia.csv. O arquivo só cresce."""
+    novo = not REGISTRO.exists()
+    with REGISTRO.open("a", encoding="utf-8", newline="") as arquivo:
+        escritor = csv.writer(arquivo)
+        if novo:
+            escritor.writerow(["dia", "lidos", "diferentes", "repetidos", "declarado", "loja", "cobertura"])
+        escritor.writerow([dia, lidos, diferentes, repetidos, declarado, loja, f"{cobertura:.3f}"])
+
+
 def conferir(pasta=None, olhar_a_loja=True):
     pasta = pasta or pasta_do_dia()
     produtos = ler_dia(pasta)
@@ -44,11 +59,13 @@ def conferir(pasta=None, olhar_a_loja=True):
         time.sleep(PAUSA)
         loja = total_da_pagina(resposta.text) if resposta.status_code == 200 else None
         registro.info("a página da loja mostra %s produtos (status %s)", loja, resposta.status_code)
+    else:
+        loja = None
     cobertura = len(ids) / declarado
-    registro.info("cobertura: %s de %s, %.1f%%", len(ids), declarado, cobertura * 100)
+    registro.info("cobertura: %s de %s, %.1f%%; faltaram %s", len(ids), declarado, cobertura * 100, declarado - len(ids))
+    anotar(Path(pasta).name, len(produtos), len(ids), len(repetidos), declarado, loja, cobertura)
     if cobertura < COBERTURA_MINIMA:
-        raise SystemExit(f"A cobertura ficou em {cobertura:.1%}, abaixo de {COBERTURA_MINIMA:.0%}. A lista mudou de ordem durante a coleta. "
-                         f"Apague a pasta {pasta} e rode de novo mais tarde.")
+        raise SystemExit(f"A cobertura ficou em {cobertura:.1%}, abaixo de {COBERTURA_MINIMA:.0%}. Confira os repetidos antes de seguir.")
     return len(ids)
 
 
