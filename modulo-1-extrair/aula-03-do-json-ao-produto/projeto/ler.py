@@ -42,7 +42,13 @@ def ler_dia(pasta):
 
 
 if __name__ == "__main__":
-    pasta = Path(sys.argv[1]) if len(sys.argv) > 1 else sorted(Path("dados/bronze").iterdir())[-1]
+    if len(sys.argv) > 1:
+        pasta = Path(sys.argv[1])
+    else:
+        dias = sorted(Path("dados/bronze").glob("*"))  # vazio se a pasta ainda não existe
+        if not dias:
+            raise SystemExit("Ainda não há coleta em dados/bronze. Rode antes: uv run python coletar.py")
+        pasta = dias[-1]
     produtos = ler_dia(pasta)
     print(f"{pasta}: {len(produtos)} produtos")
     for campo, valor in produtos[0].items():

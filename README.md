@@ -26,6 +26,7 @@ Em 14 de novembro de 2026, com Python 3.13, uv, httpx 0.28.1, python-dotenv 1.2.
 
 - A sequência das aulas 2 a 7, às 13h59: 472 produtos lidos, 458 diferentes, cobertura de 97,0%. A falta vem do empate na ordem padrão da API; a aula 5 explica.
 - Do zero, três minutos depois (`rm -rf dados` e `uv run python rodar.py`): 4 pedidos à API e 1 à página da loja, 472 produtos lidos, 467 diferentes, cobertura de 98,9%, em 21 segundos.
+- A prova da aula 7, às 23h34, num clone limpo do repositório, só com o `.env` copiado (`saidas/prova-copia-limpa.txt`): `uv sync`, `uv run python rodar.py` e `uv run pytest`. 478 produtos lidos, 477 diferentes, cobertura de 99,8%, em 20 segundos, e os 8 testes passando. Não apague o `dados/` para provar nada: o bronze guarda dias que a API não devolve mais.
 - Mais cedo, no mesmo dia, a cobertura foi de 95,6% e de 100% em duas rodadas de 120 por página.
 - Com 60 produtos por página, na primeira versão: o `links.next` levou a 12 páginas sobrepostas, e a cobertura variou entre 92,4% e 99,2% (`saidas/com-60-por-pagina/` e `saidas/armadilha-links-next*.txt`).
 - `uv run pytest`: 8 testes, sem internet.
