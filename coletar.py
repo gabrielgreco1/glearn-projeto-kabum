@@ -28,6 +28,7 @@ LIMITE_PAGINAS = 20  # um teto: a categoria tinha 4 páginas em 14/11/2026
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s", datefmt="%H:%M:%S")
 logging.getLogger("httpx").setLevel(logging.WARNING)
 registro = logging.getLogger("kabum")
+registro.setLevel(logging.INFO)  # o nível fica no nosso registro: o Prefect troca o do logging inteiro para WARNING
 
 
 def pasta_do_dia(dia=None):
