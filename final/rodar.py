@@ -1,17 +1,20 @@
-"""A rodada do dia: coletar, conferir e montar o histórico. Rode uma vez por dia."""
+"""A rodada do dia: extrair (coletar, conferir e montar o histórico) e transformar (silver, qualidade e gold). Rode uma vez por dia."""
 
 import conferir
 import tabela
+import transformar
 from coletar import coletar, registro
 
 
 def main():
-    registro.info("etapa 1 de 3: as páginas da categoria")
+    registro.info("etapa 1 de 4: as páginas da categoria")
     coletar()
-    registro.info("etapa 2 de 3: conferir a coleta")
+    registro.info("etapa 2 de 4: conferir a coleta")
     conferir.conferir()
-    registro.info("etapa 3 de 3: o histórico de preços")
+    registro.info("etapa 3 de 4: o histórico de preços")
     tabela.gravar_csv(tabela.montar())
+    registro.info("etapa 4 de 4: transformar")
+    transformar.main()
 
 
 if __name__ == "__main__":
