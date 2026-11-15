@@ -1,6 +1,6 @@
 """O projeto Kabum como um flow do Prefect: as cinco etapas do rodar.py, uma task cada, na ordem, sobre a pasta do
 dia. A task que pede à Kabum é tentada de novo quando a rede falha; uma recusa da loja para sem nova tentativa.
-Se a execução termina mal, fica um aviso em avisos.log.
+Se a execução termina mal, fica um aviso em avisos.log. Se termina bem, mas a vigia vê algo estranho no banco, também.
 
 Uso: uv run python fluxo.py            roda uma vez, agora
      uv run python fluxo.py agendar    fica ligado e roda todo dia às 6h e às 18h (Ctrl+C para parar)
@@ -16,6 +16,7 @@ import carregar as carga
 import conferir as conferencia
 import tabela
 import transformar as transformacao
+import vigiar as vigia
 from coletar import coletar as coletar_paginas
 from coletar import pasta_do_dia
 
@@ -39,12 +40,23 @@ transformar = task(transformacao.main, name="transformar")
 carregar = task(carga.main, name="carregar")
 
 
-def avisar(flow, flow_run, state):
-    """O Prefect chama esta função quando a execução termina em Failed ou Crashed. O aviso diz o que olhar primeiro."""
-    aviso = f"AVISO: {flow.name}, execução {flow_run.name}, terminou em {state.name}: {state.message}"
+def anotar(aviso):
+    """Mostra o aviso no log e acrescenta uma linha em avisos.log, com a hora."""
     print(aviso)
     with open("avisos.log", "a", encoding="utf-8") as arquivo:
         arquivo.write(f"{datetime.now():%Y-%m-%d %H:%M:%S} {aviso} (o que fazer: runbook.md)\n")
+
+
+def avisar(flow, flow_run, state):
+    """O Prefect chama esta função quando a execução termina em Failed ou Crashed. O aviso diz o que olhar primeiro."""
+    anotar(f"AVISO: {flow.name}, execução {flow_run.name}, terminou em {state.name}: {state.message}")
+
+
+@task
+def vigiar():
+    """O que o portão deixa passar: cada aviso da vigia vira uma linha de ATENÇÃO, e a execução continua Completed."""
+    for aviso in vigia.avisos():
+        anotar(f"ATENÇÃO: {aviso}")
 
 
 @flow(log_prints=True, on_failure=[avisar], on_crashed=[avisar])
@@ -55,6 +67,7 @@ def projeto_kabum():
     historico()
     transformar()
     carregar()
+    vigiar()
     print(f"coleta de {pasta.name} no banco")
 
 
