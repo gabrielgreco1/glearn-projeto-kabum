@@ -1,0 +1,32 @@
+From 4fb73d0f3213be7b7cbe2bebb2c76dfa941754d4 Mon Sep 17 00:00:00 2001
+From: Colega do time <colega@exemplo.com>
+Date: Sun, 15 Nov 2026 17:35:43 -0300
+Subject: [PATCH] silver: centavos e modelo mais simples
+
+---
+ silver.py | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/silver.py b/silver.py
+index 78c0eeb..d9c212d 100644
+--- a/silver.py
++++ b/silver.py
+@@ -11,12 +11,12 @@ COLUNAS = ["dia", "id", "titulo", "e_placa", "chip", "modelo", "marca", "fabrica
+            "desconto_pix", "preco_oferta", "oferta_termina", "em_oferta", "preco_final", "estoque", "is_marketplace",
+            "vendedor", "link"]
+ MAPA = "fabricantes.csv"  # de fabricante, como a loja escreve, para marca; vazio quando a loja não diz quem fez
+-MODELO = r"(?i)\b(RTX|GTX|GT|RX)\s*(\d{3,4})\s*(Ti|XT|Super|GRE)?\b"  # RTX 5060 Ti, Rtx5060, RX 580, GT 730, RTX  5090
++MODELO = r"(?i)\b(RTX|GTX|GT|RX) (\d{3,4}) ?(Ti|XT|Super|GRE)?\b"  # RTX 5060 Ti, RX 580, GT 730
+
+
+ def centavos(coluna):
+-    """R$ 2139.18 vira 213918. O round vem antes do cast: no float, 2139.18 * 100 dá 213917.99999999997."""
+-    return (pl.col(coluna) * 100).round().cast(pl.Int64)
++    """R$ 2139.18 vira 213918: o preço vezes 100, como inteiro."""
++    return (pl.col(coluna) * 100).cast(pl.Int64)
+
+
+ def precos(tabela):
+--
+2.50.1
+
