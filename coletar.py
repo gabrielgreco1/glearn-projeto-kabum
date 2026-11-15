@@ -14,14 +14,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-USER_AGENT = os.getenv("KABUM_USER_AGENT")
-if not USER_AGENT:
-    raise SystemExit("Falta KABUM_USER_AGENT no arquivo .env. Copie o .env.example para .env e preencha.")
-
 API = "https://servicespub.prod.api.aws.grupokabum.com.br"
 CATEGORIA = "/catalog/v2/products-by-category/hardware/placa-de-video-vga"
 TAMANHO = 120  # produtos por página, o máximo que a API aceita; o mesmo em todos os pedidos
-CABECALHOS = {"User-Agent": USER_AGENT, "Accept": "application/json"}
 PAUSA = 3.0  # segundos de espera depois de cada pedido
 LIMITE_PAGINAS = 20  # um teto: a categoria tinha 4 páginas em 14/11/2026
 
@@ -31,6 +26,15 @@ registro = logging.getLogger("kabum")
 registro.setLevel(logging.INFO)  # o nível fica no nosso registro: o Prefect troca o do logging inteiro para WARNING
 
 
+def cabecalhos():
+    """O User-Agent, lido do .env na hora do pedido, e não no import: quem só importa este arquivo, como os testes no
+    GitHub, não precisa do .env."""
+    contato = os.getenv("KABUM_USER_AGENT")
+    if not contato:
+        raise SystemExit("Falta KABUM_USER_AGENT no arquivo .env. Copie o .env.example para .env e preencha.")
+    return {"User-Agent": contato, "Accept": "application/json"}
+
+
 def pasta_do_dia(dia=None):
     """dados/bronze/2026-11-14/: uma pasta por dia de coleta."""
     return Path("dados/bronze") / f"{dia or date.today()}"
@@ -38,7 +42,7 @@ def pasta_do_dia(dia=None):
 
 def pedir(caminho):
     """Pede um endereço da API e devolve os bytes da resposta. Para em qualquer resposta que não seja um JSON com status 200."""
-    resposta = httpx.get(API + caminho, headers=CABECALHOS, timeout=30)
+    resposta = httpx.get(API + caminho, headers=cabecalhos(), timeout=30)
     time.sleep(PAUSA)
     tipo = resposta.headers.get("content-type", "")
     if resposta.status_code != 200 or "json" not in tipo:

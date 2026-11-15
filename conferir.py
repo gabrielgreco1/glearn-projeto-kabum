@@ -19,7 +19,7 @@ from pathlib import Path
 
 import httpx
 
-from coletar import CABECALHOS, PAUSA, pasta_do_dia, registro
+from coletar import PAUSA, cabecalhos, pasta_do_dia, registro
 from ler import ler_dia
 
 PAGINA_DA_LOJA = "https://www.kabum.com.br/hardware/placa-de-video-vga"
@@ -42,7 +42,7 @@ def pagina_da_loja(pasta):
     if destino.exists():
         registro.info("já tenho %s, não peço de novo", destino)
         return destino.read_text(encoding="utf-8")
-    resposta = httpx.get(PAGINA_DA_LOJA, headers={**CABECALHOS, "Accept": "text/html"}, timeout=30)
+    resposta = httpx.get(PAGINA_DA_LOJA, headers={**cabecalhos(), "Accept": "text/html"}, timeout=30)
     time.sleep(PAUSA)
     if resposta.status_code != 200:
         registro.warning("a página da loja respondeu %s; a conferência segue só com o total da API", resposta.status_code)
