@@ -32,7 +32,7 @@ def ler_pagina(conteudo):
             "product_link": atributos.get("product_link"),
             "menu": atributos.get("menu"),  # o caminho da categoria na loja, como "Hardware/Placa de vídeo (VGA)/Acessórios"
             "is_marketplace": atributos.get("is_marketplace"),  # True quando quem vende é outra loja, pela Kabum
-            "vendedor": (atributos.get("marketplace") or {}).get("seller_name"),  # só os produtos de marketplace têm este bloco
+            "vendedor": (atributos.get("marketplace") or {}).get("seller_name"),  # nos produtos da própria Kabum, o bloco vem vazio
         })
     return produtos
 

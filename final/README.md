@@ -81,11 +81,12 @@ A tabela `fabricantes.csv`, na raiz, troca o fabricante como a loja escreve pela
 - 112 linhas são acessórios (suportes, cabos e até uma caixa de som), no menu "Acessórios" da categoria. 74 linhas de placa ficaram sem modelo, como as G210 e as placas Quadro; elas ficam na silver com o aviso `placa_com_modelo`.
 - A loja escreve o fabricante de 42 jeitos. "Outros", "Generico" e "OEM" não dizem quem fez; "Nvidia" e "RX" são nomes de chip; "PALIT" e "Palit Microsystem" são o mesmo. Depois da tabela `fabricantes.csv`, ficam 34 marcas, e 185 linhas sem marca.
 - Nenhuma linha quebrou regra de erro. Quatro linhas passaram de três vezes a mediana do modelo: uma GTX 1660 Super a R$ 5.452,20 e uma GT 730 a R$ 1.569,90, nos dois dias.
-- Entre os dois dias, 1 produto mudou de preço (um suporte Redragon, de R$ 73,36 para R$ 79,90) e 2 sumiram. A conferência do dia 15 diz que faltaram 2 produtos: os dois sumiços podem ser da paginação, e não da loja.
+- Entre os dois dias, 1 produto mudou de preço (um suporte Redragon, de R$ 73,36 para R$ 79,90) e 2 sumiram. A conferência do dia 15 diz que faltaram 2 produtos: os dois sumiços podem ser da paginação, e não da loja. Na prova numa cópia limpa, 44 minutos depois, os dois vieram de novo, cada um em duas páginas: eram da paginação.
 
 ## O que o projeto não faz
 
 - O preço Prime, que a loja mostra só para assinantes com login, não entra. O projeto não entra em conta nenhuma.
 - O modelo sai do título com uma expressão regular. Títulos sem RTX, GTX, GT ou RX antes do número (as G210, as Quadro, as R5 230) ficam sem modelo e com aviso.
 - Um produto que some num dia de cobertura abaixo de 100% pode ter sido perdido pela paginação. A gold mostra a cobertura ao lado; não decide sozinha.
+- A oferta vale pelo dia: o histórico guarda o dia da coleta, e não a hora. Uma oferta que termina às 10h59 conta como em oferta na coleta das 15h do mesmo dia.
 - Nada roda sozinho: o programa roda quando você manda.

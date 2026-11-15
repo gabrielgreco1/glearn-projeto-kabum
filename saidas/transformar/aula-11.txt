@@ -1,11 +1,11 @@
 $ uv run python tabela.py
-00:27:27 INFO gravei 953 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
+01:08:06 INFO gravei 953 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
 $ uv run python silver.py
-00:27:29 INFO silver: 953 linhas e 19 colunas
-00:27:29 INFO placas: 841 linhas; acessórios: 112
-00:27:29 INFO chip das placas: Nvidia 703, AMD 130, Intel 4, sem chip 4
-00:27:29 INFO placas com modelo: 767; sem modelo: 74; modelos diferentes: 54
-00:27:29 INFO linhas sem marca: 185; marcas diferentes: 34
+01:08:08 INFO silver: 953 linhas e 19 colunas
+01:08:08 INFO placas: 841 linhas; acessórios: 112
+01:08:08 INFO chip das placas: Nvidia 703, AMD 130, Intel 4, sem chip 4
+01:08:08 INFO placas com modelo: 767; sem modelo: 74; modelos diferentes: 54
+01:08:08 INFO linhas sem marca: 185; marcas diferentes: 34
 $ uv run pytest
 ============================= test session starts ==============================
 platform darwin -- Python 3.13.5, pytest-9.2.0, pluggy-1.7.0
@@ -22,4 +22,4 @@ testes/test_perfil.py ..                                                 [ 50%]
 testes/test_silver.py .........                                          [ 95%]
 testes/test_tabela.py .                                                  [100%]
 
-============================== 20 passed in 0.11s ==============================
+============================== 20 passed in 0.09s ==============================

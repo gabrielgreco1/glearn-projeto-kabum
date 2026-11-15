@@ -64,7 +64,7 @@ def main():
     duckdb.sql("SELECT dia, id, preco_anterior / 100 AS antes, preco_final / 100 AS depois, variacao_pct "
                "FROM 'dados/gold/mudancas.parquet'").show()
     duckdb.sql("SELECT dia, id, ultimo_preco / 100 AS ultimo_preco, cobertura FROM 'dados/gold/sumiram.parquet'").show()
-    registro.info("gold: %s mudanças, %s sumiços e %s linhas de modelo por dia, em %s",
+    registro.info("gold: %s mudanças, %s sumiços e %s linhas na tabela dos modelos, em %s",
                   linhas["mudancas"], linhas["sumiram"], linhas["modelos"], GOLD)
 
 

@@ -45,9 +45,10 @@ Em 14 de novembro de 2026, com Python 3.13, uv, httpx 0.28.1, python-dotenv 1.2.
 
 Em 15 de novembro de 2026, a etapa Transformar, com Polars 2.1.0 e DuckDB 2.0.0, sobre o bronze de 14 e 15 de novembro (`saidas/transformar/`):
 
-- `uv run python rodar.py` na pasta `final/`: a coleta do dia 15 (476 de 478 produtos, 99,6%) e a transformação de 953 linhas de 2 dias: 953 válidas, 0 rejeitadas, 80 avisos, 1 mudança de preço e 2 produtos que sumiram, no mesmo dia em que a conferência anotou 2 faltando.
-- `uv run pytest`: 31 testes, sem internet.
-- Cada pasta `aula-08` a `aula-14` foi rodada numa cópia limpa, com o mesmo bronze.
+- `uv run python rodar.py` na pasta do aluno com o `final/` e os dois dias (`saidas/transformar/rodada-final-dois-dias.txt`): sem pedido novo, a transformação de 953 linhas de 2 dias, 0 rejeitadas, 1 mudança de preço e 2 produtos que sumiram, no mesmo dia em que a conferência anotou 2 faltando. O relatório do dia 15: 476 linhas do dia, 0 rejeitadas, avisos 1 + 37 + 2, publicado.
+- `uv run pytest`: 32 testes, sem internet.
+- A prova da aula 14 num clone limpo da pasta do aluno, só com o `.env` copiado, às 1h07 (`saidas/transformar/prova-copia-limpa.txt`): 4 pedidos à API e 1 à loja, 479 produtos, cobertura de 100%, a transformação de um dia só (479 linhas, 0 mudanças, 0 sumiços), em 26 segundos; 32 testes passando. Uma primeira prova, às 0h51, antes da correção do portão para olhar só o dia novo (`prova-copia-limpa-0h51.txt`), mostrou os dois produtos que tinham sumido às 0h07 de volta, cada um em duas páginas.
+- Cada pasta `aula-08` a `aula-14` foi rodada numa cópia limpa, com o mesmo bronze (`saidas/transformar/aula-NN.txt`).
 
 ## Regras do projeto
 

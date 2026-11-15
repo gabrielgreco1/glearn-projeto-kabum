@@ -65,7 +65,7 @@ def main():
     registro.info("silver: %s linhas e %s colunas", silver.height, silver.width)
     placas = silver.filter(pl.col("e_placa"))
     registro.info("placas: %s linhas; acessórios: %s", placas.height, silver.height - placas.height)
-    chips = placas.group_by("chip").len().sort("len", descending=True)
+    chips = placas.group_by("chip").len().sort("len", "chip", descending=[True, False], nulls_last=True)
     registro.info("chip das placas: %s", ", ".join(f"{chip or 'sem chip'} {n}" for chip, n in chips.iter_rows()))
     registro.info("placas com modelo: %s; sem modelo: %s; modelos diferentes: %s", placas["modelo"].count(),
                   placas["modelo"].null_count(), placas["modelo"].drop_nulls().n_unique())

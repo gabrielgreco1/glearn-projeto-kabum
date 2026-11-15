@@ -1,16 +1,16 @@
 $ uv run python tabela.py
-00:27:30 INFO gravei 953 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
+01:08:09 INFO gravei 953 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
 $ uv run python validar.py
-00:27:32 INFO lidos 953 = válidos 953 + rejeitados 0
-00:27:32 INFO id_dia_unico       erro   0 falhas
-00:27:32 INFO titulo_obrigatorio erro   0 falhas
-00:27:32 INFO preco_faixa        erro   0 falhas
-00:27:32 INFO pix_menor          erro   0 falhas
-00:27:32 INFO desconto_confere   erro   0 falhas
-00:27:32 INFO oferta_menor       aviso  2 falhas
-00:27:32 INFO placa_com_modelo   aviso  74 falhas
-00:27:32 INFO preco_mediana      aviso  4 falhas
-00:27:32 INFO gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+01:08:11 INFO lidos 953 = válidos 953 + rejeitados 0
+01:08:11 INFO id_dia_unico       erro   0 falhas
+01:08:11 INFO titulo_obrigatorio erro   0 falhas
+01:08:11 INFO preco_faixa        erro   0 falhas
+01:08:11 INFO pix_menor          erro   0 falhas
+01:08:11 INFO desconto_confere   erro   0 falhas
+01:08:11 INFO oferta_menor       aviso  2 falhas
+01:08:11 INFO placa_com_modelo   aviso  74 falhas
+01:08:11 INFO preco_mediana      aviso  4 falhas
+01:08:11 INFO gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
 $ cat dados/silver/rejeitados.csv
 linha,dia,id,titulo,regra_id,motivo,valor
 $ uv run pytest
@@ -30,4 +30,4 @@ testes/test_silver.py .........                                          [ 79%]
 testes/test_tabela.py .                                                  [ 83%]
 testes/test_validar.py ....                                              [100%]
 
-============================== 24 passed in 0.12s ==============================
+============================== 24 passed in 0.11s ==============================

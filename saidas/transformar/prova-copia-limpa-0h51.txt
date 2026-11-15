@@ -1,0 +1,58 @@
+      30
+$ git clone . prova-kabum
+Cloning into '/tmp/prova-kabum'...
+done.
+$ uv sync
+Using CPython 3.13.5
+Creating virtual environment at: .venv
+Resolved 18 packages in 0.61ms
+$ uv run python rodar.py
+real 25.13
+user 0.65
+sys 0.23
+00:51:12 INFO etapa 1 de 4: as páginas da categoria
+00:51:17 INFO baixei a página 1: 841010 bytes em dados/bronze/2026-11-15/pagina-001.json
+00:51:21 INFO baixei a página 2: 954703 bytes em dados/bronze/2026-11-15/pagina-002.json
+00:51:27 INFO baixei a página 3: 907463 bytes em dados/bronze/2026-11-15/pagina-003.json
+00:51:31 INFO baixei a página 4: 995579 bytes em dados/bronze/2026-11-15/pagina-004.json
+00:51:31 INFO coleta do dia: 4 páginas em dados/bronze/2026-11-15
+00:51:31 INFO etapa 2 de 4: conferir a coleta
+00:51:31 INFO coleta: 479 produtos lidos, 476 diferentes; a API declara 479
+00:51:31 INFO repetidos entre páginas: 714565 (2 vezes), 690411 (2 vezes), 1009158 (2 vezes)
+00:51:35 INFO a página da loja mostra 479 produtos
+00:51:35 INFO cobertura: 476 de 479, 99.4%; faltaram 3
+00:51:35 INFO etapa 3 de 4: o histórico de preços
+00:51:35 INFO gravei 476 linhas em dados/precos.csv, de 1 dia(s): 2026-11-15
+00:51:35 INFO etapa 4 de 4: transformar
+00:51:35 INFO transformar 1 de 3: montar e conferir a silver
+00:51:35 INFO lidos 476 = válidos 476 + rejeitados 0
+00:51:35 INFO transformar 2 de 3: o relatório de qualidade
+00:51:35 INFO relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+00:51:35 INFO gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+00:51:35 INFO transformar 3 de 3: a gold
+┌──────┬───────┬────────┬────────┬──────────────┐
+│ dia  │  id   │ antes  │ depois │ variacao_pct │
+│ date │ int64 │ double │ double │    double    │
+└──────┴───────┴────────┴────────┴──────────────┘
+                     0 rows                    
+
+┌──────┬───────┬──────────────┬───────────┐
+│ dia  │  id   │ ultimo_preco │ cobertura │
+│ date │ int64 │    double    │  double   │
+└──────┴───────┴──────────────┴───────────┘
+                  0 rows                 
+
+00:51:35 INFO gold: 0 mudanças, 0 sumiços e 54 linhas de modelo por dia, em dados/gold
+$ uv run pytest -q
+...............................                                          [100%]
+31 passed in 0.16s
+dados:
+bronze
+conferencia.csv
+gold
+precos.csv
+qualidade
+silver
+
+dados/bronze:
+2026-11-15

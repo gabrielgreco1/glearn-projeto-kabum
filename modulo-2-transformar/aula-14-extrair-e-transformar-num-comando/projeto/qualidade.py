@@ -34,18 +34,27 @@ def decidir(rel):
     return True, f"nenhuma regra de erro acima de {LIMITE_ERRO:.0%}"
 
 
-def relatorio(tabela, validos, rejeitados, falhas):
-    """Junta os números da rodada num dicionário, com a decisão no fim."""
+def relatorio(tabela, validos, rejeitados):
+    """Os números do dia que acabou de entrar, com o tamanho do histórico ao lado, e a decisão no fim.
+
+    O portão olha só o dia novo: os dias antigos já passaram por ele, e com um ano de histórico um dia inteiro
+    quebrado seria menos de 1% da silver."""
     dia = tabela["dia"].max()
+    do_dia = pl.col("dia") == dia
+    rejeitados_do_dia = rejeitados.filter(do_dia)
+    validos_do_dia = validos.filter(do_dia)
     rel = {
         "dia": str(dia),
         "gerado_em": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "dias_na_silver": tabela["dia"].n_unique(),
-        "lidos": tabela.height,
-        "validos": validos.height,
-        "rejeitados": rejeitados["linha"].n_unique(),
-        "rejeitados_por_regra": {r["id"]: falhas[r["id"]] for r in REGRAS if r["severidade"] == "erro"},
-        "avisos_por_regra": {r["id"]: falhas[r["id"]] for r in REGRAS if r["severidade"] == "aviso"},
+        "linhas_na_silver": tabela.height,
+        "lidos": tabela.filter(do_dia).height,
+        "validos": validos_do_dia.height,
+        "rejeitados": rejeitados_do_dia["linha"].n_unique(),
+        "rejeitados_por_regra": {r["id"]: rejeitados_do_dia.filter(pl.col("regra_id") == r["id"]).height
+                                 for r in REGRAS if r["severidade"] == "erro"},
+        "avisos_por_regra": {r["id"]: validos_do_dia.filter(pl.col("avisos").str.contains(r["id"], literal=True)).height
+                             for r in REGRAS if r["severidade"] == "aviso"},
         "cobertura": cobertura_do_dia(dia),
     }
     rel["publicado"], rel["motivo"] = decidir(rel)
@@ -53,6 +62,7 @@ def relatorio(tabela, validos, rejeitados, falhas):
 
 
 def gravar(rel):
+    """Grava o relatório em dados/qualidade/<dia>.json. Rodar de novo no mesmo dia troca o arquivo."""
     PASTA.mkdir(parents=True, exist_ok=True)
     destino = PASTA / f"{rel['dia']}.json"
     destino.write_text(json.dumps(rel, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

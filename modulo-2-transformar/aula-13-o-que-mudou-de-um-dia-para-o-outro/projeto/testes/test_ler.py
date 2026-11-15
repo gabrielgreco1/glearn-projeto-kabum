@@ -32,5 +32,5 @@ def test_menu_e_vendedor_vem_do_bronze():
     produtos = ler_pagina(AMOSTRA.read_bytes())
     assert produtos[0]["menu"] == "Hardware/Placa de vídeo (VGA)/Placa de vídeo Nvidia"
     assert produtos[0]["is_marketplace"] is False
-    assert produtos[0]["vendedor"] is None  # vendido pela própria Kabum: não há bloco marketplace
+    assert produtos[0]["vendedor"] is None  # vendido pela própria Kabum: o bloco marketplace vem vazio
     assert produtos[1]["vendedor"] == "Loja inventada"

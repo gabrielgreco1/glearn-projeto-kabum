@@ -11,11 +11,21 @@ from validar import separar
 AMOSTRA = Path(__file__).parent / "amostra_precos.csv"
 
 
-def test_relatorio_da_amostra_publica():
+def test_relatorio_conta_o_dia_novo_e_publica():
     tabela = montar(AMOSTRA)
-    rel = relatorio(tabela, *separar(tabela))
-    assert (rel["dia"], rel["lidos"], rel["validos"], rel["rejeitados"]) == ("2026-11-15", 3, 3, 0)
+    validos, rejeitados, _ = separar(tabela)
+    rel = relatorio(tabela, validos, rejeitados)
+    assert (rel["dia"], rel["linhas_na_silver"], rel["lidos"], rel["validos"], rel["rejeitados"]) == ("2026-11-15", 3, 1, 1, 0)
     assert rel["publicado"] is True
+
+
+def test_dia_novo_quebrado_nao_publica_mesmo_com_o_historico_bom():
+    tabela = montar(AMOSTRA).with_columns(  # no dia 15, o Pix do produto 111 passa do cartão
+        pl.when(pl.col("dia") == pl.col("dia").max()).then(200000).otherwise(pl.col("preco_pix")).alias("preco_pix"))
+    validos, rejeitados, _ = separar(tabela)
+    rel = relatorio(tabela, validos, rejeitados)
+    assert rel["rejeitados_por_regra"]["pix_menor"] == 1
+    assert rel["publicado"] is False  # a conta é sobre a linha do dia 15: 1 de 1, 100%
 
 
 def test_regra_de_erro_acima_de_2_por_cento_segura_a_publicacao():
