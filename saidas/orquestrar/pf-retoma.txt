@@ -1,0 +1,42 @@
+10:09:56.127 | INFO    | Flow run 'healthy-oxpecker' - Beginning flow run 'healthy-oxpecker' for flow 'projeto-kabum'
+10:09:56.130 | INFO    | Flow run 'healthy-oxpecker' - View at http://127.0.0.1:4200/runs/flow-run/3310f3dc-7539-4fb0-82e1-4d3dae02d96b
+10:09:56.173 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+10:09:56.176 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+10:09:59.265 | INFO    | kabum - baixei a página 3: 914442 bytes em dados/bronze/2026-11-15/pagina-003.json
+10:10:04.099 | INFO    | kabum - baixei a página 4: 996379 bytes em dados/bronze/2026-11-15/pagina-004.json
+10:10:04.117 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+10:10:08.117 | INFO    | Task run 'coletar-c76' - Finished in state Completed()
+10:10:08.195 | INFO    | kabum - coleta: 479 produtos lidos, 475 diferentes; a API declara 479
+10:10:08.195 | INFO    | kabum - repetidos entre páginas: 922131 (2 vezes), 1062236 (2 vezes), 543498 (2 vezes), 717772 (2 vezes)
+10:10:08.196 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+10:10:08.203 | INFO    | kabum - a página da loja mostra 479 produtos
+10:10:08.203 | INFO    | kabum - cobertura: 475 de 479, 99.2%; faltaram 4
+10:10:08.204 | INFO    | Task run 'conferir-283' - Finished in state Completed()
+10:10:08.217 | INFO    | kabum - gravei 475 linhas em dados/precos.csv, de 1 dia(s): 2026-11-15
+10:10:08.218 | INFO    | Task run 'historico-767' - Finished in state Completed()
+10:10:08.219 | INFO    | kabum - transformar 1 de 3: montar e conferir a silver
+10:10:08.228 | INFO    | kabum - lidos 475 = válidos 475 + rejeitados 0
+10:10:08.230 | INFO    | kabum - transformar 2 de 3: o relatório de qualidade
+10:10:08.232 | INFO    | kabum - relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+10:10:08.234 | INFO    | kabum - gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+10:10:08.234 | INFO    | kabum - transformar 3 de 3: a gold
+10:10:08.257 | INFO    | Task run 'transformar-079' - ┌──────┬───────┬────────┬────────┬──────────────┐
+│ dia  │  id   │ antes  │ depois │ variacao_pct │
+│ date │ int64 │ double │ double │    double    │
+└──────┴───────┴────────┴────────┴──────────────┘
+                     0 rows
+10:10:08.258 | INFO    | Task run 'transformar-079' - ┌──────┬───────┬──────────────┬───────────┐
+│ dia  │  id   │ ultimo_preco │ cobertura │
+│ date │ int64 │    double    │  double   │
+└──────┴───────┴──────────────┴───────────┘
+                  0 rows
+10:10:08.259 | INFO    | kabum - gold: 0 mudanças, 0 sumiços e 54 linhas na tabela dos modelos, em dados/gold
+10:10:08.259 | INFO    | Task run 'transformar-079' - Finished in state Completed()
+10:10:08.278 | INFO    | kabum - coletas: 1 dias conferidos, do dados/conferencia.csv
+10:10:08.278 | INFO    | kabum - dias na silver: 1; a carregar: 1 novos e 0 que mudaram
+10:10:08.288 | INFO    | kabum - 2026-11-15: apaguei 0 linhas e gravei 475; conferido: 475 linhas e soma 217322060
+10:10:08.289 | INFO    | Task run 'carregar-1d4' - Finished in state Completed()
+10:10:08.297 | INFO    | kabum - vigia: 1 dias no banco, o último 2026-11-15; 0 avisos
+10:10:08.298 | INFO    | Task run 'vigiar-0f3' - Finished in state Completed()
+10:10:08.314 | INFO    | Flow run 'healthy-oxpecker' - coleta de 2026-11-15 no banco
+10:10:08.320 | INFO    | Flow run 'healthy-oxpecker' - Finished in state Completed()

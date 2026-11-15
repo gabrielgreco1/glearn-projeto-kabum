@@ -1,0 +1,381 @@
+$ HTTPS_PROXY=http://127.0.0.1:9 NO_PROXY=127.0.0.1 uv run python fluxo.py
+09:15:37.528 | INFO    | Flow run 'adept-orca' - Beginning flow run 'adept-orca' for flow 'projeto-kabum'
+09:15:37.531 | INFO    | Flow run 'adept-orca' - View at http://127.0.0.1:4200/runs/flow-run/9a5dce51-35c7-475b-8541-48cb2d53af1d
+09:15:37.540 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+09:15:37.542 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+09:15:37.545 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-003.json, não peço de novo
+09:15:37.547 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-004.json, não peço de novo
+09:15:37.549 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+09:15:37.577 | INFO    | Task run 'coletar-f9b' - Task run failed with exception: ConnectError('[Errno 61] Connection refused') - Retry 1/3 will start 10 second(s) from now
+09:15:47.591 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+09:15:47.603 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+09:15:47.610 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-003.json, não peço de novo
+09:15:47.617 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-004.json, não peço de novo
+09:15:47.622 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+09:15:47.649 | INFO    | Task run 'coletar-f9b' - Task run failed with exception: ConnectError('[Errno 61] Connection refused') - Retry 2/3 will start 10 second(s) from now
+09:15:57.662 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+09:15:57.676 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+09:15:57.685 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-003.json, não peço de novo
+09:15:57.691 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-004.json, não peço de novo
+09:15:57.696 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+09:15:57.723 | INFO    | Task run 'coletar-f9b' - Task run failed with exception: ConnectError('[Errno 61] Connection refused') - Retry 3/3 will start 10 second(s) from now
+09:16:07.725 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+09:16:07.727 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+09:16:07.757 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-003.json, não peço de novo
+09:16:07.759 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-004.json, não peço de novo
+09:16:07.762 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+09:16:07.779 | ERROR   | Task run 'coletar-f9b' - Task run failed with exception: ConnectError('[Errno 61] Connection refused') - Retries are exhausted
+Traceback (most recent call last):
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/http_proxy.py", line 288, in handle_request
+    connect_response = self._connection.handle_request(
+        connect_request
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection.py", line 101, in handle_request
+    raise exc
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection.py", line 78, in handle_request
+    stream = self._connect(request)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_backends/sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "~/.local/share/uv/python/cpython-3.13-macos-aarch64-none/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 61] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1072, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1777, in run_task_sync
+    engine.call_task_fn(txn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1093, in call_task_fn
+    result = call_with_parameters(self.task.fn, parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/fluxo.py", line 21, in coletar
+    conferencia.pagina_da_loja(pasta)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "~/projeto-kabum/conferir.py", line 36, in pagina_da_loja
+    resposta = httpx.get(PAGINA_DA_LOJA, headers={**CABECALHOS, "Accept": "text/html"}, timeout=30)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_api.py", line 195, in get
+    return request(
+        "GET",
+    ...<9 lines>...
+        trust_env=trust_env,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_api.py", line 109, in request
+    return client.request(
+           ~~~~~~~~~~~~~~^
+        method=method,
+        ^^^^^^^^^^^^^^
+    ...<8 lines>...
+        follow_redirects=follow_redirects,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "~/.local/share/uv/python/cpython-3.13-macos-aarch64-none/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 61] Connection refused
+09:16:07.782 | ERROR   | Task run 'coletar-f9b' - Finished in state Failed('Task run encountered an exception ConnectError: [Errno 61] Connection refused')
+09:16:07.783 | ERROR   | Flow run 'adept-orca' - Encountered exception during execution: ConnectError('[Errno 61] Connection refused')
+Traceback (most recent call last):
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/http_proxy.py", line 288, in handle_request
+    connect_response = self._connection.handle_request(
+        connect_request
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection.py", line 101, in handle_request
+    raise exc
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection.py", line 78, in handle_request
+    stream = self._connect(request)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_backends/sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "~/.local/share/uv/python/cpython-3.13-macos-aarch64-none/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 61] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1372, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2173, in run_flow_sync
+    engine.call_flow_fn()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1394, in call_flow_fn
+    result = call_with_parameters(self.flow.fn, self.parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/fluxo.py", line 47, in projeto_kabum
+    coletar(pasta)
+    ~~~~~~~^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/tasks.py", line 1240, in __call__
+    return run_task(
+        task=self,
+    ...<2 lines>...
+        return_type=return_type,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 2054, in run_task
+    return run_task_sync(**kwargs)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1780, in run_task_sync
+    return engine.state if return_type == "state" else engine.result()
+                                                       ~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 636, in result
+    raise self._raised
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1072, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1777, in run_task_sync
+    engine.call_task_fn(txn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1093, in call_task_fn
+    result = call_with_parameters(self.task.fn, parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/fluxo.py", line 21, in coletar
+    conferencia.pagina_da_loja(pasta)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "~/projeto-kabum/conferir.py", line 36, in pagina_da_loja
+    resposta = httpx.get(PAGINA_DA_LOJA, headers={**CABECALHOS, "Accept": "text/html"}, timeout=30)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_api.py", line 195, in get
+    return request(
+        "GET",
+    ...<9 lines>...
+        trust_env=trust_env,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_api.py", line 109, in request
+    return client.request(
+           ~~~~~~~~~~~~~~^
+        method=method,
+        ^^^^^^^^^^^^^^
+    ...<8 lines>...
+        follow_redirects=follow_redirects,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "~/.local/share/uv/python/cpython-3.13-macos-aarch64-none/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 61] Connection refused
+09:16:07.793 | INFO    | Flow run 'adept-orca' - Running hook 'avisar' in response to entering state 'Failed'
+09:16:07.793 | INFO    | Flow run 'adept-orca' - AVISO: projeto-kabum, execução adept-orca, terminou em Failed: Flow run encountered an exception: ConnectError: [Errno 61] Connection refused
+09:16:07.794 | INFO    | Flow run 'adept-orca' - Hook 'avisar' finished running successfully
+09:16:07.794 | INFO    | Flow run 'adept-orca' - Finished in state Failed('Flow run encountered an exception: ConnectError: [Errno 61] Connection refused')
+Traceback (most recent call last):
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/http_proxy.py", line 288, in handle_request
+    connect_response = self._connection.handle_request(
+        connect_request
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection.py", line 101, in handle_request
+    raise exc
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection.py", line 78, in handle_request
+    stream = self._connect(request)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_backends/sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "~/.local/share/uv/python/cpython-3.13-macos-aarch64-none/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 61] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "~/projeto-kabum/fluxo.py", line 56, in <module>
+    projeto_kabum()
+    ~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flows.py", line 1912, in __call__
+    return run_flow(
+        flow=self,
+    ...<2 lines>...
+        return_type=return_type,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2332, in run_flow
+    ret_val = run_flow_sync(**kwargs)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2175, in run_flow_sync
+    return engine.state if return_type == "state" else engine.result()
+                                                       ~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 817, in result
+    raise self._raised
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1372, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2173, in run_flow_sync
+    engine.call_flow_fn()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1394, in call_flow_fn
+    result = call_with_parameters(self.flow.fn, self.parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/fluxo.py", line 47, in projeto_kabum
+    coletar(pasta)
+    ~~~~~~~^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/tasks.py", line 1240, in __call__
+    return run_task(
+        task=self,
+    ...<2 lines>...
+        return_type=return_type,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 2054, in run_task
+    return run_task_sync(**kwargs)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1780, in run_task_sync
+    return engine.state if return_type == "state" else engine.result()
+                                                       ~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 636, in result
+    raise self._raised
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1072, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1777, in run_task_sync
+    engine.call_task_fn(txn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1093, in call_task_fn
+    result = call_with_parameters(self.task.fn, parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/fluxo.py", line 21, in coletar
+    conferencia.pagina_da_loja(pasta)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "~/projeto-kabum/conferir.py", line 36, in pagina_da_loja
+    resposta = httpx.get(PAGINA_DA_LOJA, headers={**CABECALHOS, "Accept": "text/html"}, timeout=30)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_api.py", line 195, in get
+    return request(
+        "GET",
+    ...<9 lines>...
+        trust_env=trust_env,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_api.py", line 109, in request
+    return client.request(
+           ~~~~~~~~~~~~~~^
+        method=method,
+        ^^^^^^^^^^^^^^
+    ...<8 lines>...
+        follow_redirects=follow_redirects,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "~/.local/share/uv/python/cpython-3.13-macos-aarch64-none/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 61] Connection refused
+
+real	0m30.925s
+user	0m0.832s
+sys	0m0.115s
+$ cat avisos.log
+2026-11-15 09:16:07 AVISO: projeto-kabum, execução adept-orca, terminou em Failed: Flow run encountered an exception: ConnectError: [Errno 61] Connection refused (o que fazer: runbook.md)

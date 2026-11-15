@@ -1,0 +1,184 @@
+09:24:43.362 | INFO    | Flow run 'little-kestrel' - Beginning flow run 'little-kestrel' for flow 'projeto-kabum'
+09:24:43.364 | INFO    | Flow run 'little-kestrel' - View at http://127.0.0.1:4200/runs/flow-run/1bbd8265-a60e-43b7-b85b-9e3949f117e3
+09:24:46.496 | INFO    | kabum - baixei a página 1: 801576 bytes em dados/bronze/2026-11-15/pagina-001.json
+09:24:49.618 | INFO    | kabum - baixei a página 2: 994651 bytes em dados/bronze/2026-11-15/pagina-002.json
+09:24:53.960 | INFO    | kabum - baixei a página 3: 925656 bytes em dados/bronze/2026-11-15/pagina-003.json
+09:24:57.084 | INFO    | kabum - baixei a página 4: 1003392 bytes em dados/bronze/2026-11-15/pagina-004.json
+09:24:57.088 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+09:25:01.083 | INFO    | Task run 'coletar-90f' - Finished in state Completed()
+09:25:01.154 | INFO    | kabum - coleta: 480 produtos lidos, 452 diferentes; a API declara 480
+09:25:01.155 | INFO    | kabum - repetidos entre páginas: 731030 (2 vezes), 577171 (2 vezes), 931072 (2 vezes), 922131 (2 vezes), 1062236 (2 vezes), 543498 (2 vezes), 1051729 (2 vezes), 1065197 (2 vezes), 1077586 (2 vezes), 635954 (2 vezes), 629803 (2 vezes), 928109 (2 vezes), 928108 (2 vezes), 1061740 (2 vezes), 877496 (2 vezes), 573345 (2 vezes), 520149 (2 vezes), 991866 (2 vezes), 1078279 (2 vezes), 1076095 (2 vezes), 1085854 (2 vezes), 941152 (2 vezes), 1003842 (2 vezes), 1077411 (2 vezes), 214817 (2 vezes), 1063824 (2 vezes), 994308 (2 vezes), 875453 (2 vezes)
+09:25:01.155 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:25:01.162 | INFO    | kabum - a página da loja mostra 480 produtos
+09:25:01.163 | INFO    | kabum - cobertura: 452 de 480, 94.2%; faltaram 28
+09:25:01.164 | INFO    | Task run 'conferir-f1c' - Finished in state Completed()
+09:25:01.185 | INFO    | kabum - gravei 929 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
+09:25:01.187 | INFO    | Task run 'historico-adb' - Finished in state Completed()
+09:25:01.188 | INFO    | kabum - transformar 1 de 3: montar e conferir a silver
+09:25:01.199 | INFO    | kabum - lidos 929 = válidos 929 + rejeitados 0
+09:25:01.201 | INFO    | kabum - transformar 2 de 3: o relatório de qualidade
+09:25:01.203 | INFO    | kabum - relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+09:25:01.205 | INFO    | kabum - gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+09:25:01.206 | INFO    | kabum - transformar 3 de 3: a gold
+09:25:01.221 | ERROR   | Task run 'transformar-07f' - Task run failed with exception: IOException('IO Error: Could not rename file "dados/gold/tmp_mudancas.parquet" to "dados/gold/mudancas.parquet": No such file or directory')
+Traceback (most recent call last):
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1072, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1777, in run_task_sync
+    engine.call_task_fn(txn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1093, in call_task_fn
+    result = call_with_parameters(self.task.fn, parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/transformar.py", line 28, in main
+    historico.main()
+    ~~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/historico.py", line 63, in main
+    linhas = {nome: gravar(consulta, nome) for nome, consulta in [("mudancas", MUDANCAS), ("sumiram", SUMIRAM), ("modelos", MODELOS)]}
+                    ~~~~~~^^^^^^^^^^^^^^^^
+  File "~/projeto-kabum/historico.py", line 57, in gravar
+    duckdb.sql(consulta).write_parquet(str(destino))
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/duckdb/_relation.py", line 3017, in guarded
+    raise _trimmed(error) from error.__cause__
+_duckdb.IOException: IO Error: Could not rename file "dados/gold/tmp_mudancas.parquet" to "dados/gold/mudancas.parquet": No such file or directory
+09:25:01.224 | ERROR   | Task run 'transformar-07f' - Finished in state Failed('Task run encountered an exception IOException: IO Error: Could not rename file "dados/gold/tmp_mudancas.parquet" to "dados/gold/mudancas.parquet": No such file or directory')
+09:25:01.224 | ERROR   | Flow run 'little-kestrel' - Encountered exception during execution: IOException('IO Error: Could not rename file "dados/gold/tmp_mudancas.parquet" to "dados/gold/mudancas.parquet": No such file or directory')
+Traceback (most recent call last):
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1372, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2173, in run_flow_sync
+    engine.call_flow_fn()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1394, in call_flow_fn
+    result = call_with_parameters(self.flow.fn, self.parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/fluxo.py", line 68, in projeto_kabum
+    transformar()
+    ~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/tasks.py", line 1240, in __call__
+    return run_task(
+        task=self,
+    ...<2 lines>...
+        return_type=return_type,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 2054, in run_task
+    return run_task_sync(**kwargs)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1780, in run_task_sync
+    return engine.state if return_type == "state" else engine.result()
+                                                       ~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 636, in result
+    raise self._raised
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1072, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1777, in run_task_sync
+    engine.call_task_fn(txn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1093, in call_task_fn
+    result = call_with_parameters(self.task.fn, parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/transformar.py", line 28, in main
+    historico.main()
+    ~~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/historico.py", line 63, in main
+    linhas = {nome: gravar(consulta, nome) for nome, consulta in [("mudancas", MUDANCAS), ("sumiram", SUMIRAM), ("modelos", MODELOS)]}
+                    ~~~~~~^^^^^^^^^^^^^^^^
+  File "~/projeto-kabum/historico.py", line 57, in gravar
+    duckdb.sql(consulta).write_parquet(str(destino))
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/duckdb/_relation.py", line 3017, in guarded
+    raise _trimmed(error) from error.__cause__
+_duckdb.IOException: IO Error: Could not rename file "dados/gold/tmp_mudancas.parquet" to "dados/gold/mudancas.parquet": No such file or directory
+09:25:01.239 | INFO    | Flow run 'little-kestrel' - Running hook 'avisar' in response to entering state 'Failed'
+09:25:01.239 | INFO    | Flow run 'little-kestrel' - AVISO: projeto-kabum, execução little-kestrel, terminou em Failed: Flow run encountered an exception: IOException: IO Error: Could not rename file "dados/gold/tmp_mudancas.parquet" to "dados/gold/mudancas.parquet": No such file or directory
+09:25:01.240 | INFO    | Flow run 'little-kestrel' - Hook 'avisar' finished running successfully
+09:25:01.240 | INFO    | Flow run 'little-kestrel' - Finished in state Failed('Flow run encountered an exception: IOException: IO Error: Could not rename file "dados/gold/tmp_mudancas.parquet" to "dados/gold/mudancas.parquet": No such file or directory')
+Traceback (most recent call last):
+  File "~/projeto-kabum/fluxo.py", line 80, in <module>
+    projeto_kabum()
+    ~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flows.py", line 1912, in __call__
+    return run_flow(
+        flow=self,
+    ...<2 lines>...
+        return_type=return_type,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2332, in run_flow
+    ret_val = run_flow_sync(**kwargs)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2175, in run_flow_sync
+    return engine.state if return_type == "state" else engine.result()
+                                                       ~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 817, in result
+    raise self._raised
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1372, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2173, in run_flow_sync
+    engine.call_flow_fn()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1394, in call_flow_fn
+    result = call_with_parameters(self.flow.fn, self.parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/fluxo.py", line 68, in projeto_kabum
+    transformar()
+    ~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/tasks.py", line 1240, in __call__
+    return run_task(
+        task=self,
+    ...<2 lines>...
+        return_type=return_type,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 2054, in run_task
+    return run_task_sync(**kwargs)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1780, in run_task_sync
+    return engine.state if return_type == "state" else engine.result()
+                                                       ~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 636, in result
+    raise self._raised
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1072, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1777, in run_task_sync
+    engine.call_task_fn(txn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1093, in call_task_fn
+    result = call_with_parameters(self.task.fn, parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/transformar.py", line 28, in main
+    historico.main()
+    ~~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/historico.py", line 63, in main
+    linhas = {nome: gravar(consulta, nome) for nome, consulta in [("mudancas", MUDANCAS), ("sumiram", SUMIRAM), ("modelos", MODELOS)]}
+                    ~~~~~~^^^^^^^^^^^^^^^^
+  File "~/projeto-kabum/historico.py", line 57, in gravar
+    duckdb.sql(consulta).write_parquet(str(destino))
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/duckdb/_relation.py", line 3017, in guarded
+    raise _trimmed(error) from error.__cause__
+_duckdb.IOException: IO Error: Could not rename file "dados/gold/tmp_mudancas.parquet" to "dados/gold/mudancas.parquet": No such file or directory
+nanobind: leaked 38 instances!
+nanobind: leaked 1 keep_alive records!
+nanobind: leaked 6 types!
+ - leaked type "_duckdb._sqltypes.DuckDBPyType"
+ - leaked type "FunctionNullHandling"
+ - leaked type "PythonExceptionHandling"
+ - leaked type "PythonUDFType"
+ - leaked type "_duckdb.DuckDBPyConnection"
+ - leaked type "ExplainType"
+nanobind: leaked 84 functions!
+ - leaked function "_catalog_version"
+ - leaked function "unregister_filesystem"
+ - leaked function "__eq__"
+ - leaked function "_register_filelike"
+ - leaked function "create_function"
+ - leaked function "_create_view"
+ - leaked function "extract_statements"
+ - leaked function ""
+ - leaked function "enable_profiling"
+ - leaked function "row_type"
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html

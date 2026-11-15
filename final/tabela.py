@@ -1,9 +1,12 @@
-"""Monta o histórico de preços: uma linha por produto por dia de coleta, com os valores como a API mandou."""
+"""Monta o histórico de preços: uma linha por produto por dia de coleta, com os valores como a API mandou.
+
+Só entra o dia que a conferência selou. Uma coleta interrompida, que ninguém terminou, fica fora."""
 
 import csv
 from pathlib import Path
 
 from coletar import registro
+from conferir import SELO
 from ler import CAMPOS, ler_dia
 
 CSV = Path("dados/precos.csv")
@@ -15,6 +18,9 @@ def montar(bronze=Path("dados/bronze")):
     linhas = []
     for pasta in sorted(bronze.iterdir()):
         if not pasta.is_dir():
+            continue
+        if not (pasta / SELO).exists():
+            registro.warning("%s não tem o selo da conferência (%s): fica fora do histórico", pasta, SELO)
             continue
         vistos = set()
         for produto in ler_dia(pasta):

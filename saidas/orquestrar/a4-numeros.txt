@@ -1,0 +1,11 @@
+$ docker compose exec banco psql -U postgres -c "SELECT * FROM coletas"
+    dia     | diferentes | declarado | loja | cobertura 
+------------+------------+-----------+------+-----------
+ 2026-11-14 |        477 |       478 |  478 |     0.998
+ 2026-11-15 |        452 |       480 |  480 |     0.942
+(2 rows)
+
+$ uv run python vigiar.py
+09:24:15 INFO vigia: 2 dias no banco, o último 2026-11-15; 2 avisos
+a cobertura de 2026-11-15 ficou em 94.2%, perto do mínimo de 90%: a paginação perdeu 28 produtos. Se cair de novo amanhã, confira os repetidos no log da task conferir.
+sumiram 28 dos 477 produtos de 2026-11-14 para 2026-11-15 (5.9%); a paginação perdeu 28 nesse dia, então pode ser só ela.

@@ -1,0 +1,55 @@
+ Container projeto-kabum-banco-1 Stopping 
+ Container projeto-kabum-banco-1 Stopped 
+$ uv run python fluxo.py
+09:16:08.551 | INFO    | Flow run 'yellow-clam' - Beginning flow run 'yellow-clam' for flow 'projeto-kabum'
+09:16:08.553 | INFO    | Flow run 'yellow-clam' - View at http://127.0.0.1:4200/runs/flow-run/517b2b43-a194-4ef6-b4cd-051a2970d1b2
+09:16:08.562 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+09:16:08.565 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+09:16:08.567 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-003.json, não peço de novo
+09:16:08.569 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-004.json, não peço de novo
+09:16:08.571 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+09:16:12.626 | INFO    | Task run 'coletar-e5a' - Finished in state Completed()
+09:16:12.660 | INFO    | kabum - coleta: 478 produtos lidos, 476 diferentes; a API declara 478
+09:16:12.660 | INFO    | kabum - repetidos entre páginas: 1078274 (2 vezes), 1013926 (2 vezes)
+09:16:12.661 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:16:12.672 | INFO    | kabum - a página da loja mostra 480 produtos
+09:16:12.673 | INFO    | kabum - cobertura: 476 de 478, 99.6%; faltaram 2
+09:16:12.674 | INFO    | Task run 'conferir-6c2' - Finished in state Completed()
+09:16:12.737 | INFO    | kabum - gravei 953 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
+09:16:12.738 | INFO    | Task run 'historico-f21' - Finished in state Completed()
+09:16:12.739 | INFO    | kabum - transformar 1 de 3: montar e conferir a silver
+09:16:12.749 | INFO    | kabum - lidos 953 = válidos 953 + rejeitados 0
+09:16:12.751 | INFO    | kabum - transformar 2 de 3: o relatório de qualidade
+09:16:12.753 | INFO    | kabum - relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+09:16:12.755 | INFO    | kabum - gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+09:16:12.755 | INFO    | kabum - transformar 3 de 3: a gold
+09:16:12.778 | INFO    | Task run 'transformar-9d9' - ┌────────────┬────────┬────────┬────────┬──────────────┐
+│    dia     │   id   │ antes  │ depois │ variacao_pct │
+│    date    │ int64  │ double │ double │    double    │
+├────────────┼────────┼────────┼────────┼──────────────┤
+│ 2026-11-15 │ 507266 │  73.36 │   79.9 │          8.9 │
+└────────────┴────────┴────────┴────────┴──────────────┘
+09:16:12.779 | INFO    | Task run 'transformar-9d9' - ┌────────────┬────────┬──────────────┬───────────┐
+│    dia     │   id   │ ultimo_preco │ cobertura │
+│    date    │ int64  │    double    │  double   │
+├────────────┼────────┼──────────────┼───────────┤
+│ 2026-11-15 │ 690411 │        479.0 │     0.996 │
+│ 2026-11-15 │ 714565 │     15999.99 │     0.996 │
+└────────────┴────────┴──────────────┴───────────┘
+09:16:12.780 | INFO    | kabum - gold: 1 mudanças, 2 sumiços e 108 linhas na tabela dos modelos, em dados/gold
+09:16:12.780 | INFO    | Task run 'transformar-9d9' - Finished in state Completed()
+09:16:12.785 | ERROR   | Task run 'carregar-052' - Crash detected! Execution was aborted by Python system exit call.
+09:16:12.786 | ERROR   | Task run 'carregar-052' - Finished in state Crashed('Execution was aborted by Python system exit call.')
+09:16:12.787 | ERROR   | Flow run 'yellow-clam' - Crash detected! Execution was aborted by Python system exit call.
+09:16:12.796 | INFO    | Flow run 'yellow-clam' - Running hook 'avisar' in response to entering state 'Crashed'
+09:16:12.796 | INFO    | Flow run 'yellow-clam' - Hook 'avisar' finished running successfully
+09:16:12.796 | INFO    | Flow run 'yellow-clam' - Finished in state Crashed('Execution was aborted by Python system exit call.')
+AVISO: projeto-kabum, execução yellow-clam, terminou em Crashed: Execution was aborted by Python system exit call.
+O banco não respondeu. Ele está de pé? Rode: docker compose up -d --wait
+connection failed: connection to server at "127.0.0.1", port 5434 failed: could not receive data from server: Connection refused
+Multiple connection attempts failed. All failures were:
+- host: 'localhost', port: '5434', hostaddr: '::1': connection failed: connection to server at "::1", port 5434 failed: could not receive data from server: Connection refused
+- host: 'localhost', port: '5434', hostaddr: '127.0.0.1': connection failed: connection to server at "127.0.0.1", port 5434 failed: could not receive data from server: Connection refused
+$ cat avisos.log
+2026-11-15 09:16:07 AVISO: projeto-kabum, execução adept-orca, terminou em Failed: Flow run encountered an exception: ConnectError: [Errno 61] Connection refused (o que fazer: runbook.md)
+2026-11-15 09:16:12 AVISO: projeto-kabum, execução yellow-clam, terminou em Crashed: Execution was aborted by Python system exit call. (o que fazer: runbook.md)

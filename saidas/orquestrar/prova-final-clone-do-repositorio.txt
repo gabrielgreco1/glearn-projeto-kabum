@@ -1,0 +1,55 @@
+$ git clone --branch etapa-orquestrar https://github.com/gabrielgreco1/glearn-projeto-kabum.git (pasta temporária nova)
+$ cp .env.example .env   (com o contato trocado)
+$ docker compose up -d --wait
+ Volume final_banco Creating 
+ Volume final_banco Created 
+ Container final-banco-1 Healthy 
+$ uv sync
+$ uv run pytest
+============================== 47 passed in 4.54s ==============================
+$ uv run python fluxo.py   (Ctrl+C depois da página 2)
+10:09:50.662 | INFO    | kabum - baixei a página 1: 801505 bytes em dados/bronze/2026-11-15/pagina-001.json
+10:09:55.046 | INFO    | kabum - baixei a página 2: 992119 bytes em dados/bronze/2026-11-15/pagina-002.json
+^C
+10:09:55.355 | ERROR   | Task run 'coletar-a0d' - Finished in state Crashed('Execution was aborted by an interrupt signal.')
+10:09:55.405 | INFO    | Flow run 'smoky-ammonite' - Running hook 'avisar' in response to entering state 'Crashed'
+10:09:55.407 | INFO    | Flow run 'smoky-ammonite' - Finished in state Crashed('Execution was aborted by an interrupt signal.')
+AVISO: projeto-kabum, execução smoky-ammonite, terminou em Crashed: Execution was aborted by an interrupt signal.
+$ ls dados/bronze/*
+pagina-001.json
+pagina-002.json
+$ uv run python fluxo.py
+10:09:56.173 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+10:09:56.176 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+10:09:59.265 | INFO    | kabum - baixei a página 3: 914442 bytes em dados/bronze/2026-11-15/pagina-003.json
+10:10:04.099 | INFO    | kabum - baixei a página 4: 996379 bytes em dados/bronze/2026-11-15/pagina-004.json
+10:10:08.196 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+10:10:08.203 | INFO    | kabum - cobertura: 475 de 479, 99.2%; faltaram 4
+10:10:08.278 | INFO    | kabum - dias na silver: 1; a carregar: 1 novos e 0 que mudaram
+10:10:08.288 | INFO    | kabum - 2026-11-15: apaguei 0 linhas e gravei 475; conferido: 475 linhas e soma 217322060
+10:10:08.297 | INFO    | kabum - vigia: 1 dias no banco, o último 2026-11-15; 0 avisos
+10:10:08.298 | INFO    | Task run 'vigiar-0f3' - Finished in state Completed()
+10:10:08.320 | INFO    | Flow run 'healthy-oxpecker' - Finished in state Completed()
+$ uv run prefect deployment run projeto-kabum/duas-vezes-por-dia   (com o fluxo.py agendar ligado noutro terminal)
+Created flow run 'cordial-emu'.
+imported-koel COMPLETED Completed expected=2026-11-15T12:21:23.237572Z auto=False
+stoic-puffin COMPLETED Completed expected=2026-11-15T12:30:27.342767Z auto=False
+cordial-emu COMPLETED Completed expected=2026-11-15T13:10:22.852313Z auto=False
+nickel-caracara SCHEDULED Scheduled expected=2026-11-15T21:00:00Z auto=True
+defiant-barracuda SCHEDULED Scheduled expected=2026-11-16T09:00:00Z auto=True
+horned-tench SCHEDULED Scheduled expected=2026-11-16T21:00:00Z auto=True
+10:10:29.194 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+10:10:29.311 | INFO    | kabum - dias na silver: 1; a carregar: 0 novos e 0 que mudaram
+10:10:29.501 | INFO    | Flow run 'cordial-emu' - Finished in state Completed()
+$ cat avisos.log
+2026-11-15 10:09:55 AVISO: projeto-kabum, execução smoky-ammonite, terminou em Crashed: Execution was aborted by an interrupt signal. (o que fazer: runbook.md)
+$ docker compose exec banco psql -U postgres -c "SELECT dia, inseridas, soma_final FROM cargas ORDER BY id"
+    dia     | inseridas | soma_final 
+------------+-----------+------------
+ 2026-11-15 |       475 |  217322060
+(1 row)
+
+$ docker compose down -v
+ Volume final_banco Removing 
+ Volume final_banco Removed 
+fim

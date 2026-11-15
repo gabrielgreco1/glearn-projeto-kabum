@@ -1,0 +1,10 @@
+# O contato de verdade fica só no seu computador.
+.env
+# O que o programa baixa e gera. Fica fora do repositório, mas é o seu histórico: um dia apagado não volta.
+dados/
+# Os avisos de falha do fluxo.py. Ficam na sua máquina, como o log.
+avisos.log
+# O ambiente que o uv cria e os restos do Python.
+.venv/
+__pycache__/
+.pytest_cache/

@@ -1,0 +1,135 @@
+$ mv dados/bronze/2026-11-15 dados/barrados/2026-11-15-manual
+$ uv run python fluxo.py   (Ctrl+C depois da página 2)
+09:19:13.599 | INFO    | Flow run 'lurking-caribou' - Beginning flow run 'lurking-caribou' for flow 'projeto-kabum'
+09:19:13.602 | INFO    | Flow run 'lurking-caribou' - View at http://127.0.0.1:4200/runs/flow-run/606fa348-332d-4070-b193-539b6a1af3df
+09:19:17.535 | INFO    | kabum - baixei a página 1: 801576 bytes em dados/bronze/2026-11-15/pagina-001.json
+09:19:21.475 | INFO    | kabum - baixei a página 2: 994651 bytes em dados/bronze/2026-11-15/pagina-002.json
+^C
+09:19:21.788 | ERROR   | Task run 'coletar-317' - Crash detected! Execution was aborted by an interrupt signal.
+09:19:21.789 | ERROR   | Task run 'coletar-317' - Finished in state Crashed('Execution was aborted by an interrupt signal.')
+09:19:21.793 | ERROR   | Flow run 'lurking-caribou' - Crash detected! Execution was aborted by an interrupt signal.
+09:19:21.811 | INFO    | Flow run 'lurking-caribou' - Running hook 'avisar' in response to entering state 'Crashed'
+09:19:21.812 | INFO    | Flow run 'lurking-caribou' - Hook 'avisar' finished running successfully
+09:19:21.812 | INFO    | Flow run 'lurking-caribou' - Finished in state Crashed('Execution was aborted by an interrupt signal.')
+AVISO: projeto-kabum, execução lurking-caribou, terminou em Crashed: Execution was aborted by an interrupt signal.
+Traceback (most recent call last):
+  File "~/projeto-kabum/fluxo.py", line 56, in <module>
+    projeto_kabum()
+    ~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flows.py", line 1912, in __call__
+    return run_flow(
+        flow=self,
+    ...<2 lines>...
+        return_type=return_type,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2332, in run_flow
+    ret_val = run_flow_sync(**kwargs)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2173, in run_flow_sync
+    engine.call_flow_fn()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1394, in call_flow_fn
+    result = call_with_parameters(self.flow.fn, self.parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/fluxo.py", line 47, in projeto_kabum
+    coletar(pasta)
+    ~~~~~~~^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/tasks.py", line 1240, in __call__
+    return run_task(
+        task=self,
+    ...<2 lines>...
+        return_type=return_type,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 2054, in run_task
+    return run_task_sync(**kwargs)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1777, in run_task_sync
+    engine.call_task_fn(txn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1093, in call_task_fn
+    result = call_with_parameters(self.task.fn, parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/fluxo.py", line 20, in coletar
+    coletar_paginas(pasta)
+    ~~~~~~~~~~~~~~~^^^^^^^
+  File "~/projeto-kabum/coletar.py", line 81, in coletar
+    coletar_pagina(numero, endereco(numero), pasta)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "~/projeto-kabum/coletar.py", line 58, in coletar_pagina
+    conteudo = pedir(caminho)
+  File "~/projeto-kabum/coletar.py", line 41, in pedir
+    resposta = httpx.get(API + caminho, headers=CABECALHOS, timeout=30)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_api.py", line 195, in get
+    return request(
+        "GET",
+    ...<9 lines>...
+        trust_env=trust_env,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_api.py", line 109, in request
+    return client.request(
+           ~~~~~~~~~~~~~~^
+        method=method,
+        ^^^^^^^^^^^^^^
+    ...<8 lines>...
+        follow_redirects=follow_redirects,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 136, in handle_request
+    raise exc
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 106, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 177, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 217, in _receive_event
+    data = self._network_stream.read(
+        self.READ_NUM_BYTES, timeout=timeout
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/httpcore/_backends/sync.py", line 128, in read
+    return self._sock.recv(max_bytes)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "~/.local/share/uv/python/cpython-3.13-macos-aarch64-none/lib/python3.13/ssl.py", line 1285, in recv
+    return self.read(buflen)
+           ~~~~~~~~~^^^^^^^^
+  File "~/.local/share/uv/python/cpython-3.13-macos-aarch64-none/lib/python3.13/ssl.py", line 1140, in read
+    return self._sslobj.read(len)
+           ~~~~~~~~~~~~~~~~~^^^^^
+KeyboardInterrupt
+$ ls dados/bronze/2026-11-15
+pagina-001.json
+pagina-002.json
+$ uv run python tabela.py
+09:19:22 INFO gravei 711 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
+$ tail -1 avisos.log
+2026-11-15 09:19:21 AVISO: projeto-kabum, execução lurking-caribou, terminou em Crashed: Execution was aborted by an interrupt signal. (o que fazer: runbook.md)

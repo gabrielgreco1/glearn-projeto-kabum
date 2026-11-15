@@ -1,0 +1,69 @@
+ Container projeto-kabum-banco-1 Starting 
+ Container projeto-kabum-banco-1 Started 
+ Container projeto-kabum-banco-1 Waiting 
+ Container projeto-kabum-banco-1 Healthy 
+$ uv run python fluxo.py
+09:16:16.120 | INFO    | Flow run 'robust-cuttlefish' - Beginning flow run 'robust-cuttlefish' for flow 'projeto-kabum'
+09:16:16.122 | INFO    | Flow run 'robust-cuttlefish' - View at http://127.0.0.1:4200/runs/flow-run/22446169-4e63-45a4-aa1a-17b22b91278a
+09:16:16.132 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+09:16:16.134 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+09:16:16.137 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-003.json, não peço de novo
+09:16:16.139 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-004.json, não peço de novo
+09:16:16.141 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+09:16:16.141 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:16:16.142 | INFO    | Task run 'coletar-e21' - Finished in state Completed()
+09:16:16.153 | INFO    | kabum - coleta: 478 produtos lidos, 476 diferentes; a API declara 478
+09:16:16.153 | INFO    | kabum - repetidos entre páginas: 1078274 (2 vezes), 1013926 (2 vezes)
+09:16:16.153 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:16:16.160 | INFO    | kabum - a página da loja mostra 480 produtos
+09:16:16.160 | INFO    | kabum - cobertura: 476 de 478, 99.6%; faltaram 2
+09:16:16.162 | INFO    | Task run 'conferir-721' - Finished in state Completed()
+09:16:16.207 | INFO    | kabum - gravei 953 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
+09:16:16.208 | INFO    | Task run 'historico-872' - Finished in state Completed()
+09:16:16.208 | INFO    | kabum - transformar 1 de 3: montar e conferir a silver
+09:16:16.218 | INFO    | kabum - lidos 953 = válidos 953 + rejeitados 0
+09:16:16.220 | INFO    | kabum - transformar 2 de 3: o relatório de qualidade
+09:16:16.222 | INFO    | kabum - relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+09:16:16.223 | INFO    | kabum - gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+09:16:16.223 | INFO    | kabum - transformar 3 de 3: a gold
+09:16:16.247 | INFO    | Task run 'transformar-432' - ┌────────────┬────────┬────────┬────────┬──────────────┐
+│    dia     │   id   │ antes  │ depois │ variacao_pct │
+│    date    │ int64  │ double │ double │    double    │
+├────────────┼────────┼────────┼────────┼──────────────┤
+│ 2026-11-15 │ 507266 │  73.36 │   79.9 │          8.9 │
+└────────────┴────────┴────────┴────────┴──────────────┘
+09:16:16.248 | INFO    | Task run 'transformar-432' - ┌────────────┬────────┬──────────────┬───────────┐
+│    dia     │   id   │ ultimo_preco │ cobertura │
+│    date    │ int64  │    double    │  double   │
+├────────────┼────────┼──────────────┼───────────┤
+│ 2026-11-15 │ 690411 │        479.0 │     0.996 │
+│ 2026-11-15 │ 714565 │     15999.99 │     0.996 │
+└────────────┴────────┴──────────────┴───────────┘
+09:16:16.248 | INFO    | kabum - gold: 1 mudanças, 2 sumiços e 108 linhas na tabela dos modelos, em dados/gold
+09:16:16.249 | INFO    | Task run 'transformar-432' - Finished in state Completed()
+09:16:16.263 | INFO    | kabum - coletas: 2 dias conferidos, do dados/conferencia.csv
+09:16:16.263 | INFO    | kabum - dias na silver: 2; a carregar: 0 novos e 0 que mudaram
+09:16:16.264 | INFO    | Task run 'carregar-75f' - Finished in state Completed()
+09:16:16.264 | INFO    | Flow run 'robust-cuttlefish' - coleta de 2026-11-15 no banco
+09:16:16.272 | INFO    | Flow run 'robust-cuttlefish' - Finished in state Completed()
+$ uv run pytest
+============================= test session starts ==============================
+platform darwin -- Python 3.13.5, pytest-9.2.0, pluggy-1.7.0
+rootdir: ~/projeto-kabum
+configfile: pyproject.toml
+testpaths: testes
+plugins: anyio-4.16.0
+collected 40 items
+
+testes/test_carregar.py ........                                         [ 20%]
+testes/test_coletar.py .                                                 [ 22%]
+testes/test_conferir.py ...                                              [ 30%]
+testes/test_historico.py ...                                             [ 37%]
+testes/test_ler.py ....                                                  [ 47%]
+testes/test_perfil.py ..                                                 [ 52%]
+testes/test_qualidade.py .....                                           [ 65%]
+testes/test_silver.py .........                                          [ 87%]
+testes/test_tabela.py .                                                  [ 90%]
+testes/test_validar.py ....                                              [100%]
+
+============================== 40 passed in 0.19s ==============================

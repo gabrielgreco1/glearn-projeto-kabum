@@ -1,0 +1,79 @@
+$ uv run python fluxo.py
+09:17:41.814 | INFO    | Flow run 'spectacular-mongrel' - Beginning flow run 'spectacular-mongrel' for flow 'projeto-kabum'
+09:17:41.817 | INFO    | Flow run 'spectacular-mongrel' - View at http://127.0.0.1:4200/runs/flow-run/e1eda33d-4c20-46a0-8cf3-bf3827473d83
+09:17:45.664 | INFO    | kabum - baixei a página 1: 801576 bytes em dados/bronze/2026-11-15/pagina-001.json
+09:17:49.746 | INFO    | kabum - baixei a página 2: 981145 bytes em dados/bronze/2026-11-15/pagina-002.json
+09:17:53.813 | INFO    | kabum - baixei a página 3: 925656 bytes em dados/bronze/2026-11-15/pagina-003.json
+09:17:57.295 | INFO    | kabum - baixei a página 4: 1003393 bytes em dados/bronze/2026-11-15/pagina-004.json
+09:17:57.300 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+09:18:01.310 | INFO    | Task run 'coletar-ed9' - Finished in state Completed()
+09:18:01.391 | INFO    | kabum - coleta: 480 produtos lidos, 480 diferentes; a API declara 480
+09:18:01.391 | INFO    | kabum - repetidos entre páginas: nenhum
+09:18:01.392 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:18:01.399 | INFO    | kabum - a página da loja mostra 480 produtos
+09:18:01.399 | INFO    | kabum - cobertura: 480 de 480, 100.0%; faltaram 0
+09:18:01.400 | INFO    | Task run 'conferir-07a' - Finished in state Completed()
+09:18:01.422 | INFO    | kabum - gravei 957 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
+09:18:01.423 | INFO    | Task run 'historico-a2d' - Finished in state Completed()
+09:18:01.424 | INFO    | kabum - transformar 1 de 3: montar e conferir a silver
+09:18:01.434 | INFO    | kabum - lidos 957 = válidos 957 + rejeitados 0
+09:18:01.436 | INFO    | kabum - transformar 2 de 3: o relatório de qualidade
+09:18:01.438 | INFO    | kabum - relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+09:18:01.439 | INFO    | kabum - gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+09:18:01.440 | INFO    | kabum - transformar 3 de 3: a gold
+09:18:01.463 | INFO    | Task run 'transformar-53d' - ┌────────────┬─────────┬─────────┬──────────┬──────────────┐
+│    dia     │   id    │  antes  │  depois  │ variacao_pct │
+│    date    │  int64  │ double  │  double  │    double    │
+├────────────┼─────────┼─────────┼──────────┼──────────────┤
+│ 2026-11-15 │ 1063824 │  3199.4 │  2495.53 │        -22.0 │
+│ 2026-11-15 │ 1003353 │ 1599.21 │  1486.25 │         -7.1 │
+│ 2026-11-15 │  902595 │ 1861.09 │   1818.3 │         -2.3 │
+│ 2026-11-15 │ 1022085 │ 2070.45 │  2022.86 │         -2.3 │
+│ 2026-11-15 │ 1088292 │  974.51 │   952.11 │         -2.3 │
+│ 2026-11-15 │ 1062771 │  304.57 │   297.57 │         -2.3 │
+│ 2026-11-15 │  716084 │  303.26 │   296.28 │         -2.3 │
+│ 2026-11-15 │  400204 │  1729.9 │  1699.99 │         -1.7 │
+│ 2026-11-15 │  779499 │  301.97 │   319.51 │          5.8 │
+│ 2026-11-15 │  507266 │   73.36 │     79.9 │          8.9 │
+│ 2026-11-15 │ 1070462 │ 11475.3 │ 12590.79 │          9.7 │
+│ 2026-11-15 │  641729 │  748.49 │    899.9 │         20.2 │
+└────────────┴─────────┴─────────┴──────────┴──────────────┘
+  12 rows                                        5 columns
+09:18:01.465 | INFO    | Task run 'transformar-53d' - ┌──────┬───────┬──────────────┬───────────┐
+│ dia  │  id   │ ultimo_preco │ cobertura │
+│ date │ int64 │    double    │  double   │
+└──────┴───────┴──────────────┴───────────┘
+                  0 rows
+09:18:01.465 | INFO    | kabum - gold: 12 mudanças, 0 sumiços e 108 linhas na tabela dos modelos, em dados/gold
+09:18:01.466 | INFO    | Task run 'transformar-53d' - Finished in state Completed()
+09:18:01.481 | INFO    | kabum - coletas: 2 dias conferidos, do dados/conferencia.csv
+09:18:01.482 | INFO    | kabum - dias na silver: 2; a carregar: 0 novos e 1 que mudaram
+09:18:01.492 | INFO    | kabum - 2026-11-15: apaguei 476 linhas e gravei 480; conferido: 480 linhas e soma 218681421
+09:18:01.493 | INFO    | Task run 'carregar-7a2' - Finished in state Completed()
+09:18:01.493 | INFO    | Flow run 'spectacular-mongrel' - coleta de 2026-11-15 no banco
+09:18:01.501 | INFO    | Flow run 'spectacular-mongrel' - Finished in state Completed()
+
+real	0m20.357s
+user	0m0.956s
+sys	0m0.188s
+$ uv run pytest
+============================= test session starts ==============================
+platform darwin -- Python 3.13.5, pytest-9.2.0, pluggy-1.7.0
+rootdir: ~/projeto-kabum
+configfile: pyproject.toml
+testpaths: testes
+plugins: anyio-4.16.0
+collected 41 items
+
+testes/test_carregar.py ........                                         [ 19%]
+testes/test_coletar.py .                                                 [ 21%]
+testes/test_conferir.py ....                                             [ 31%]
+testes/test_historico.py ...                                             [ 39%]
+testes/test_ler.py ....                                                  [ 48%]
+testes/test_perfil.py ..                                                 [ 53%]
+testes/test_qualidade.py .....                                           [ 65%]
+testes/test_silver.py .........                                          [ 87%]
+testes/test_tabela.py .                                                  [ 90%]
+testes/test_validar.py ....                                              [100%]
+
+============================== 41 passed in 0.20s ==============================

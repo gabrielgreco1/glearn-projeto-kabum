@@ -1,0 +1,13 @@
+$ uv run prefect gcl create projeto-kabum --limit 1
+Created global concurrency limit with name 'projeto-kabum' and ID 
+'d04c8134-2d90-49bb-9d37-3a221763af5a'. Run `prefect gcl inspect projeto-kabum` 
+to view details.
+$ uv run prefect gcl ls
+                                               Global Concurrency Limits                                                
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━┳━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┓
+┃                              ID ┃ Name     ┃  ┃  ┃ Activ… ┃ Slot Decay Per … ┃ Created                    ┃ Updated  ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━╇━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━┩
+│ d04c8134-2d90-49bb-9d37-3a22176 │ projeto- │  │  │ 0      │ 0.0              │ 2026-11-15T12:25:46.61542… │ now      │
+│ 85d759ea-95b2-4f8f-8c1f-bfc9c72 │ teste-ex │  │  │ 0      │ 0.0              │ 2026-11-15T12:14:40.87809… │ 4 minut… │
+└─────────────────────────────────┴──────────┴──┴──┴────────┴──────────────────┴────────────────────────────┴──────────┘
+                       List Global Concurrency Limits using `prefect global-concurrency-limit ls`                       
