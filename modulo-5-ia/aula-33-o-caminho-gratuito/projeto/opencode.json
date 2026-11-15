@@ -1,0 +1,18 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permissions": [
+    { "action": "shell", "resource": "*", "effect": "ask" },
+    { "action": "shell", "resource": "uv run pytest *", "effect": "allow" },
+    { "action": "shell", "resource": "git status *", "effect": "allow" },
+    { "action": "shell", "resource": "git diff *", "effect": "allow" },
+    { "action": "shell", "resource": "git log *", "effect": "allow" },
+    { "action": "shell", "resource": "git add *", "effect": "allow" },
+    { "action": "shell", "resource": "git commit *", "effect": "allow" },
+    { "action": "shell", "resource": "uv run python coletar.py *", "effect": "deny" },
+    { "action": "shell", "resource": "uv run python rodar.py *", "effect": "deny" },
+    { "action": "shell", "resource": "uv run python fluxo.py *", "effect": "deny" },
+    { "action": "shell", "resource": "git push *", "effect": "deny" },
+    { "action": "webfetch", "resource": "*", "effect": "deny" },
+    { "action": "read", "resource": "*.env", "effect": "deny" }
+  ]
+}

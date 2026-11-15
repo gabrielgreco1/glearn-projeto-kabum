@@ -1,0 +1,6 @@
+[
+  {"id": "g1-economia", "repo": "../projeto-g1", "issue": "../backlog/5-g1-economia.md",
+   "modelo": "sonnet", "esforco": "high", "max_turnos": 60, "max_usd": 1.5},
+  {"id": "g1-windows", "repo": "../projeto-g1", "issue": "../backlog/6-g1-windows.md",
+   "modelo": "haiku", "esforco": "low", "max_turnos": 15, "max_usd": 0.1}
+]

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "kabum": {
+      "command": "uv",
+      "args": ["run", "--with", "mcp==2.3.0", "python", "mcp_kabum.py"]
+    }
+  }
+}
