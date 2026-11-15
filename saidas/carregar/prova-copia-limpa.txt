@@ -1,0 +1,122 @@
+$ docker compose down
+ Container projeto-kabum-banco-1 Stopping 
+ Container projeto-kabum-banco-1 Stopped 
+ Container projeto-kabum-banco-1 Removing 
+ Container projeto-kabum-banco-1 Removed 
+ Network projeto-kabum_default Removing 
+ Network projeto-kabum_default Removed 
+$ git clone . /tmp/prova-kabum
+Cloning into '/tmp/prova-kabum'...
+done.
+$ cp .env /tmp/prova-kabum/
+$ cd /tmp/prova-kabum
+$ docker compose up -d --wait
+ Volume prova-kabum_banco Creating 
+ Network prova-kabum_default Creating 
+ Volume prova-kabum_banco Created 
+ Network prova-kabum_default Created 
+ Container prova-kabum-banco-1 Creating 
+ Container prova-kabum-banco-1 Created 
+ Container prova-kabum-banco-1 Starting 
+ Container prova-kabum-banco-1 Started 
+ Container prova-kabum-banco-1 Waiting 
+ Container prova-kabum-banco-1 Healthy 
+$ uv run python rodar.py
+05:23:19
+Using CPython 3.13.5
+Creating virtual environment at: .venv
+Installed 18 packages in 22ms
+05:23:24 INFO etapa 1 de 5: as páginas da categoria
+05:23:28 INFO baixei a página 1: 810817 bytes em dados/bronze/2026-11-15/pagina-001.json
+05:23:33 INFO baixei a página 2: 988675 bytes em dados/bronze/2026-11-15/pagina-002.json
+05:23:37 INFO baixei a página 3: 920642 bytes em dados/bronze/2026-11-15/pagina-003.json
+05:23:42 INFO baixei a página 4: 995683 bytes em dados/bronze/2026-11-15/pagina-004.json
+05:23:46 INFO baixei a página 5: 18013 bytes em dados/bronze/2026-11-15/pagina-005.json
+05:23:46 INFO coleta do dia: 5 páginas em dados/bronze/2026-11-15
+05:23:46 INFO etapa 2 de 5: conferir a coleta
+05:23:46 INFO coleta: 481 produtos lidos, 481 diferentes; a API declara 481
+05:23:46 INFO repetidos entre páginas: nenhum
+05:23:50 INFO a página da loja mostra 481 produtos
+05:23:50 INFO cobertura: 481 de 481, 100.0%; faltaram 0
+05:23:50 INFO etapa 3 de 5: o histórico de preços
+05:23:50 INFO gravei 481 linhas em dados/precos.csv, de 1 dia(s): 2026-11-15
+05:23:50 INFO etapa 4 de 5: transformar
+05:23:50 INFO transformar 1 de 3: montar e conferir a silver
+05:23:50 INFO lidos 481 = válidos 481 + rejeitados 0
+05:23:50 INFO transformar 2 de 3: o relatório de qualidade
+05:23:50 INFO relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+05:23:50 INFO gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+05:23:50 INFO transformar 3 de 3: a gold
+05:23:50 INFO gold: 0 mudanças, 0 sumiços e 54 linhas na tabela dos modelos, em dados/gold
+05:23:50 INFO etapa 5 de 5: carregar no banco
+05:23:50 INFO coletas: 1 dias conferidos, do dados/conferencia.csv
+05:23:50 INFO dias na silver: 1; a carregar: 1 novos e 0 que mudaram
+05:23:50 INFO 2026-11-15: apaguei 0 linhas e gravei 481; conferido: 481 linhas e soma 224684411
+                     0 rows                    
+
+                  0 rows                 
+
+05:23:50
+$ uv run python rodar.py
+05:23:50 INFO etapa 1 de 5: as páginas da categoria
+05:23:50 INFO já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+05:23:50 INFO já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+05:23:50 INFO já tenho dados/bronze/2026-11-15/pagina-003.json, não peço de novo
+05:23:50 INFO já tenho dados/bronze/2026-11-15/pagina-004.json, não peço de novo
+05:23:50 INFO já tenho dados/bronze/2026-11-15/pagina-005.json, não peço de novo
+05:23:50 INFO coleta do dia: 5 páginas em dados/bronze/2026-11-15
+05:23:50 INFO etapa 2 de 5: conferir a coleta
+05:23:50 INFO coleta: 481 produtos lidos, 481 diferentes; a API declara 481
+05:23:50 INFO repetidos entre páginas: nenhum
+05:23:50 INFO já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+05:23:50 INFO a página da loja mostra 481 produtos
+05:23:50 INFO cobertura: 481 de 481, 100.0%; faltaram 0
+05:23:50 INFO etapa 3 de 5: o histórico de preços
+05:23:50 INFO gravei 481 linhas em dados/precos.csv, de 1 dia(s): 2026-11-15
+05:23:50 INFO etapa 4 de 5: transformar
+05:23:50 INFO transformar 1 de 3: montar e conferir a silver
+05:23:50 INFO lidos 481 = válidos 481 + rejeitados 0
+05:23:50 INFO transformar 2 de 3: o relatório de qualidade
+05:23:50 INFO relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+05:23:50 INFO gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+05:23:50 INFO transformar 3 de 3: a gold
+05:23:50 INFO gold: 0 mudanças, 0 sumiços e 54 linhas na tabela dos modelos, em dados/gold
+05:23:50 INFO etapa 5 de 5: carregar no banco
+05:23:50 INFO coletas: 1 dias conferidos, do dados/conferencia.csv
+05:23:50 INFO dias na silver: 1; a carregar: 0 novos e 0 que mudaram
+                     0 rows                    
+
+                  0 rows                 
+
+$ docker compose exec banco psql -U postgres -c "SELECT id, dia, apagadas, inseridas, soma_final, left(hash_dia, 12) AS hash FROM cargas ORDER BY id"
+ id |    dia     | apagadas | inseridas | soma_final |     hash     
+----+------------+----------+-----------+------------+--------------
+  1 | 2026-11-15 |        0 |       481 |  224684411 | 3c284a151c2d
+(1 row)
+
+$ docker compose exec banco psql -U postgres -c "SELECT * FROM coletas"
+    dia     | diferentes | declarado | loja | cobertura 
+------------+------------+-----------+------+-----------
+ 2026-11-15 |        481 |       481 |  481 |     1.000
+(1 row)
+
+$ docker compose exec banco psql -U postgres -c "SELECT count(*) AS linhas, pg_size_pretty(sum(pg_column_size(p.*))) AS dados, pg_size_pretty(pg_total_relation_size('precos')) AS no_disco FROM precos p"
+ linhas | dados  | no_disco 
+--------+--------+----------
+    481 | 131 kB | 208 kB
+(1 row)
+
+$ uv run pytest
+============================== 40 passed in 0.19s ==============================
+$ docker compose down -v
+ Container prova-kabum-banco-1 Stopping 
+ Container prova-kabum-banco-1 Stopped 
+ Container prova-kabum-banco-1 Removing 
+ Container prova-kabum-banco-1 Removed 
+ Volume prova-kabum_banco Removing 
+ Network prova-kabum_default Removing 
+ Volume prova-kabum_banco Removed 
+ Network prova-kabum_default Removed 
+$ cd -
+$ docker compose up -d --wait
+ Container projeto-kabum-banco-1 Healthy 

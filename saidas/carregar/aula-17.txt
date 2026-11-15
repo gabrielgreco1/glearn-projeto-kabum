@@ -1,0 +1,44 @@
+## a carga cai no meio: o dia 15 quebra uma regra posta só para o teste
+$ docker compose exec banco psql -U postgres -c "ALTER TABLE precos ADD CONSTRAINT so_ate_14 CHECK (dia <= '2026-11-14')"
+ALTER TABLE
+$ uv run python carregar.py
+05:23:11 INFO marca d'água: None; dias a carregar: 2026-11-14, 2026-11-15
+05:23:11 INFO 2026-11-14: apaguei 477 linhas e gravei 477; conferido: 477 linhas e soma 217122953
+psycopg.errors.CheckViolation: new row for relation "precos" violates check constraint "so_ate_14"
+DETAIL:  Failing row contains (2026-11-15, 117364, Placa de Vídeo PCYes NVIDIA GeForce GT 740, 4GB DDR5, 128 Bits ..., t, Nvidia, GT 740, PCYes, PCYES, 97612, 97612, 0, null, null, f, 97612, 2, t, DIGITUSUL, placa-de-video-pcyes-nvidia-geforce-gt-740-4gb-ddr5-128-bits-pa7..., null).
+CONTEXT:  COPY precos, line 1: "2026-11-15	117364	Placa de Vídeo PCYes NVIDIA GeForce GT 740, 4GB DDR5, 128 Bits - PA740GT12804D5FZ..."
+$ docker compose exec banco psql -U postgres -c "SELECT id, dia, apagadas, inseridas, soma_final FROM cargas ORDER BY id"
+ id |    dia     | apagadas | inseridas | soma_final 
+----+------------+----------+-----------+------------
+  1 | 2026-11-14 |      477 |       477 |  217122953
+(1 row)
+
+$ docker compose exec banco psql -U postgres -c "SELECT dia, count(*) FROM precos GROUP BY dia ORDER BY dia"
+    dia     | count 
+------------+-------
+ 2026-11-14 |   477
+(1 row)
+
+$ docker compose exec banco psql -U postgres -c "ALTER TABLE precos DROP CONSTRAINT so_ate_14"
+ALTER TABLE
+$ uv run python carregar.py
+05:23:11 INFO marca d'água: 2026-11-14; dias a carregar: 2026-11-15
+05:23:11 INFO 2026-11-15: apaguei 0 linhas e gravei 476; conferido: 476 linhas e soma 216105707
+$ uv run python carregar.py
+05:23:11 INFO marca d'água: 2026-11-15; dias a carregar: nenhum
+$ docker compose exec banco psql -U postgres -c "SELECT id, feita_em, dia, apagadas, inseridas, soma_final FROM cargas ORDER BY id"
+ id |           feita_em            |    dia     | apagadas | inseridas | soma_final 
+----+-------------------------------+------------+----------+-----------+------------
+  1 | 2026-11-15 08:23:11.264519+00 | 2026-11-14 |      477 |       477 |  217122953
+  2 | 2026-11-15 08:23:11.631508+00 | 2026-11-15 |        0 |       476 |  216105707
+(2 rows)
+
+$ docker compose exec banco psql -U postgres -c "SELECT dia, count(*), sum(preco_final) FROM precos GROUP BY dia ORDER BY dia"
+    dia     | count |    sum    
+------------+-------+-----------
+ 2026-11-14 |   477 | 217122953
+ 2026-11-15 |   476 | 216105707
+(2 rows)
+
+$ uv run pytest
+============================== 37 passed in 0.18s ==============================

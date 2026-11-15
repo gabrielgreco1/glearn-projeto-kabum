@@ -1,0 +1,65 @@
+$ git clone -b etapa-carregar https://github.com/gabrielgreco1/glearn-projeto-kabum.git
+$ cp .env.example .env  (contato trocado)
+$ docker compose up -d --wait
+ Container final-banco-1 Waiting 
+ Container final-banco-1 Healthy 
+$ uv sync
+ + typing-extensions==4.16.0
+$ uv run python rodar.py
+05:44:20
+05:44:24 INFO etapa 1 de 5: as páginas da categoria
+05:44:28 INFO baixei a página 1: 801858 bytes em dados/bronze/2026-11-15/pagina-001.json
+05:44:33 INFO baixei a página 2: 1001780 bytes em dados/bronze/2026-11-15/pagina-002.json
+05:44:37 INFO baixei a página 3: 920642 bytes em dados/bronze/2026-11-15/pagina-003.json
+05:44:42 INFO baixei a página 4: 994634 bytes em dados/bronze/2026-11-15/pagina-004.json
+05:44:45 INFO baixei a página 5: 19062 bytes em dados/bronze/2026-11-15/pagina-005.json
+05:44:45 INFO coleta do dia: 5 páginas em dados/bronze/2026-11-15
+05:44:45 INFO etapa 2 de 5: conferir a coleta
+05:44:45 INFO coleta: 481 produtos lidos, 458 diferentes; a API declara 481
+05:44:45 INFO repetidos entre páginas: 1051729 (2 vezes), 1065197 (2 vezes), 1077586 (2 vezes), 635954 (2 vezes), 706620 (2 vezes), 629803 (2 vezes), 928109 (2 vezes), 928108 (2 vezes), 1061740 (2 vezes), 877496 (2 vezes), 573345 (2 vezes), 578744 (2 vezes), 988188 (2 vezes), 520149 (2 vezes), 997061 (2 vezes), 991866 (2 vezes), 1078279 (2 vezes), 1076095 (2 vezes), 1085854 (2 vezes), 941152 (2 vezes), 1003842 (2 vezes), 1077411 (2 vezes), 888143 (2 vezes)
+05:44:50 INFO a página da loja mostra 481 produtos
+05:44:50 INFO cobertura: 458 de 481, 95.2%; faltaram 23
+05:44:50 INFO etapa 3 de 5: o histórico de preços
+05:44:50 INFO gravei 458 linhas em dados/precos.csv, de 1 dia(s): 2026-11-15
+05:44:50 INFO etapa 4 de 5: transformar
+05:44:50 INFO transformar 1 de 3: montar e conferir a silver
+05:44:50 INFO lidos 458 = válidos 458 + rejeitados 0
+05:44:50 INFO transformar 2 de 3: o relatório de qualidade
+05:44:50 INFO relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+05:44:50 INFO gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+05:44:50 INFO transformar 3 de 3: a gold
+05:44:50 INFO gold: 0 mudanças, 0 sumiços e 53 linhas na tabela dos modelos, em dados/gold
+05:44:50 INFO etapa 5 de 5: carregar no banco
+05:44:50 INFO coletas: 1 dias conferidos, do dados/conferencia.csv
+05:44:50 INFO dias na silver: 1; a carregar: 1 novos e 0 que mudaram
+05:44:50 INFO 2026-11-15: apaguei 0 linhas e gravei 458; conferido: 458 linhas e soma 212766210
+05:44:50
+$ uv run python rodar.py
+05:44:50 INFO dias na silver: 1; a carregar: 0 novos e 0 que mudaram
+$ uv run python carregar.py 2026-11-15
+05:44:50 INFO coletas: 1 dias conferidos, do dados/conferencia.csv
+05:44:50 INFO dias pedidos: 2026-11-15
+05:44:50 INFO 2026-11-15: apaguei 458 linhas e gravei 458; conferido: 458 linhas e soma 212766210
+$ uv run python carregar.py
+05:44:50 INFO coletas: 1 dias conferidos, do dados/conferencia.csv
+05:44:50 INFO dias na silver: 1; a carregar: 0 novos e 0 que mudaram
+ id |    dia     | apagadas | inseridas | soma_final |     hash     
+----+------------+----------+-----------+------------+--------------
+  1 | 2026-11-15 |        0 |       458 |  212766210 | 3c5b6bcc7b5a
+  2 | 2026-11-15 |      458 |       458 |  212766210 | 3c5b6bcc7b5a
+(2 rows)
+
+    dia     | diferentes | declarado | loja | cobertura 
+------------+------------+-----------+------+-----------
+ 2026-11-15 |        458 |       481 |  481 |     0.952
+(1 row)
+
+ count 
+-------
+   458
+(1 row)
+
+$ uv run pytest
+============================== 40 passed in 0.19s ==============================
+$ docker compose down -v
+ Network final_default Removed 

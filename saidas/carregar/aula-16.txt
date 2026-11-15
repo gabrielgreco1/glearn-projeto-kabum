@@ -1,0 +1,39 @@
+$ uv run python carregar.py
+Diga o dia: uv run python carregar.py 2026-11-14
+$ uv run python carregar.py 2026-11-14
+05:23:09 INFO 2026-11-14: apaguei 0 linhas e gravei 477
+$ docker compose exec banco psql -U postgres -c "SELECT dia, count(*), sum(preco_final) FROM precos GROUP BY dia"
+    dia     | count |    sum    
+------------+-------+-----------
+ 2026-11-14 |   477 | 217122953
+(1 row)
+
+$ uv run python carregar.py 2026-11-14
+05:23:10 INFO 2026-11-14: apaguei 477 linhas e gravei 477
+$ docker compose exec banco psql -U postgres -c "SELECT dia, count(*), sum(preco_final) FROM precos GROUP BY dia"
+    dia     | count |    sum    
+------------+-------+-----------
+ 2026-11-14 |   477 | 217122953
+(1 row)
+
+$ uv run python carregar.py 2026-11-13
+A silver não tem o dia 2026-11-13. Os dias que ela tem: 2026-11-14, 2026-11-15
+## uma linha que sobrou no banco
+$ docker compose exec banco psql -U postgres -c "INSERT INTO precos SELECT dia, 1, 'linha que não está na silver', e_placa, chip, modelo, marca, fabricante, preco_cartao, preco_pix, desconto_pix, preco_oferta, oferta_termina, em_oferta, preco_final, estoque, is_marketplace, vendedor, link, avisos FROM precos WHERE dia = '2026-11-14' ORDER BY id LIMIT 1"
+INSERT 0 1
+$ docker compose exec banco psql -U postgres -c "SELECT dia, count(*) FROM precos GROUP BY dia"
+    dia     | count 
+------------+-------
+ 2026-11-14 |   478
+(1 row)
+
+$ uv run python carregar.py 2026-11-14
+05:23:10 INFO 2026-11-14: apaguei 478 linhas e gravei 477
+$ docker compose exec banco psql -U postgres -c "SELECT dia, count(*) FROM precos GROUP BY dia"
+    dia     | count 
+------------+-------
+ 2026-11-14 |   477
+(1 row)
+
+$ uv run pytest
+============================== 35 passed in 0.18s ==============================
