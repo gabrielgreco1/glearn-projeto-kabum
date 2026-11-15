@@ -1,0 +1,127 @@
+$ uv run python fluxo.py   (Ctrl+C depois da página 2)
+09:29:51.718 | INFO    | Flow run 'inescapable-pillbug' - Beginning flow run 'inescapable-pillbug' for flow 'projeto-kabum'
+09:29:51.727 | INFO    | Flow run 'inescapable-pillbug' - View at http://127.0.0.1:4200/runs/flow-run/7f59005d-829b-4540-aeec-52ff58222425
+09:29:55.718 | INFO    | kabum - baixei a página 1: 800966 bytes em dados/bronze/2026-11-15/pagina-001.json
+09:30:00.080 | INFO    | kabum - baixei a página 2: 995744 bytes em dados/bronze/2026-11-15/pagina-002.json
+^C
+09:30:00.387 | ERROR   | Task run 'coletar-a2e' - Crash detected! Execution was aborted by an interrupt signal.
+09:30:00.390 | ERROR   | Task run 'coletar-a2e' - Finished in state Crashed('Execution was aborted by an interrupt signal.')
+09:30:00.430 | ERROR   | Flow run 'inescapable-pillbug' - Crash detected! Execution was aborted by an interrupt signal.
+09:30:00.439 | INFO    | Flow run 'inescapable-pillbug' - Running hook 'avisar' in response to entering state 'Crashed'
+09:30:00.440 | INFO    | Flow run 'inescapable-pillbug' - Hook 'avisar' finished running successfully
+09:30:00.440 | INFO    | Flow run 'inescapable-pillbug' - Finished in state Crashed('Execution was aborted by an interrupt signal.')
+AVISO: projeto-kabum, execução inescapable-pillbug, terminou em Crashed: Execution was aborted by an interrupt signal.
+Traceback (most recent call last):
+  File "/tmp/prova-kabum/fluxo.py", line 86, in <module>
+    projeto_kabum()
+    ~~~~~~~~~~~~~^^
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/prefect/flows.py", line 1912, in __call__
+    return run_flow(
+        flow=self,
+    ...<2 lines>...
+        return_type=return_type,
+    )
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2332, in run_flow
+    ret_val = run_flow_sync(**kwargs)
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2173, in run_flow_sync
+    engine.call_flow_fn()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1394, in call_flow_fn
+    result = call_with_parameters(self.flow.fn, self.parameters)
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "/tmp/prova-kabum/fluxo.py", line 71, in projeto_kabum
+    coletar(pasta)
+    ~~~~~~~^^^^^^^
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/prefect/tasks.py", line 1240, in __call__
+    return run_task(
+        task=self,
+    ...<2 lines>...
+        return_type=return_type,
+    )
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 2054, in run_task
+    return run_task_sync(**kwargs)
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1777, in run_task_sync
+    engine.call_task_fn(txn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1093, in call_task_fn
+    result = call_with_parameters(self.task.fn, parameters)
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "/tmp/prova-kabum/fluxo.py", line 30, in coletar
+    coletar_paginas(pasta)
+    ~~~~~~~~~~~~~~~^^^^^^^
+  File "/tmp/prova-kabum/coletar.py", line 85, in coletar
+    coletar_pagina(numero, endereco(numero), pasta)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/prova-kabum/coletar.py", line 62, in coletar_pagina
+    conteudo = pedir(caminho)
+  File "/tmp/prova-kabum/coletar.py", line 45, in pedir
+    resposta = httpx.get(API + caminho, headers=cabecalhos(), timeout=30)
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/httpx/_api.py", line 195, in get
+    return request(
+        "GET",
+    ...<9 lines>...
+        trust_env=trust_env,
+    )
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/httpx/_api.py", line 109, in request
+    return client.request(
+           ~~~~~~~~~~~~~~^
+        method=method,
+        ^^^^^^^^^^^^^^
+    ...<8 lines>...
+        follow_redirects=follow_redirects,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 136, in handle_request
+    raise exc
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 106, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 177, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 217, in _receive_event
+    data = self._network_stream.read(
+        self.READ_NUM_BYTES, timeout=timeout
+    )
+  File "/tmp/prova-kabum/.venv/lib/python3.13/site-packages/httpcore/_backends/sync.py", line 128, in read
+    return self._sock.recv(max_bytes)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "~/.local/share/uv/python/cpython-3.13-macos-aarch64-none/lib/python3.13/ssl.py", line 1285, in recv
+    return self.read(buflen)
+           ~~~~~~~~~^^^^^^^^
+  File "~/.local/share/uv/python/cpython-3.13-macos-aarch64-none/lib/python3.13/ssl.py", line 1140, in read
+    return self._sslobj.read(len)
+           ~~~~~~~~~~~~~~~~~^^^^^
+KeyboardInterrupt

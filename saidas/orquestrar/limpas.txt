@@ -1,0 +1,103 @@
+== aula-21-o-projeto-no-prefect
+banco de pé: 1
+$ uv run pytest
+============================== 40 passed in 4.63s ==============================
+$ uv run python fluxo.py   (rodada 1)
+baixei: 4; já tenho: 1
+10:05:47.259 | INFO    | kabum - cobertura: 479 de 479, 100.0%; faltaram 0
+10:05:47.336 | INFO    | kabum - dias na silver: 1; a carregar: 1 novos e 0 que mudaram
+10:05:47.345 | INFO    | kabum - 2026-11-15: apaguei 0 linhas e gravei 479; conferido: 479 linhas e soma 217981422
+10:05:47.356 | INFO    | Flow run 'mature-turtle' - Finished in state Completed()
+$ uv run python fluxo.py   (rodada 2)
+baixei: 0; já tenho: 6
+10:05:48.074 | INFO    | kabum - cobertura: 479 de 479, 100.0%; faltaram 0
+10:05:48.148 | INFO    | kabum - dias na silver: 1; a carregar: 0 novos e 0 que mudaram
+10:05:48.156 | INFO    | Flow run 'masked-chupacabra' - Finished in state Completed()
+removidos: 3
+== aula-22-a-cobertura-como-portao
+banco de pé: 1
+$ uv run pytest
+============================== 41 passed in 4.39s ==============================
+$ uv run python fluxo.py   (rodada 1)
+baixei: 4; já tenho: 1
+10:06:18.557 | INFO    | kabum - cobertura: 475 de 479, 99.2%; faltaram 4
+10:06:18.632 | INFO    | kabum - dias na silver: 1; a carregar: 1 novos e 0 que mudaram
+10:06:18.642 | INFO    | kabum - 2026-11-15: apaguei 0 linhas e gravei 475; conferido: 475 linhas e soma 217322060
+10:06:18.652 | INFO    | Flow run 'blond-oxpecker' - Finished in state Completed()
+$ uv run python fluxo.py   (rodada 2)
+baixei: 0; já tenho: 6
+10:06:19.381 | INFO    | kabum - cobertura: 475 de 479, 99.2%; faltaram 4
+10:06:19.473 | INFO    | kabum - dias na silver: 1; a carregar: 0 novos e 0 que mudaram
+10:06:19.481 | INFO    | Flow run 'energetic-uakari' - Finished in state Completed()
+removidos: 3
+== aula-23-so-o-dia-inteiro-e-a-segunda-chance
+banco de pé: 1
+$ uv run pytest
+============================== 42 passed in 4.37s ==============================
+$ uv run python fluxo.py   (rodada 1)
+baixei: 4; já tenho: 1
+10:06:50.763 | INFO    | kabum - cobertura: 458 de 479, 95.6%; faltaram 21
+10:06:50.832 | INFO    | kabum - dias na silver: 1; a carregar: 1 novos e 0 que mudaram
+10:06:50.841 | INFO    | kabum - 2026-11-15: apaguei 0 linhas e gravei 458; conferido: 458 linhas e soma 212158719
+10:06:50.850 | INFO    | Flow run 'astute-tanuki' - Finished in state Completed()
+$ uv run python fluxo.py   (rodada 2)
+baixei: 0; já tenho: 6
+10:06:51.564 | INFO    | kabum - cobertura: 458 de 479, 95.6%; faltaram 21
+10:06:51.637 | INFO    | kabum - dias na silver: 1; a carregar: 0 novos e 0 que mudaram
+10:06:51.645 | INFO    | Flow run 'big-hyrax' - Finished in state Completed()
+removidos: 3
+== aula-24-a-vigia
+banco de pé: 1
+$ uv run pytest
+============================== 46 passed in 4.71s ==============================
+$ uv run python fluxo.py   (rodada 1)
+baixei: 4; já tenho: 1
+10:07:23.155 | INFO    | kabum - cobertura: 479 de 479, 100.0%; faltaram 0
+10:07:23.231 | INFO    | kabum - dias na silver: 1; a carregar: 1 novos e 0 que mudaram
+10:07:23.240 | INFO    | kabum - 2026-11-15: apaguei 0 linhas e gravei 479; conferido: 479 linhas e soma 217981422
+10:07:23.248 | INFO    | kabum - vigia: 1 dias no banco, o último 2026-11-15; 0 avisos
+10:07:23.258 | INFO    | Flow run 'effective-albatross' - Finished in state Completed()
+$ uv run python fluxo.py   (rodada 2)
+baixei: 0; já tenho: 6
+10:07:23.983 | INFO    | kabum - cobertura: 479 de 479, 100.0%; faltaram 0
+10:07:24.055 | INFO    | kabum - dias na silver: 1; a carregar: 0 novos e 0 que mudaram
+10:07:24.063 | INFO    | kabum - vigia: 1 dias no banco, o último 2026-11-15; 0 avisos
+10:07:24.071 | INFO    | Flow run 'eager-mastodon' - Finished in state Completed()
+removidos: 3
+== aula-25-uma-execucao-por-vez
+banco de pé: 1
+$ uv run pytest
+============================== 46 passed in 4.42s ==============================
+$ uv run python fluxo.py   (rodada 1)
+baixei: 4; já tenho: 1
+10:07:56.869 | INFO    | kabum - cobertura: 475 de 479, 99.2%; faltaram 4
+10:07:56.941 | INFO    | kabum - dias na silver: 1; a carregar: 1 novos e 0 que mudaram
+10:07:56.950 | INFO    | kabum - 2026-11-15: apaguei 0 linhas e gravei 475; conferido: 475 linhas e soma 217077942
+10:07:56.958 | INFO    | kabum - vigia: 1 dias no banco, o último 2026-11-15; 0 avisos
+10:07:56.982 | INFO    | Flow run 'splendid-hornet' - Finished in state Completed()
+$ uv run python fluxo.py   (rodada 2)
+baixei: 0; já tenho: 6
+10:07:57.737 | INFO    | kabum - cobertura: 475 de 479, 99.2%; faltaram 4
+10:07:57.828 | INFO    | kabum - dias na silver: 1; a carregar: 0 novos e 0 que mudaram
+10:07:57.836 | INFO    | kabum - vigia: 1 dias no banco, o último 2026-11-15; 0 avisos
+10:07:57.857 | INFO    | Flow run 'thoughtful-tanuki' - Finished in state Completed()
+removidos: 3
+== aula-26-os-testes-no-github-e-a-prova-final
+banco de pé: 1
+$ uv run pytest
+============================== 47 passed in 4.46s ==============================
+$ uv run python fluxo.py   (rodada 1)
+baixei: 4; já tenho: 1
+10:08:28.050 | INFO    | kabum - cobertura: 458 de 479, 95.6%; faltaram 21
+10:08:28.120 | INFO    | kabum - dias na silver: 1; a carregar: 1 novos e 0 que mudaram
+10:08:28.129 | INFO    | kabum - 2026-11-15: apaguei 0 linhas e gravei 458; conferido: 458 linhas e soma 208268168
+10:08:28.137 | INFO    | kabum - vigia: 1 dias no banco, o último 2026-11-15; 0 avisos
+10:08:28.159 | INFO    | Flow run 'rapid-nightingale' - Finished in state Completed()
+$ uv run python fluxo.py   (rodada 2)
+baixei: 0; já tenho: 6
+10:08:29.072 | INFO    | kabum - cobertura: 458 de 479, 95.6%; faltaram 21
+10:08:29.159 | INFO    | kabum - dias na silver: 1; a carregar: 0 novos e 0 que mudaram
+10:08:29.166 | INFO    | kabum - vigia: 1 dias no banco, o último 2026-11-15; 0 avisos
+10:08:29.190 | INFO    | Flow run 'dark-hippogriff' - Finished in state Completed()
+removidos: 3
+fim

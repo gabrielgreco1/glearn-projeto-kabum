@@ -14,20 +14,25 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-USER_AGENT = os.getenv("KABUM_USER_AGENT")
-if not USER_AGENT:
-    raise SystemExit("Falta KABUM_USER_AGENT no arquivo .env. Copie o .env.example para .env e preencha.")
-
 API = "https://servicespub.prod.api.aws.grupokabum.com.br"
 CATEGORIA = "/catalog/v2/products-by-category/hardware/placa-de-video-vga"
 TAMANHO = 120  # produtos por página, o máximo que a API aceita; o mesmo em todos os pedidos
-CABECALHOS = {"User-Agent": USER_AGENT, "Accept": "application/json"}
 PAUSA = 3.0  # segundos de espera depois de cada pedido
 LIMITE_PAGINAS = 20  # um teto: a categoria tinha 4 páginas em 14/11/2026
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s", datefmt="%H:%M:%S")
 logging.getLogger("httpx").setLevel(logging.WARNING)
 registro = logging.getLogger("kabum")
+registro.setLevel(logging.INFO)  # o nível fica no nosso registro: o Prefect troca o do logging inteiro para WARNING
+
+
+def cabecalhos():
+    """O User-Agent, lido do .env na hora do pedido, e não no import: quem só importa este arquivo, como os testes no
+    GitHub, não precisa do .env."""
+    contato = os.getenv("KABUM_USER_AGENT")
+    if not contato:
+        raise SystemExit("Falta KABUM_USER_AGENT no arquivo .env. Copie o .env.example para .env e preencha.")
+    return {"User-Agent": contato, "Accept": "application/json"}
 
 
 def pasta_do_dia(dia=None):
@@ -36,9 +41,13 @@ def pasta_do_dia(dia=None):
 
 
 def pedir(caminho):
-    """Pede um endereço da API e devolve os bytes da resposta. Para em qualquer resposta que não seja um JSON com status 200."""
-    resposta = httpx.get(API + caminho, headers=CABECALHOS, timeout=30)
+    """Pede um endereço da API e devolve os bytes da resposta. Um 5xx sobe como erro comum, para ser tentado de novo;
+    qualquer outra resposta que não seja um JSON com status 200 para o programa."""
+    resposta = httpx.get(API + caminho, headers=cabecalhos(), timeout=30)
     time.sleep(PAUSA)
+    if resposta.status_code >= 500:
+        # 500, 502, 503: um problema da loja, que passa. Um erro comum, e o orquestrador tenta de novo.
+        raise RuntimeError(f"{caminho} respondeu {resposta.status_code}: erro da loja, vale tentar de novo")
     tipo = resposta.headers.get("content-type", "")
     if resposta.status_code != 200 or "json" not in tipo:
         # 403, 429 ou uma página de desafio em HTML no lugar do JSON: o site disse não. O programa para aqui.
@@ -56,7 +65,9 @@ def coletar_pagina(numero, caminho, pasta):
         return json.loads(destino.read_text(encoding="utf-8"))
     conteudo = pedir(caminho)
     pasta.mkdir(parents=True, exist_ok=True)
-    destino.write_bytes(conteudo)
+    parcial = destino.with_suffix(".parcial")
+    parcial.write_bytes(conteudo)
+    parcial.replace(destino)  # o nome troca de uma vez: uma queda no meio da gravação não deixa uma página pela metade
     registro.info("baixei a página %s: %s bytes em %s", numero, len(conteudo), destino)
     return json.loads(conteudo)
 

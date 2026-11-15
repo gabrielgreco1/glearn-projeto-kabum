@@ -1,0 +1,55 @@
+$ uv run python fluxo.py agendar
+Your flow 'projeto-kabum' is being served and polling for scheduled runs!
+
+To trigger a run for this flow, use the following command:
+
+        $ prefect deployment run 'projeto-kabum/duas-vezes-por-dia'
+
+You can also run your flow via the Prefect UI: http://127.0.0.1:4200/deployments/deployment/4b4b9722-3a71-46c4-b066-238d33bc21cf
+
+09:30:38.255 | INFO    | Flow run 'stoic-puffin' - Beginning flow run 'stoic-puffin' for flow 'projeto-kabum'
+09:30:38.257 | INFO    | Flow run 'stoic-puffin' - View at http://127.0.0.1:4200/runs/flow-run/67db8b85-2b4a-49e9-945d-5ad8e2f759af
+09:30:38.336 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+09:30:38.360 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+09:30:38.363 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-003.json, não peço de novo
+09:30:38.365 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-004.json, não peço de novo
+09:30:38.367 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+09:30:38.368 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:30:38.369 | INFO    | Task run 'coletar-db8' - Finished in state Completed()
+09:30:38.380 | INFO    | kabum - coleta: 480 produtos lidos, 475 diferentes; a API declara 480
+09:30:38.381 | INFO    | kabum - repetidos entre páginas: 731030 (2 vezes), 922131 (2 vezes), 1062236 (2 vezes), 543498 (2 vezes), 717772 (2 vezes)
+09:30:38.381 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:30:38.387 | INFO    | kabum - a página da loja mostra 480 produtos
+09:30:38.388 | INFO    | kabum - cobertura: 475 de 480, 99.0%; faltaram 5
+09:30:38.389 | INFO    | Task run 'conferir-e05' - Finished in state Completed()
+09:30:38.400 | INFO    | kabum - gravei 475 linhas em dados/precos.csv, de 1 dia(s): 2026-11-15
+09:30:38.401 | INFO    | Task run 'historico-7ed' - Finished in state Completed()
+09:30:38.402 | INFO    | kabum - transformar 1 de 3: montar e conferir a silver
+09:30:38.411 | INFO    | kabum - lidos 475 = válidos 475 + rejeitados 0
+09:30:38.412 | INFO    | kabum - transformar 2 de 3: o relatório de qualidade
+09:30:38.414 | INFO    | kabum - relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+09:30:38.416 | INFO    | kabum - gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+09:30:38.416 | INFO    | kabum - transformar 3 de 3: a gold
+09:30:38.438 | INFO    | Task run 'transformar-5af' - ┌──────┬───────┬────────┬────────┬──────────────┐
+│ dia  │  id   │ antes  │ depois │ variacao_pct │
+│ date │ int64 │ double │ double │    double    │
+└──────┴───────┴────────┴────────┴──────────────┘
+                     0 rows
+09:30:38.440 | INFO    | Task run 'transformar-5af' - ┌──────┬───────┬──────────────┬───────────┐
+│ dia  │  id   │ ultimo_preco │ cobertura │
+│ date │ int64 │    double    │  double   │
+└──────┴───────┴──────────────┴───────────┘
+                  0 rows
+09:30:38.440 | INFO    | kabum - gold: 0 mudanças, 0 sumiços e 54 linhas na tabela dos modelos, em dados/gold
+09:30:38.441 | INFO    | Task run 'transformar-5af' - Finished in state Completed()
+09:30:38.453 | INFO    | kabum - coletas: 1 dias conferidos, do dados/conferencia.csv
+09:30:38.453 | INFO    | kabum - dias na silver: 1; a carregar: 0 novos e 0 que mudaram
+09:30:38.454 | INFO    | Task run 'carregar-ae8' - Finished in state Completed()
+09:30:38.461 | INFO    | kabum - vigia: 1 dias no banco, o último 2026-11-15; 0 avisos
+09:30:38.462 | INFO    | Task run 'vigiar-05f' - Finished in state Completed()
+09:30:38.478 | INFO    | Flow run 'stoic-puffin' - coleta de 2026-11-15 no banco
+09:30:38.644 | INFO    | Flow run 'stoic-puffin' - Finished in state Completed()
+09:30:52.527 | INFO    | prefect.runner - Pausing all deployments...
+09:30:52.549 | INFO    | prefect.runner - All deployments have been paused!
+09:30:52.551 | INFO    | prefect.flows - Received KeyboardInterrupt, shutting down...
+^C

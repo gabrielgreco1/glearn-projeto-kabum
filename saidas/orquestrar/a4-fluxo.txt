@@ -1,0 +1,87 @@
+$ uv run python fluxo.py
+09:24:15.605 | INFO    | Flow run 'expensive-woodpecker' - Beginning flow run 'expensive-woodpecker' for flow 'projeto-kabum'
+09:24:15.607 | INFO    | Flow run 'expensive-woodpecker' - View at http://127.0.0.1:4200/runs/flow-run/397d0cee-442d-4526-955a-c53dc4fd8c25
+09:24:15.617 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+09:24:15.619 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+09:24:15.621 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-003.json, não peço de novo
+09:24:15.624 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-004.json, não peço de novo
+09:24:15.626 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+09:24:15.626 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:24:15.627 | INFO    | Task run 'coletar-808' - Finished in state Completed()
+09:24:15.637 | INFO    | kabum - coleta: 480 produtos lidos, 452 diferentes; a API declara 480
+09:24:15.638 | INFO    | kabum - repetidos entre páginas: 731030 (2 vezes), 577171 (2 vezes), 931072 (2 vezes), 922131 (2 vezes), 1062236 (2 vezes), 543498 (2 vezes), 1051729 (2 vezes), 1065197 (2 vezes), 1077586 (2 vezes), 635954 (2 vezes), 629803 (2 vezes), 928109 (2 vezes), 928108 (2 vezes), 1061740 (2 vezes), 877496 (2 vezes), 573345 (2 vezes), 520149 (2 vezes), 991866 (2 vezes), 1078279 (2 vezes), 1076095 (2 vezes), 1085854 (2 vezes), 941152 (2 vezes), 1003842 (2 vezes), 1077411 (2 vezes), 214817 (2 vezes), 1063824 (2 vezes), 994308 (2 vezes), 875453 (2 vezes)
+09:24:15.638 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:24:15.644 | INFO    | kabum - a página da loja mostra 480 produtos
+09:24:15.645 | INFO    | kabum - cobertura: 452 de 480, 94.2%; faltaram 28
+09:24:15.647 | INFO    | Task run 'conferir-0b2' - Finished in state Completed()
+09:24:15.693 | INFO    | kabum - gravei 929 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
+09:24:15.694 | INFO    | Task run 'historico-f5d' - Finished in state Completed()
+09:24:15.695 | INFO    | kabum - transformar 1 de 3: montar e conferir a silver
+09:24:15.704 | INFO    | kabum - lidos 929 = válidos 929 + rejeitados 0
+09:24:15.706 | INFO    | kabum - transformar 2 de 3: o relatório de qualidade
+09:24:15.708 | INFO    | kabum - relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+09:24:15.710 | INFO    | kabum - gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+09:24:15.711 | INFO    | kabum - transformar 3 de 3: a gold
+09:24:15.734 | INFO    | Task run 'transformar-3f8' - ┌────────────┬─────────┬─────────┬──────────┬──────────────┐
+│    dia     │   id    │  antes  │  depois  │ variacao_pct │
+│    date    │  int64  │ double  │  double  │    double    │
+├────────────┼─────────┼─────────┼──────────┼──────────────┤
+│ 2026-11-15 │ 1063824 │  3199.4 │  2495.53 │        -22.0 │
+│ 2026-11-15 │ 1003353 │ 1599.21 │  1486.25 │         -7.1 │
+│ 2026-11-15 │ 1062771 │  304.57 │   297.57 │         -2.3 │
+│ 2026-11-15 │ 1022085 │ 2070.45 │  2022.86 │         -2.3 │
+│ 2026-11-15 │ 1088292 │  974.51 │   952.11 │         -2.3 │
+│ 2026-11-15 │  902595 │ 1861.09 │   1818.3 │         -2.3 │
+│ 2026-11-15 │  400204 │  1729.9 │  1699.99 │         -1.7 │
+│ 2026-11-15 │  779499 │  301.97 │   319.51 │          5.8 │
+│ 2026-11-15 │  507266 │   73.36 │     79.9 │          8.9 │
+│ 2026-11-15 │ 1070462 │ 11475.3 │ 12590.79 │          9.7 │
+│ 2026-11-15 │  641729 │  748.49 │    899.9 │         20.2 │
+└────────────┴─────────┴─────────┴──────────┴──────────────┘
+  11 rows                                        5 columns
+09:24:15.736 | INFO    | Task run 'transformar-3f8' - ┌────────────┬─────────┬──────────────┬───────────┐
+│    dia     │   id    │ ultimo_preco │ cobertura │
+│    date    │  int64  │    double    │  double   │
+├────────────┼─────────┼──────────────┼───────────┤
+│ 2026-11-15 │  271841 │       613.76 │     0.942 │
+│ 2026-11-15 │  505871 │        39.39 │     0.942 │
+│ 2026-11-15 │  538966 │        559.0 │     0.942 │
+│ 2026-11-15 │  573378 │        347.8 │     0.942 │
+│ 2026-11-15 │  618254 │        720.0 │     0.942 │
+│ 2026-11-15 │  692493 │       553.49 │     0.942 │
+│ 2026-11-15 │  712426 │      8748.25 │     0.942 │
+│ 2026-11-15 │  716084 │       303.26 │     0.942 │
+│ 2026-11-15 │  728352 │       508.47 │     0.942 │
+│ 2026-11-15 │  885283 │      12799.0 │     0.942 │
+│     ·      │     ·   │         ·    │       ·   │
+│     ·      │     ·   │         ·    │       ·   │
+│     ·      │     ·   │         ·    │       ·   │
+│ 2026-11-15 │ 1051533 │      1379.99 │     0.942 │
+│ 2026-11-15 │ 1058238 │         39.9 │     0.942 │
+│ 2026-11-15 │ 1065147 │       1206.5 │     0.942 │
+│ 2026-11-15 │ 1069405 │      1018.53 │     0.942 │
+│ 2026-11-15 │ 1069581 │      5369.43 │     0.942 │
+│ 2026-11-15 │ 1072511 │         29.9 │     0.942 │
+│ 2026-11-15 │ 1072907 │       499.99 │     0.942 │
+│ 2026-11-15 │ 1072909 │       499.99 │     0.942 │
+│ 2026-11-15 │ 1077132 │        24.99 │     0.942 │
+│ 2026-11-15 │ 1077139 │        24.99 │     0.942 │
+└────────────┴─────────┴──────────────┴───────────┘
+  28 rows (20 shown)                    4 columns
+09:24:15.737 | INFO    | kabum - gold: 11 mudanças, 28 sumiços e 107 linhas na tabela dos modelos, em dados/gold
+09:24:15.737 | INFO    | Task run 'transformar-3f8' - Finished in state Completed()
+09:24:15.751 | INFO    | kabum - coletas: 2 dias conferidos, do dados/conferencia.csv
+09:24:15.752 | INFO    | kabum - dias na silver: 2; a carregar: 0 novos e 0 que mudaram
+09:24:15.752 | INFO    | Task run 'carregar-146' - Finished in state Completed()
+09:24:15.760 | INFO    | kabum - vigia: 2 dias no banco, o último 2026-11-15; 2 avisos
+09:24:15.761 | INFO    | Task run 'vigiar-9b1' - ATENÇÃO: a cobertura de 2026-11-15 ficou em 94.2%, perto do mínimo de 90%: a paginação perdeu 28 produtos. Se cair de novo amanhã, confira os repetidos no log da task conferir.
+09:24:15.761 | INFO    | Task run 'vigiar-9b1' - ATENÇÃO: sumiram 28 dos 477 produtos de 2026-11-14 para 2026-11-15 (5.9%); a paginação perdeu 28 nesse dia, então pode ser só ela.
+09:24:15.762 | INFO    | Task run 'vigiar-9b1' - Finished in state Completed()
+09:24:15.762 | INFO    | Flow run 'expensive-woodpecker' - coleta de 2026-11-15 no banco
+09:24:15.774 | INFO    | Flow run 'expensive-woodpecker' - Finished in state Completed()
+$ tail -2 avisos.log
+2026-11-15 09:24:15 ATENÇÃO: a cobertura de 2026-11-15 ficou em 94.2%, perto do mínimo de 90%: a paginação perdeu 28 produtos. Se cair de novo amanhã, confira os repetidos no log da task conferir. (o que fazer: runbook.md)
+2026-11-15 09:24:15 ATENÇÃO: sumiram 28 dos 477 produtos de 2026-11-14 para 2026-11-15 (5.9%); a paginação perdeu 28 nesse dia, então pode ser só ela. (o que fazer: runbook.md)
+$ uv run pytest
+..............................................                           [100%]
+46 passed in 0.20s

@@ -1,0 +1,33 @@
+$ cat avisos.log
+2026-11-15 09:30:00 AVISO: projeto-kabum, execução inescapable-pillbug, terminou em Crashed: Execution was aborted by an interrupt signal. (o que fazer: runbook.md)
+$ docker compose exec banco psql -U postgres -c "SELECT dia, inseridas, soma_final FROM cargas ORDER BY id"
+    dia     | inseridas | soma_final 
+------------+-----------+------------
+ 2026-11-15 |       475 |  216742159
+(1 row)
+
+$ docker compose exec banco psql -U postgres -c "SELECT * FROM coletas"
+    dia     | diferentes | declarado | loja | cobertura 
+------------+------------+-----------+------+-----------
+ 2026-11-15 |        475 |       480 |  480 |     0.990
+(1 row)
+
+$ docker compose down -v
+ Container prova-kabum-banco-1 Stopping 
+ Container prova-kabum-banco-1 Stopped 
+ Container prova-kabum-banco-1 Removing 
+ Container prova-kabum-banco-1 Removed 
+ Volume prova-kabum_banco Removing 
+ Network prova-kabum_default Removing 
+ Volume prova-kabum_banco Removed 
+ Network prova-kabum_default Removed 
+$ cd -
+$ docker compose up -d --wait
+ Network projeto-kabum_default Creating 
+ Network projeto-kabum_default Created 
+ Container projeto-kabum-banco-1 Creating 
+ Container projeto-kabum-banco-1 Created 
+ Container projeto-kabum-banco-1 Starting 
+ Container projeto-kabum-banco-1 Started 
+ Container projeto-kabum-banco-1 Waiting 
+ Container projeto-kabum-banco-1 Healthy 

@@ -1,6 +1,6 @@
 # Projeto Kabum (G learn)
 
-Repositório de referência do Projeto Kabum do curso G learn: um programa em Python que guarda, uma vez por dia, o preço de todas as placas de vídeo da Kabum, pela API de catálogo que a própria página da loja usa, e mede quanto da categoria cada coleta trouxe. Na segunda etapa, o mesmo programa limpa, confere e resume esse histórico: preços em centavos, regras escritas, um relatório por rodada e as mudanças de preço de um dia para o outro. Na terceira, ele guarda o histórico num Postgres que roda no Docker, um dia por vez, só com os dias novos e os que mudaram.
+Repositório de referência do Projeto Kabum do curso G learn: um programa em Python que guarda, uma vez por dia, o preço de todas as placas de vídeo da Kabum, pela API de catálogo que a própria página da loja usa, e mede quanto da categoria cada coleta trouxe. Na segunda etapa, o mesmo programa limpa, confere e resume esse histórico: preços em centavos, regras escritas, um relatório por rodada e as mudanças de preço de um dia para o outro. Na terceira, ele guarda o histórico num Postgres que roda no Docker, um dia por vez, só com os dias novos e os que mudaram. Na quarta, ele roda sozinho, num flow do Prefect, às 6h e às 18h, só publica um dia inteiro, avisa o que falhou e o que precisa de olho, uma rodada por vez.
 
 ## Como usar
 
@@ -41,7 +41,18 @@ Você faz o projeto na SUA pasta, `projeto-kabum/`, no SEU repositório, seguind
 | 19 | [O que sumiu e o último preço](modulo-3-carregar/aula-19-o-que-sumiu-e-o-ultimo-preco) | `uv run python carregar.py` e as views no `psql` |
 | 20 | [Extrair, transformar e carregar num comando](modulo-3-carregar/aula-20-extrair-transformar-e-carregar) | `uv run python rodar.py` e `uv run pytest` |
 
-O README de cada pasta diz a ordem dos comandos. As pastas são cumulativas: a de cada aula tem tudo o que veio antes. O projeto pronto está em [final/](final), igual à aula 20. A partir da aula 15, o projeto precisa do Docker: o Postgres roda num container, na porta 5434.
+### Etapa Orquestrar
+
+| Aula | Pasta | O que roda |
+|---|---|---|
+| 21 | [O projeto Kabum no Prefect](modulo-4-orquestrar/aula-21-o-projeto-no-prefect) | `uv run python fluxo.py` |
+| 22 | [A cobertura como portão](modulo-4-orquestrar/aula-22-a-cobertura-como-portao) | `uv run python fluxo.py` |
+| 23 | [Só o dia inteiro, e a segunda chance](modulo-4-orquestrar/aula-23-so-o-dia-inteiro-e-a-segunda-chance) | `uv run python conferir.py AAAA-MM-DD` e `uv run python fluxo.py agendar` |
+| 24 | [A vigia: o que o portão deixa passar](modulo-4-orquestrar/aula-24-a-vigia) | `uv run python vigiar.py` e `uv run python fluxo.py` |
+| 25 | [Uma execução por vez](modulo-4-orquestrar/aula-25-uma-execucao-por-vez) | `uv run prefect gcl create projeto-kabum --limit 1` e `uv run python fluxo.py` |
+| 26 | [Os testes no GitHub e a prova final](modulo-4-orquestrar/aula-26-os-testes-no-github-e-a-prova-final) | `uv run pytest` e `uv run python fluxo.py` |
+
+O README de cada pasta diz a ordem dos comandos. As pastas são cumulativas: a de cada aula tem tudo o que veio antes. O projeto pronto está em [final/](final), igual à aula 26. A partir da aula 15, o projeto precisa do Docker: o Postgres roda num container, na porta 5434. A partir da aula 21, ele precisa também do servidor do Prefect ligado (`uv run prefect server start`).
 
 ## O que foi rodado
 
@@ -70,6 +81,16 @@ Em 15 de novembro de 2026, a etapa Carregar, com Docker 29.5.2, Postgres 18.7 (i
 - A prova da aula 20 num clone da pasta do aluno, só com o `.env` copiado, contra a loja ao vivo, às 5h23 (`prova-copia-limpa.txt`): 5 pedidos à API e 1 à loja (a categoria tinha 481 produtos, 5 páginas de 120), cobertura de 100%, 481 linhas carregadas num banco novo; a segunda rodada sem pedido e sem carga.
 - O `final/` num `git clone` deste repositório, numa pasta temporária, contra a loja ao vivo, às 5h44 (`prova-final-clone-do-repositorio.txt`): 5 páginas, 481 produtos lidos e 458 diferentes (cobertura de 95,2%: a paginação da aula 5 de novo), 458 linhas carregadas; a segunda rodada sem pedido e sem carga; o dia pedido pelo nome apagou 458 e gravou 458, com a mesma soma; 40 testes.
 - Cada pasta `aula-15` a `aula-20` rodada numa cópia limpa, com o mesmo bronze e o banco zerado (`limpas.txt`).
+
+Em 15 de novembro de 2026, a etapa Orquestrar, com Prefect 3.9.3 (servidor local), sobre as coletas de 14 e 15 de novembro e a loja ao vivo (`saidas/orquestrar/`):
+
+- As seis aulas rodadas em ordem na pasta do aluno, das 9h10 às 9h32 (`a1-*.txt` a `a6-*.txt`), com as falhas provocadas de verdade: a rede fora (3 tentativas e Failed), o banco desligado (Crashed), uma página repetida de propósito (74,9%: a coleta foi para `dados/barrados/`, e a rodada seguinte coletou o dia de novo, com 100%), Ctrl+C no meio da coleta (a retomada pediu só as páginas que faltavam), duas rodadas ao mesmo tempo (sem o limite, 10 pedidos à loja e as duas em Failed no DuckDB; com ele, a segunda esperou 20 segundos e não pediu nada).
+- A cobertura de coletas inteiras do mesmo dia variou entre 94,2% e 100%: a página 2 da API vem de dois jeitos. Com 94,2%, a vigia avisou a cobertura perto do mínimo e 28 sumidos, os mesmos 28 que a paginação perdeu.
+- A agenda das 6h e das 18h, com o fuso de Brasília, marcou as execuções para 21:00 e 09:00 de UTC (`a3-agenda-run.txt`). Numa cópia do `fluxo.py` com um cron de dois em dois minutos, a execução marcada rodou sozinha (`verifica-cron.txt`).
+- Os testes no GitHub, na branch `prova-ci-orquestracao` deste repositório, com o projeto na raiz: o primeiro push vermelho (o `SystemExit` do contato no import), os seguintes verdes, 47 testes.
+- A prova da aula 26 num clone da pasta do aluno, com Ctrl+C depois da página 2 e uma execução pedida ao agendamento (`a6-prova-*.txt`): 99,0% de cobertura, 475 linhas, a rodada do agendamento sem pedido e sem carga.
+- Uma vaga do limite presa: com o servidor do Prefect morto no meio de uma execução e ligado de novo, `active_slots` ficou em 1 por mais de 7 minutos (`vaga-presa-servidor-reiniciado.txt`); o runbook diz como soltar.
+- Cada pasta `aula-21` a `aula-26` rodada numa cópia limpa, com banco novo e a loja ao vivo, duas vezes (`limpas.txt`).
 
 ## Regras do projeto
 

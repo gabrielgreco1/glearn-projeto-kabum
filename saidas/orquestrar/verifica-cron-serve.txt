@@ -1,0 +1,72 @@
+Your flow 'projeto-kabum' is being served and polling for scheduled runs!
+
+To trigger a run for this flow, use the following command:
+
+        $ prefect deployment run 'projeto-kabum/a-cada-2-min'
+
+You can also run your flow via the Prefect UI: http://127.0.0.1:4200/deployments/deployment/d3406974-b9e2-411a-ab56-8f806c7eb867
+
+09:31:59.884 | INFO    | Flow run 'xanthic-impala' - Beginning flow run 'xanthic-impala' for flow 'projeto-kabum'
+09:31:59.889 | INFO    | Flow run 'xanthic-impala' - View at http://127.0.0.1:4200/runs/flow-run/01a1df30-bde0-7e17-aae3-15069784ac4a
+09:31:59.982 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+09:32:00.006 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+09:32:00.009 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-003.json, não peço de novo
+09:32:00.011 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-004.json, não peço de novo
+09:32:00.013 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+09:32:00.014 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:32:00.015 | INFO    | Task run 'coletar-167' - Finished in state Completed()
+09:32:00.027 | INFO    | kabum - coleta: 480 produtos lidos, 474 diferentes; a API declara 480
+09:32:00.027 | INFO    | kabum - repetidos entre páginas: 885283 (2 vezes), 1072511 (2 vezes), 1033699 (2 vezes), 1065147 (2 vezes), 538966 (2 vezes), 990083 (2 vezes)
+09:32:00.027 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:32:00.033 | INFO    | kabum - a página da loja mostra 480 produtos
+09:32:00.034 | INFO    | kabum - cobertura: 474 de 480, 98.8%; faltaram 6
+09:32:00.035 | INFO    | Task run 'conferir-e3b' - Finished in state Completed()
+09:32:00.055 | INFO    | kabum - gravei 951 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
+09:32:00.056 | INFO    | Task run 'historico-08f' - Finished in state Completed()
+09:32:00.057 | INFO    | kabum - transformar 1 de 3: montar e conferir a silver
+09:32:00.066 | INFO    | kabum - lidos 951 = válidos 951 + rejeitados 0
+09:32:00.069 | INFO    | kabum - transformar 2 de 3: o relatório de qualidade
+09:32:00.070 | INFO    | kabum - relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+09:32:00.072 | INFO    | kabum - gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+09:32:00.072 | INFO    | kabum - transformar 3 de 3: a gold
+09:32:00.095 | INFO    | Task run 'transformar-3b0' - ┌────────────┬─────────┬─────────┬──────────┬──────────────┐
+│    dia     │   id    │  antes  │  depois  │ variacao_pct │
+│    date    │  int64  │ double  │  double  │    double    │
+├────────────┼─────────┼─────────┼──────────┼──────────────┤
+│ 2026-11-15 │ 1063824 │  3199.4 │  2495.53 │        -22.0 │
+│ 2026-11-15 │ 1003353 │ 1599.21 │  1486.25 │         -7.1 │
+│ 2026-11-15 │  716084 │  303.26 │   296.28 │         -2.3 │
+│ 2026-11-15 │ 1022085 │ 2070.45 │  2022.86 │         -2.3 │
+│ 2026-11-15 │ 1088292 │  974.51 │   952.11 │         -2.3 │
+│ 2026-11-15 │ 1062771 │  304.57 │   297.57 │         -2.3 │
+│ 2026-11-15 │  902595 │ 1861.09 │   1818.3 │         -2.3 │
+│ 2026-11-15 │  400204 │  1729.9 │  1699.99 │         -1.7 │
+│ 2026-11-15 │  779499 │  301.97 │   319.51 │          5.8 │
+│ 2026-11-15 │  507266 │   73.36 │     79.9 │          8.9 │
+│ 2026-11-15 │ 1070462 │ 11475.3 │ 12590.79 │          9.7 │
+│ 2026-11-15 │  641729 │  748.49 │    899.9 │         20.2 │
+└────────────┴─────────┴─────────┴──────────┴──────────────┘
+  12 rows                                        5 columns
+09:32:00.096 | INFO    | Task run 'transformar-3b0' - ┌────────────┬─────────┬──────────────┬───────────┐
+│    dia     │   id    │ ultimo_preco │ cobertura │
+│    date    │  int64  │    double    │  double   │
+├────────────┼─────────┼──────────────┼───────────┤
+│ 2026-11-15 │  543498 │      2380.95 │     0.988 │
+│ 2026-11-15 │  577171 │       1667.0 │     0.988 │
+│ 2026-11-15 │  731030 │       1780.9 │     0.988 │
+│ 2026-11-15 │  922131 │       300.96 │     0.988 │
+│ 2026-11-15 │  931072 │      4285.75 │     0.988 │
+│ 2026-11-15 │ 1062236 │        292.9 │     0.988 │
+└────────────┴─────────┴──────────────┴───────────┘
+09:32:00.097 | INFO    | kabum - gold: 12 mudanças, 6 sumiços e 108 linhas na tabela dos modelos, em dados/gold
+09:32:00.097 | INFO    | Task run 'transformar-3b0' - Finished in state Completed()
+09:32:00.111 | INFO    | kabum - coletas: 2 dias conferidos, do dados/conferencia.csv
+09:32:00.111 | INFO    | kabum - dias na silver: 2; a carregar: 0 novos e 0 que mudaram
+09:32:00.112 | INFO    | Task run 'carregar-6ea' - Finished in state Completed()
+09:32:00.120 | INFO    | kabum - vigia: 2 dias no banco, o último 2026-11-15; 0 avisos
+09:32:00.120 | INFO    | Task run 'vigiar-62f' - Finished in state Completed()
+09:32:00.137 | INFO    | Flow run 'xanthic-impala' - coleta de 2026-11-15 no banco
+09:32:00.279 | INFO    | Flow run 'xanthic-impala' - Finished in state Completed()
+09:32:03.635 | INFO    | prefect.runner - Pausing all deployments...
+09:32:03.650 | INFO    | prefect.runner - All deployments have been paused!
+09:32:03.653 | INFO    | prefect.flows - Received KeyboardInterrupt, shutting down...

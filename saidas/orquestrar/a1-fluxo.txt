@@ -1,0 +1,43 @@
+09:15:24.422 | INFO    | Flow run 'upbeat-oarfish' - Beginning flow run 'upbeat-oarfish' for flow 'projeto-kabum'
+09:15:24.425 | INFO    | Flow run 'upbeat-oarfish' - View at http://127.0.0.1:4200/runs/flow-run/3d0f2984-82c5-4cd3-82bf-978b9376d4c7
+09:15:24.434 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+09:15:24.436 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+09:15:24.439 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-003.json, não peço de novo
+09:15:24.441 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-004.json, não peço de novo
+09:15:24.443 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+09:15:24.443 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:15:24.444 | INFO    | Task run 'coletar-ae4' - Finished in state Completed()
+09:15:24.454 | INFO    | kabum - coleta: 478 produtos lidos, 476 diferentes; a API declara 478
+09:15:24.455 | INFO    | kabum - repetidos entre páginas: 1078274 (2 vezes), 1013926 (2 vezes)
+09:15:24.455 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:15:24.461 | INFO    | kabum - a página da loja mostra 480 produtos
+09:15:24.461 | INFO    | kabum - cobertura: 476 de 478, 99.6%; faltaram 2
+09:15:24.463 | INFO    | Task run 'conferir-1bf' - Finished in state Completed()
+09:15:24.509 | INFO    | kabum - gravei 953 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
+09:15:24.510 | INFO    | Task run 'historico-ccf' - Finished in state Completed()
+09:15:24.511 | INFO    | kabum - transformar 1 de 3: montar e conferir a silver
+09:15:24.520 | INFO    | kabum - lidos 953 = válidos 953 + rejeitados 0
+09:15:24.522 | INFO    | kabum - transformar 2 de 3: o relatório de qualidade
+09:15:24.524 | INFO    | kabum - relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+09:15:24.526 | INFO    | kabum - gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+09:15:24.526 | INFO    | kabum - transformar 3 de 3: a gold
+09:15:24.549 | INFO    | Task run 'transformar-174' - ┌────────────┬────────┬────────┬────────┬──────────────┐
+│    dia     │   id   │ antes  │ depois │ variacao_pct │
+│    date    │ int64  │ double │ double │    double    │
+├────────────┼────────┼────────┼────────┼──────────────┤
+│ 2026-11-15 │ 507266 │  73.36 │   79.9 │          8.9 │
+└────────────┴────────┴────────┴────────┴──────────────┘
+09:15:24.551 | INFO    | Task run 'transformar-174' - ┌────────────┬────────┬──────────────┬───────────┐
+│    dia     │   id   │ ultimo_preco │ cobertura │
+│    date    │ int64  │    double    │  double   │
+├────────────┼────────┼──────────────┼───────────┤
+│ 2026-11-15 │ 690411 │        479.0 │     0.996 │
+│ 2026-11-15 │ 714565 │     15999.99 │     0.996 │
+└────────────┴────────┴──────────────┴───────────┘
+09:15:24.551 | INFO    | kabum - gold: 1 mudanças, 2 sumiços e 108 linhas na tabela dos modelos, em dados/gold
+09:15:24.552 | INFO    | Task run 'transformar-174' - Finished in state Completed()
+09:15:24.565 | INFO    | kabum - coletas: 2 dias conferidos, do dados/conferencia.csv
+09:15:24.566 | INFO    | kabum - dias na silver: 2; a carregar: 0 novos e 0 que mudaram
+09:15:24.566 | INFO    | Task run 'carregar-e2b' - Finished in state Completed()
+09:15:24.567 | INFO    | Flow run 'upbeat-oarfish' - coleta de 2026-11-15 no banco
+09:15:24.575 | INFO    | Flow run 'upbeat-oarfish' - Finished in state Completed()

@@ -1,0 +1,24 @@
+$ uv run prefect deployment ls
+                                                      Deployments                                                       
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Name                                          ┃ ID                                           ┃ Work Pool             ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━┩
+│ projeto-kabum/duas-vezes-por-dia              │ 4b4b9722-3a71-46c4-b066-238d33bc21cf         │                       │
+└───────────────────────────────────────────────┴──────────────────────────────────────────────┴───────────────────────┘
+$ uv run prefect deployment run projeto-kabum/duas-vezes-por-dia
+Creating flow run for deployment 'projeto-kabum/duas-vezes-por-dia'...
+Created flow run 'stoic-puffin'.
+└── UUID: 67db8b85-2b4a-49e9-945d-5ad8e2f759af
+└── Parameters: {}
+└── Job Variables: {}
+└── Scheduled start time: 2026-11-15 09:30:27 -03 (now)
+└── URL: http://127.0.0.1:4200/runs/flow-run/67db8b85-2b4a-49e9-945d-5ad8e2f759af
+
+# API: deployment
+{"name": "duas-vezes-por-dia", "path": ".", "schedules": [{"cron": "0 6,18 * * *", "timezone": "America/Sao_Paulo", "day_or": true}]}
+# API: execuções do deployment
+imported-koel COMPLETED Completed expected=2026-11-15T12:21:23.237572Z auto=False
+stoic-puffin COMPLETED Completed expected=2026-11-15T12:30:27.342767Z auto=False
+classy-jackalope SCHEDULED Scheduled expected=2026-11-15T21:00:00Z auto=True
+hopping-tapir SCHEDULED Scheduled expected=2026-11-16T09:00:00Z auto=True
+platinum-heron SCHEDULED Scheduled expected=2026-11-16T21:00:00Z auto=True

@@ -1,0 +1,77 @@
+09:25:47.793 | INFO    | Flow run 'elfish-cobra' - Beginning flow run 'elfish-cobra' for flow 'projeto-kabum'
+09:25:47.796 | INFO    | Flow run 'elfish-cobra' - View at http://127.0.0.1:4200/runs/flow-run/05158c60-5802-4d52-b24c-adfa6e1c649c
+09:25:52.151 | INFO    | kabum - baixei a página 1: 797564 bytes em dados/bronze/2026-11-15/pagina-001.json
+09:25:56.322 | INFO    | kabum - baixei a página 2: 994651 bytes em dados/bronze/2026-11-15/pagina-002.json
+09:26:00.852 | INFO    | kabum - baixei a página 3: 925656 bytes em dados/bronze/2026-11-15/pagina-003.json
+09:26:05.070 | INFO    | kabum - baixei a página 4: 1003392 bytes em dados/bronze/2026-11-15/pagina-004.json
+09:26:05.076 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+09:26:09.279 | INFO    | Task run 'coletar-b63' - Finished in state Completed()
+09:26:09.328 | INFO    | kabum - coleta: 480 produtos lidos, 458 diferentes; a API declara 480
+09:26:09.328 | INFO    | kabum - repetidos entre páginas: 1051729 (2 vezes), 1065197 (2 vezes), 1077586 (2 vezes), 635954 (2 vezes), 629803 (2 vezes), 928109 (2 vezes), 928108 (2 vezes), 1061740 (2 vezes), 877496 (2 vezes), 573345 (2 vezes), 520149 (2 vezes), 991866 (2 vezes), 1078279 (2 vezes), 1076095 (2 vezes), 1085854 (2 vezes), 941152 (2 vezes), 1003842 (2 vezes), 1077411 (2 vezes), 214817 (2 vezes), 1063824 (2 vezes), 994308 (2 vezes), 875453 (2 vezes)
+09:26:09.329 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:26:09.335 | INFO    | kabum - a página da loja mostra 480 produtos
+09:26:09.335 | INFO    | kabum - cobertura: 458 de 480, 95.4%; faltaram 22
+09:26:09.336 | INFO    | Task run 'conferir-652' - Finished in state Completed()
+09:26:09.357 | INFO    | kabum - gravei 935 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
+09:26:09.358 | INFO    | Task run 'historico-d65' - Finished in state Completed()
+09:26:09.359 | INFO    | kabum - transformar 1 de 3: montar e conferir a silver
+09:26:09.369 | INFO    | kabum - lidos 935 = válidos 935 + rejeitados 0
+09:26:09.371 | INFO    | kabum - transformar 2 de 3: o relatório de qualidade
+09:26:09.373 | INFO    | kabum - relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+09:26:09.375 | INFO    | kabum - gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+09:26:09.375 | INFO    | kabum - transformar 3 de 3: a gold
+09:26:09.399 | INFO    | Task run 'transformar-8b0' - ┌────────────┬─────────┬─────────┬──────────┬──────────────┐
+│    dia     │   id    │  antes  │  depois  │ variacao_pct │
+│    date    │  int64  │ double  │  double  │    double    │
+├────────────┼─────────┼─────────┼──────────┼──────────────┤
+│ 2026-11-15 │ 1063824 │  3199.4 │  2495.53 │        -22.0 │
+│ 2026-11-15 │ 1003353 │ 1599.21 │  1486.25 │         -7.1 │
+│ 2026-11-15 │ 1062771 │  304.57 │   297.57 │         -2.3 │
+│ 2026-11-15 │ 1022085 │ 2070.45 │  2022.86 │         -2.3 │
+│ 2026-11-15 │ 1088292 │  974.51 │   952.11 │         -2.3 │
+│ 2026-11-15 │  902595 │ 1861.09 │   1818.3 │         -2.3 │
+│ 2026-11-15 │  400204 │  1729.9 │  1699.99 │         -1.7 │
+│ 2026-11-15 │  779499 │  301.97 │   319.51 │          5.8 │
+│ 2026-11-15 │  507266 │   73.36 │     79.9 │          8.9 │
+│ 2026-11-15 │ 1070462 │ 11475.3 │ 12590.79 │          9.7 │
+│ 2026-11-15 │  641729 │  748.49 │    899.9 │         20.2 │
+└────────────┴─────────┴─────────┴──────────┴──────────────┘
+  11 rows                                        5 columns
+09:26:09.400 | INFO    | Task run 'transformar-8b0' - ┌────────────┬─────────┬──────────────┬───────────┐
+│    dia     │   id    │ ultimo_preco │ cobertura │
+│    date    │  int64  │    double    │  double   │
+├────────────┼─────────┼──────────────┼───────────┤
+│ 2026-11-15 │  271841 │       613.76 │     0.954 │
+│ 2026-11-15 │  505871 │        39.39 │     0.954 │
+│ 2026-11-15 │  573378 │        347.8 │     0.954 │
+│ 2026-11-15 │  618254 │        720.0 │     0.954 │
+│ 2026-11-15 │  692493 │       553.49 │     0.954 │
+│ 2026-11-15 │  712426 │      8748.25 │     0.954 │
+│ 2026-11-15 │  716084 │       303.26 │     0.954 │
+│ 2026-11-15 │  728352 │       508.47 │     0.954 │
+│ 2026-11-15 │  885284 │      9899.91 │     0.954 │
+│ 2026-11-15 │  886159 │      4109.99 │     0.954 │
+│ 2026-11-15 │  950561 │        679.9 │     0.954 │
+│ 2026-11-15 │  954578 │     17818.07 │     0.954 │
+│ 2026-11-15 │ 1040909 │       3854.9 │     0.954 │
+│ 2026-11-15 │ 1048602 │       1732.5 │     0.954 │
+│ 2026-11-15 │ 1051533 │      1379.99 │     0.954 │
+│ 2026-11-15 │ 1058238 │         39.9 │     0.954 │
+│ 2026-11-15 │ 1069405 │      1018.53 │     0.954 │
+│ 2026-11-15 │ 1069581 │      5369.43 │     0.954 │
+│ 2026-11-15 │ 1072907 │       499.99 │     0.954 │
+│ 2026-11-15 │ 1072909 │       499.99 │     0.954 │
+│ 2026-11-15 │ 1077132 │        24.99 │     0.954 │
+│ 2026-11-15 │ 1077139 │        24.99 │     0.954 │
+└────────────┴─────────┴──────────────┴───────────┘
+  22 rows                               4 columns
+09:26:09.401 | INFO    | kabum - gold: 11 mudanças, 22 sumiços e 107 linhas na tabela dos modelos, em dados/gold
+09:26:09.401 | INFO    | Task run 'transformar-8b0' - Finished in state Completed()
+09:26:09.416 | INFO    | kabum - coletas: 2 dias conferidos, do dados/conferencia.csv
+09:26:09.417 | INFO    | kabum - dias na silver: 2; a carregar: 0 novos e 1 que mudaram
+09:26:09.426 | INFO    | kabum - 2026-11-15: apaguei 452 linhas e gravei 458; conferido: 458 linhas e soma 212803369
+09:26:09.427 | INFO    | Task run 'carregar-def' - Finished in state Completed()
+09:26:09.435 | INFO    | kabum - vigia: 2 dias no banco, o último 2026-11-15; 0 avisos
+09:26:09.436 | INFO    | Task run 'vigiar-a8f' - Finished in state Completed()
+09:26:09.450 | INFO    | Flow run 'elfish-cobra' - coleta de 2026-11-15 no banco
+09:26:09.457 | INFO    | Flow run 'elfish-cobra' - Finished in state Completed()

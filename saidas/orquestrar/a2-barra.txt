@@ -1,0 +1,134 @@
+$ uv run python fluxo.py
+09:17:41.089 | INFO    | Flow run 'maroon-ape' - Beginning flow run 'maroon-ape' for flow 'projeto-kabum'
+09:17:41.092 | INFO    | Flow run 'maroon-ape' - View at http://127.0.0.1:4200/runs/flow-run/0241a607-f26d-4744-a988-d65861e08d3f
+09:17:41.101 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+09:17:41.103 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+09:17:41.106 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-003.json, não peço de novo
+09:17:41.108 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-004.json, não peço de novo
+09:17:41.110 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+09:17:41.110 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:17:41.111 | INFO    | Task run 'coletar-ed1' - Finished in state Completed()
+09:17:41.122 | INFO    | kabum - coleta: 480 produtos lidos, 358 diferentes; a API declara 478
+09:17:41.122 | INFO    | kabum - repetidos entre páginas: 1078274 (2 vezes), 1013926 (2 vezes), 994308 (2 vezes), 578744 (2 vezes), 1062771 (2 vezes), 706620 (2 vezes), 1072909 (2 vezes), 271841 (2 vezes), 1051533 (2 vezes), 302344 (2 vezes), 954578 (2 vezes), 874553 (2 vezes), 1053105 (2 vezes), 1049713 (2 vezes), 264859 (2 vezes), 987296 (2 vezes), 1058237 (2 vezes), 1077139 (2 vezes), 1022775 (2 vezes), 1072430 (2 vezes), 1077132 (2 vezes), 1028166 (2 vezes), 1064891 (2 vezes), 207483 (2 vezes), 928103 (2 vezes), 751904 (2 vezes), 573345 (2 vezes), 681586 (2 vezes), 716196 (2 vezes), 928109 (2 vezes), 1048602 (2 vezes), 885284 (2 vezes), 1088222 (2 vezes), 697891 (2 vezes), 1076095 (2 vezes), 947244 (2 vezes), 950561 (2 vezes), 1078259 (2 vezes), 1087176 (2 vezes), 905826 (2 vezes), 1029663 (2 vezes), 1078268 (2 vezes), 1069581 (2 vezes), 997061 (2 vezes), 802428 (2 vezes), 776956 (2 vezes), 988706 (2 vezes), 1053809 (2 vezes), 1000485 (2 vezes), 921271 (2 vezes), 618254 (2 vezes), 1081769 (2 vezes), 995288 (2 vezes), 888143 (2 vezes), 716084 (2 vezes), 1003353 (2 vezes), 475651 (2 vezes), 781225 (2 vezes), 1012613 (2 vezes), 988188 (2 vezes), 573378 (2 vezes), 505871 (2 vezes), 520149 (2 vezes), 602323 (2 vezes), 1053811 (2 vezes), 692493 (2 vezes), 703109 (2 vezes), 1058197 (2 vezes), 777056 (2 vezes), 1085854 (2 vezes), 1078273 (2 vezes), 928108 (2 vezes), 714573 (2 vezes), 941152 (2 vezes), 1084240 (2 vezes), 214817 (2 vezes), 714458 (2 vezes), 505868 (2 vezes), 907814 (2 vezes), 714571 (2 vezes), 507105 (2 vezes), 909962 (2 vezes), 507103 (2 vezes), 692461 (2 vezes), 1078270 (2 vezes), 989003 (2 vezes), 951841 (2 vezes), 1032395 (2 vezes), 1070111 (2 vezes), 1077061 (2 vezes), 1035561 (2 vezes), 1056507 (2 vezes), 728003 (2 vezes), 1062156 (2 vezes), 1088291 (2 vezes), 1087480 (2 vezes), 1042573 (2 vezes), 1050684 (2 vezes), 640283 (2 vezes), 946336 (2 vezes), 999970 (2 vezes), 1085473 (2 vezes), 573253 (2 vezes), 736834 (2 vezes), 1091871 (2 vezes), 1091977 (2 vezes), 1091982 (2 vezes), 1091978 (2 vezes), 1091979 (2 vezes), 1091984 (2 vezes), 1032165 (2 vezes), 217261 (2 vezes), 726589 (2 vezes), 573744 (2 vezes), 579784 (2 vezes), 701169 (2 vezes), 984610 (2 vezes), 728005 (2 vezes), 693864 (2 vezes), 1032573 (2 vezes), 1089151 (2 vezes), 991786 (2 vezes)
+09:17:41.122 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:17:41.129 | INFO    | kabum - a página da loja mostra 480 produtos
+09:17:41.129 | INFO    | kabum - cobertura: 358 de 478, 74.9%; faltaram 120
+09:17:41.131 | ERROR   | Task run 'conferir-aae' - Task run failed with exception: RuntimeError('A cobertura ficou em 74.9%, abaixo de 90%. Nada foi publicado. A coleta foi para dados/barrados/2026-11-15-091741; rode de novo para coletar o dia outra vez.')
+Traceback (most recent call last):
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1072, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1777, in run_task_sync
+    engine.call_task_fn(txn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1093, in call_task_fn
+    result = call_with_parameters(self.task.fn, parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/conferir.py", line 97, in conferir
+    raise RuntimeError(f"A cobertura ficou em {cobertura * 100:.1f}%, abaixo de {COBERTURA_MINIMA * 100:.0f}%. "
+                       f"Nada foi publicado. A coleta foi para {destino}; rode de novo para coletar o dia outra vez.")
+RuntimeError: A cobertura ficou em 74.9%, abaixo de 90%. Nada foi publicado. A coleta foi para dados/barrados/2026-11-15-091741; rode de novo para coletar o dia outra vez.
+09:17:41.134 | ERROR   | Task run 'conferir-aae' - Finished in state Failed('Task run encountered an exception RuntimeError: A cobertura ficou em 74.9%, abaixo de 90%. Nada foi publicado. A coleta foi para dados/barrados/2026-11-15-091741; rode de novo para coletar o dia outra vez.')
+09:17:41.135 | ERROR   | Flow run 'maroon-ape' - Encountered exception during execution: RuntimeError('A cobertura ficou em 74.9%, abaixo de 90%. Nada foi publicado. A coleta foi para dados/barrados/2026-11-15-091741; rode de novo para coletar o dia outra vez.')
+Traceback (most recent call last):
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1372, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2173, in run_flow_sync
+    engine.call_flow_fn()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1394, in call_flow_fn
+    result = call_with_parameters(self.flow.fn, self.parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/fluxo.py", line 48, in projeto_kabum
+    conferir(pasta)
+    ~~~~~~~~^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/tasks.py", line 1240, in __call__
+    return run_task(
+        task=self,
+    ...<2 lines>...
+        return_type=return_type,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 2054, in run_task
+    return run_task_sync(**kwargs)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1780, in run_task_sync
+    return engine.state if return_type == "state" else engine.result()
+                                                       ~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 636, in result
+    raise self._raised
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1072, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1777, in run_task_sync
+    engine.call_task_fn(txn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1093, in call_task_fn
+    result = call_with_parameters(self.task.fn, parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/conferir.py", line 97, in conferir
+    raise RuntimeError(f"A cobertura ficou em {cobertura * 100:.1f}%, abaixo de {COBERTURA_MINIMA * 100:.0f}%. "
+                       f"Nada foi publicado. A coleta foi para {destino}; rode de novo para coletar o dia outra vez.")
+RuntimeError: A cobertura ficou em 74.9%, abaixo de 90%. Nada foi publicado. A coleta foi para dados/barrados/2026-11-15-091741; rode de novo para coletar o dia outra vez.
+09:17:41.151 | INFO    | Flow run 'maroon-ape' - Running hook 'avisar' in response to entering state 'Failed'
+09:17:41.151 | INFO    | Flow run 'maroon-ape' - AVISO: projeto-kabum, execução maroon-ape, terminou em Failed: Flow run encountered an exception: RuntimeError: A cobertura ficou em 74.9%, abaixo de 90%. Nada foi publicado. A coleta foi para dados/barrados/2026-11-15-091741; rode de novo para coletar o dia outra vez.
+09:17:41.151 | INFO    | Flow run 'maroon-ape' - Hook 'avisar' finished running successfully
+09:17:41.152 | INFO    | Flow run 'maroon-ape' - Finished in state Failed('Flow run encountered an exception: RuntimeError: A cobertura ficou em 74.9%, abaixo de 90%. Nada foi publicado. A coleta foi para dados/barrados/2026-11-15-091741; rode de novo para coletar o dia outra vez.')
+Traceback (most recent call last):
+  File "~/projeto-kabum/fluxo.py", line 56, in <module>
+    projeto_kabum()
+    ~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flows.py", line 1912, in __call__
+    return run_flow(
+        flow=self,
+    ...<2 lines>...
+        return_type=return_type,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2332, in run_flow
+    ret_val = run_flow_sync(**kwargs)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2175, in run_flow_sync
+    return engine.state if return_type == "state" else engine.result()
+                                                       ~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 817, in result
+    raise self._raised
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1372, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2173, in run_flow_sync
+    engine.call_flow_fn()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1394, in call_flow_fn
+    result = call_with_parameters(self.flow.fn, self.parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/fluxo.py", line 48, in projeto_kabum
+    conferir(pasta)
+    ~~~~~~~~^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/tasks.py", line 1240, in __call__
+    return run_task(
+        task=self,
+    ...<2 lines>...
+        return_type=return_type,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 2054, in run_task
+    return run_task_sync(**kwargs)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1780, in run_task_sync
+    return engine.state if return_type == "state" else engine.result()
+                                                       ~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 636, in result
+    raise self._raised
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1072, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1777, in run_task_sync
+    engine.call_task_fn(txn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/task_engine.py", line 1093, in call_task_fn
+    result = call_with_parameters(self.task.fn, parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/conferir.py", line 97, in conferir
+    raise RuntimeError(f"A cobertura ficou em {cobertura * 100:.1f}%, abaixo de {COBERTURA_MINIMA * 100:.0f}%. "
+                       f"Nada foi publicado. A coleta foi para {destino}; rode de novo para coletar o dia outra vez.")
+RuntimeError: A cobertura ficou em 74.9%, abaixo de 90%. Nada foi publicado. A coleta foi para dados/barrados/2026-11-15-091741; rode de novo para coletar o dia outra vez.
+$ ls dados/barrados
+2026-11-15-091741
+$ tail -1 avisos.log
+2026-11-15 09:17:41 AVISO: projeto-kabum, execução maroon-ape, terminou em Failed: Flow run encountered an exception: RuntimeError: A cobertura ficou em 74.9%, abaixo de 90%. Nada foi publicado. A coleta foi para dados/barrados/2026-11-15-091741; rode de novo para coletar o dia outra vez. (o que fazer: runbook.md)

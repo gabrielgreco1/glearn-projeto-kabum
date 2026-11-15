@@ -1,0 +1,61 @@
+09:26:12.705 | INFO    | Flow run 'true-leech' - Beginning flow run 'true-leech' for flow 'projeto-kabum'
+09:26:12.708 | INFO    | Flow run 'true-leech' - View at http://127.0.0.1:4200/runs/flow-run/f5a6cbef-c65d-4215-89d9-f170511667f3
+09:26:25.039 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+09:26:25.046 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+09:26:28.158 | INFO    | kabum - baixei a página 3: 925656 bytes em dados/bronze/2026-11-15/pagina-003.json
+09:26:31.965 | INFO    | kabum - baixei a página 4: 1003392 bytes em dados/bronze/2026-11-15/pagina-004.json
+09:26:31.975 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+09:26:36.009 | INFO    | Task run 'coletar-1b4' - Finished in state Completed()
+09:26:36.032 | INFO    | kabum - coleta: 480 produtos lidos, 474 diferentes; a API declara 480
+09:26:36.032 | INFO    | kabum - repetidos entre páginas: 885283 (2 vezes), 1072511 (2 vezes), 1033699 (2 vezes), 1065147 (2 vezes), 538966 (2 vezes), 990083 (2 vezes)
+09:26:36.032 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+09:26:36.041 | INFO    | kabum - a página da loja mostra 480 produtos
+09:26:36.041 | INFO    | kabum - cobertura: 474 de 480, 98.8%; faltaram 6
+09:26:36.042 | INFO    | Task run 'conferir-307' - Finished in state Completed()
+09:26:36.095 | INFO    | kabum - gravei 951 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
+09:26:36.096 | INFO    | Task run 'historico-c81' - Finished in state Completed()
+09:26:36.097 | INFO    | kabum - transformar 1 de 3: montar e conferir a silver
+09:26:36.107 | INFO    | kabum - lidos 951 = válidos 951 + rejeitados 0
+09:26:36.109 | INFO    | kabum - transformar 2 de 3: o relatório de qualidade
+09:26:36.111 | INFO    | kabum - relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+09:26:36.113 | INFO    | kabum - gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+09:26:36.113 | INFO    | kabum - transformar 3 de 3: a gold
+09:26:36.136 | INFO    | Task run 'transformar-92f' - ┌────────────┬─────────┬─────────┬──────────┬──────────────┐
+│    dia     │   id    │  antes  │  depois  │ variacao_pct │
+│    date    │  int64  │ double  │  double  │    double    │
+├────────────┼─────────┼─────────┼──────────┼──────────────┤
+│ 2026-11-15 │ 1063824 │  3199.4 │  2495.53 │        -22.0 │
+│ 2026-11-15 │ 1003353 │ 1599.21 │  1486.25 │         -7.1 │
+│ 2026-11-15 │ 1022085 │ 2070.45 │  2022.86 │         -2.3 │
+│ 2026-11-15 │ 1088292 │  974.51 │   952.11 │         -2.3 │
+│ 2026-11-15 │  902595 │ 1861.09 │   1818.3 │         -2.3 │
+│ 2026-11-15 │  716084 │  303.26 │   296.28 │         -2.3 │
+│ 2026-11-15 │ 1062771 │  304.57 │   297.57 │         -2.3 │
+│ 2026-11-15 │  400204 │  1729.9 │  1699.99 │         -1.7 │
+│ 2026-11-15 │  779499 │  301.97 │   319.51 │          5.8 │
+│ 2026-11-15 │  507266 │   73.36 │     79.9 │          8.9 │
+│ 2026-11-15 │ 1070462 │ 11475.3 │ 12590.79 │          9.7 │
+│ 2026-11-15 │  641729 │  748.49 │    899.9 │         20.2 │
+└────────────┴─────────┴─────────┴──────────┴──────────────┘
+  12 rows                                        5 columns
+09:26:36.138 | INFO    | Task run 'transformar-92f' - ┌────────────┬─────────┬──────────────┬───────────┐
+│    dia     │   id    │ ultimo_preco │ cobertura │
+│    date    │  int64  │    double    │  double   │
+├────────────┼─────────┼──────────────┼───────────┤
+│ 2026-11-15 │  543498 │      2380.95 │     0.988 │
+│ 2026-11-15 │  577171 │       1667.0 │     0.988 │
+│ 2026-11-15 │  731030 │       1780.9 │     0.988 │
+│ 2026-11-15 │  922131 │       300.96 │     0.988 │
+│ 2026-11-15 │  931072 │      4285.75 │     0.988 │
+│ 2026-11-15 │ 1062236 │        292.9 │     0.988 │
+└────────────┴─────────┴──────────────┴───────────┘
+09:26:36.138 | INFO    | kabum - gold: 12 mudanças, 6 sumiços e 108 linhas na tabela dos modelos, em dados/gold
+09:26:36.139 | INFO    | Task run 'transformar-92f' - Finished in state Completed()
+09:26:36.153 | INFO    | kabum - coletas: 2 dias conferidos, do dados/conferencia.csv
+09:26:36.153 | INFO    | kabum - dias na silver: 2; a carregar: 0 novos e 1 que mudaram
+09:26:36.163 | INFO    | kabum - 2026-11-15: apaguei 458 linhas e gravei 474; conferido: 474 linhas e soma 217610575
+09:26:36.163 | INFO    | Task run 'carregar-76f' - Finished in state Completed()
+09:26:36.171 | INFO    | kabum - vigia: 2 dias no banco, o último 2026-11-15; 0 avisos
+09:26:36.172 | INFO    | Task run 'vigiar-74d' - Finished in state Completed()
+09:26:36.186 | INFO    | Flow run 'true-leech' - coleta de 2026-11-15 no banco
+09:26:36.192 | INFO    | Flow run 'true-leech' - Finished in state Completed()

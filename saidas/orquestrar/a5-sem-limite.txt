@@ -1,0 +1,146 @@
+$ uv run python fluxo.py
+09:25:46.001 | INFO    | Flow run 'rousing-unicorn' - Beginning flow run 'rousing-unicorn' for flow 'projeto-kabum'
+09:25:46.003 | INFO    | Flow run 'rousing-unicorn' - View at http://127.0.0.1:4200/runs/flow-run/29f84058-078d-4c1d-a2f4-89e354901db5
+09:25:46.044 | ERROR   | Flow run 'rousing-unicorn' - Encountered exception during execution: ConcurrencySlotAcquisitionError("Concurrency limits ['projeto-kabum'] must be created before acquiring slots")
+Traceback (most recent call last):
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1372, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2173, in run_flow_sync
+    engine.call_flow_fn()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1394, in call_flow_fn
+    result = call_with_parameters(self.flow.fn, self.parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/fluxo.py", line 69, in projeto_kabum
+    with concurrency("projeto-kabum", occupy=1, timeout_seconds=900, strict=True):
+         ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "~/.local/share/uv/python/cpython-3.13-macos-aarch64-none/lib/python3.13/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/concurrency/sync.py", line 69, in concurrency
+    with _concurrency_internal(
+         ~~~~~~~~~~~~~~~~~~~~~^
+        names=names,
+        ^^^^^^^^^^^^
+    ...<7 lines>...
+        raise_on_lease_renewal_failure=raise_on_lease_renewal_failure,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "~/.local/share/uv/python/cpython-3.13-macos-aarch64-none/lib/python3.13/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/concurrency/_sync.py", line 129, in concurrency
+    acquisition_response = acquire_concurrency_slots_with_lease(
+        names,
+    ...<6 lines>...
+        suppress_warnings=suppress_warnings,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/concurrency/_sync.py", line 58, in acquire_concurrency_slots_with_lease
+    result = run_coro_as_sync(
+        aacquire_concurrency_slots_with_lease(
+    ...<9 lines>...
+        )
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/asyncutils/__init__.py", line 207, in run_coro_as_sync
+    return call.result()
+           ~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/_internal/concurrency/calls.py", line 365, in result
+    return self.future.result(timeout=timeout)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/_internal/concurrency/calls.py", line 192, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "~/.local/share/uv/python/cpython-3.13-macos-aarch64-none/lib/python3.13/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/_internal/concurrency/calls.py", line 441, in _run_async
+    result = await coro
+             ^^^^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/asyncutils/__init__.py", line 188, in coroutine_wrapper
+    return await task
+           ^^^^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/concurrency/_asyncio.py", line 175, in aacquire_concurrency_slots_with_lease
+    raise ConcurrencySlotAcquisitionError(
+        f"Concurrency limits {names!r} must be created before acquiring slots"
+    )
+prefect.concurrency._asyncio.ConcurrencySlotAcquisitionError: Concurrency limits ['projeto-kabum'] must be created before acquiring slots
+09:25:46.053 | INFO    | Flow run 'rousing-unicorn' - Running hook 'avisar' in response to entering state 'Failed'
+09:25:46.053 | INFO    | Flow run 'rousing-unicorn' - AVISO: projeto-kabum, execução rousing-unicorn, terminou em Failed: Flow run encountered an exception: ConcurrencySlotAcquisitionError: Concurrency limits ['projeto-kabum'] must be created before acquiring slots
+09:25:46.054 | INFO    | Flow run 'rousing-unicorn' - Hook 'avisar' finished running successfully
+09:25:46.054 | INFO    | Flow run 'rousing-unicorn' - Finished in state Failed("Flow run encountered an exception: ConcurrencySlotAcquisitionError: Concurrency limits ['projeto-kabum'] must be created before acquiring slots")
+Traceback (most recent call last):
+  File "~/projeto-kabum/fluxo.py", line 86, in <module>
+    projeto_kabum()
+    ~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flows.py", line 1912, in __call__
+    return run_flow(
+        flow=self,
+    ...<2 lines>...
+        return_type=return_type,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2332, in run_flow
+    ret_val = run_flow_sync(**kwargs)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2175, in run_flow_sync
+    return engine.state if return_type == "state" else engine.result()
+                                                       ~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 817, in result
+    raise self._raised
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1372, in run_context
+    yield self
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 2173, in run_flow_sync
+    engine.call_flow_fn()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/flow_engine.py", line 1394, in call_flow_fn
+    result = call_with_parameters(self.flow.fn, self.parameters)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/callables/__init__.py", line 404, in call_with_parameters
+    return fn(*args, **kwargs)
+  File "~/projeto-kabum/fluxo.py", line 69, in projeto_kabum
+    with concurrency("projeto-kabum", occupy=1, timeout_seconds=900, strict=True):
+         ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "~/.local/share/uv/python/cpython-3.13-macos-aarch64-none/lib/python3.13/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/concurrency/sync.py", line 69, in concurrency
+    with _concurrency_internal(
+         ~~~~~~~~~~~~~~~~~~~~~^
+        names=names,
+        ^^^^^^^^^^^^
+    ...<7 lines>...
+        raise_on_lease_renewal_failure=raise_on_lease_renewal_failure,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "~/.local/share/uv/python/cpython-3.13-macos-aarch64-none/lib/python3.13/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/concurrency/_sync.py", line 129, in concurrency
+    acquisition_response = acquire_concurrency_slots_with_lease(
+        names,
+    ...<6 lines>...
+        suppress_warnings=suppress_warnings,
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/concurrency/_sync.py", line 58, in acquire_concurrency_slots_with_lease
+    result = run_coro_as_sync(
+        aacquire_concurrency_slots_with_lease(
+    ...<9 lines>...
+        )
+    )
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/asyncutils/__init__.py", line 207, in run_coro_as_sync
+    return call.result()
+           ~~~~~~~~~~~^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/_internal/concurrency/calls.py", line 365, in result
+    return self.future.result(timeout=timeout)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/_internal/concurrency/calls.py", line 192, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "~/.local/share/uv/python/cpython-3.13-macos-aarch64-none/lib/python3.13/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/_internal/concurrency/calls.py", line 441, in _run_async
+    result = await coro
+             ^^^^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/utilities/asyncutils/__init__.py", line 188, in coroutine_wrapper
+    return await task
+           ^^^^^^^^^^
+  File "~/projeto-kabum/.venv/lib/python3.13/site-packages/prefect/concurrency/_asyncio.py", line 175, in aacquire_concurrency_slots_with_lease
+    raise ConcurrencySlotAcquisitionError(
+        f"Concurrency limits {names!r} must be created before acquiring slots"
+    )
+prefect.concurrency._asyncio.ConcurrencySlotAcquisitionError: Concurrency limits ['projeto-kabum'] must be created before acquiring slots

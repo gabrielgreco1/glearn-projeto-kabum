@@ -1,0 +1,18 @@
+$ uv run python conferir.py 2026-11-14
+09:20:03 INFO coleta: 478 produtos lidos, 477 diferentes; a API declara 478
+09:20:03 INFO repetidos entre páginas: 714565 (2 vezes)
+09:20:03 INFO já tenho dados/bronze/2026-11-14/loja.html, não peço de novo
+09:20:03 INFO a página da loja mostra 478 produtos
+09:20:03 INFO cobertura: 477 de 478, 99.8%; faltaram 1
+$ ls dados/bronze/2026-11-14
+conferida.txt
+loja.html
+pagina-001.json
+pagina-002.json
+pagina-003.json
+pagina-004.json
+$ cat dados/bronze/2026-11-14/conferida.txt
+0.998
+$ uv run python tabela.py
+09:20:03 WARNING dados/bronze/2026-11-15 não tem o selo da conferência (conferida.txt): fica fora do histórico
+09:20:03 INFO gravei 477 linhas em dados/precos.csv, de 1 dia(s): 2026-11-14

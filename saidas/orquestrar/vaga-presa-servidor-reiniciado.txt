@@ -1,0 +1,11 @@
+antes:     active_slots=1,
+/tmp/exp/reinicio.sh: line 11: 15274 Killed: 9               uv run python $B/exp/gcl.py 120 > $B/exp/r1.log 2>&1
+servidor de volta: 09:57:49
+09:57:49     active_slots=1,
+09:58:50     active_slots=1,
+09:59:50     active_slots=1,
+10:00:51     active_slots=1,
+10:01:51     active_slots=1,
+10:02:52     active_slots=1,
+10:03:53     active_slots=1,
+10:04:53     active_slots=1,
