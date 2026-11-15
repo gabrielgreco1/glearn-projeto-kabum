@@ -20,6 +20,6 @@ O banco continua com os dias que já tinham sido carregados, inteiros: cada dia 
 2. **`Failed` em `coletar`, depois das tentativas.** É a internet ou a loja fora do ar. Abra https://www.kabum.com.br no navegador. Quando ela responder, rode de novo, no mesmo dia: o que já foi baixado não é pedido outra vez.
 3. **`Failed` em `conferir`, com `A cobertura ficou em`.** A paginação da API perdeu mais de 10% dos produtos, e nada foi publicado. A coleta do dia foi para `dados/barrados/`: compare os repetidos no log da task com os da pasta barrada. Rode de novo, no mesmo dia: a coleta recomeça do zero. Se barrar de novo, a API mudou; não baixe o mínimo sem entender por quê.
 4. **`Failed` em `transformar` ou `carregar`.** A mensagem diz o que barrou: uma regra da silver, ou um dia que não fecha contra o banco. O dia que falhou não foi gravado.
-5. **`Crashed` com `interrupt signal`.** Alguém apertou Ctrl+C ou a máquina desligou no meio. Rode de novo.
+5. **`Crashed` com `interrupt signal`.** Alguém apertou Ctrl+C ou a máquina desligou no meio. Rode de novo, no mesmo dia: a coleta continua de onde parou. Se o dia já passou, a pasta dele, sem o selo `conferida.txt`, fica fora do histórico: aquele dia faltou, e não há como pedir o preço dele de novo.
 
-Para rodar de novo: `uv run python fluxo.py`.
+Para rodar de novo, com o agendamento ligado (`uv run python fluxo.py agendar`, num terminal que fica aberto): `uv run prefect deployment run projeto-kabum/duas-vezes-por-dia`. Sem ele: `uv run python fluxo.py`.

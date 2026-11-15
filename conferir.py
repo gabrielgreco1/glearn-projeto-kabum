@@ -2,11 +2,16 @@
 
 A paginação da API perde produtos: a ordem padrão tem empates, e cada página desempata de um jeito.
 Alguns produtos vêm em duas páginas e outros em nenhuma. A conferência mede quanto faltou e guarda o número.
-Abaixo do mínimo, a coleta do dia sai do bronze, para dados/barrados/, e a rodada para antes de publicar."""
+Abaixo do mínimo, a coleta do dia sai do bronze, para dados/barrados/, e a rodada para antes de publicar. Acima dele,
+a pasta do dia ganha o selo: só um dia com selo entra no histórico.
+
+Uso: uv run python conferir.py               confere a coleta de hoje
+     uv run python conferir.py 2026-11-14    confere de novo um dia guardado, sem pedir nada se a loja.html está lá"""
 
 import csv
 import json
 import re
+import sys
 import time
 from collections import Counter
 from datetime import datetime
@@ -22,6 +27,7 @@ COBERTURA_MINIMA = 0.90  # nas rodadas de 14/11/2026 a cobertura ficou entre 92%
 REGISTRO = Path("dados/conferencia.csv")  # uma linha por dia de coleta: o que faltou fica anotado
 COLUNAS = ["dia", "lidos", "diferentes", "repetidos", "declarado", "loja", "cobertura"]
 BARRADOS = Path("dados/barrados")  # as coletas que a conferência barrou, guardadas para você ler
+SELO = "conferida.txt"  # o arquivo que a conferência deixa na pasta do dia quando a cobertura passa
 
 
 def total_declarado(pasta):
@@ -96,8 +102,9 @@ def conferir(pasta=None):
         destino = barrar(pasta)
         raise RuntimeError(f"A cobertura ficou em {cobertura * 100:.1f}%, abaixo de {COBERTURA_MINIMA * 100:.0f}%. "
                            f"Nada foi publicado. A coleta foi para {destino}; rode de novo para coletar o dia outra vez.")
+    (Path(pasta) / SELO).write_text(f"{cobertura:.3f}\n", encoding="utf-8")  # o dia está inteiro: pode entrar no histórico
     return len(ids)
 
 
 if __name__ == "__main__":
-    conferir()
+    conferir(pasta_do_dia(sys.argv[1]) if sys.argv[1:] else None)
