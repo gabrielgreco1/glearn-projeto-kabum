@@ -1,13 +1,15 @@
 """Confere a coleta do dia: o total que a API declara, os produtos repetidos e o total que a página da loja mostra.
 
 A paginação da API perde produtos: a ordem padrão tem empates, e cada página desempata de um jeito.
-Alguns produtos vêm em duas páginas e outros em nenhuma. A conferência mede quanto faltou e guarda o número."""
+Alguns produtos vêm em duas páginas e outros em nenhuma. A conferência mede quanto faltou e guarda o número.
+Abaixo do mínimo, a coleta do dia sai do bronze, para dados/barrados/, e a rodada para antes de publicar."""
 
 import csv
 import json
 import re
 import time
 from collections import Counter
+from datetime import datetime
 from pathlib import Path
 
 import httpx
@@ -19,6 +21,7 @@ PAGINA_DA_LOJA = "https://www.kabum.com.br/hardware/placa-de-video-vga"
 COBERTURA_MINIMA = 0.90  # nas rodadas de 14/11/2026 a cobertura ficou entre 92% e 100%
 REGISTRO = Path("dados/conferencia.csv")  # uma linha por dia de coleta: o que faltou fica anotado
 COLUNAS = ["dia", "lidos", "diferentes", "repetidos", "declarado", "loja", "cobertura"]
+BARRADOS = Path("dados/barrados")  # as coletas que a conferência barrou, guardadas para você ler
 
 
 def total_declarado(pasta):
@@ -65,6 +68,15 @@ def anotar(linha, destino=REGISTRO):
         escritor.writerows(sorted(linhas, key=lambda item: item["dia"]))
 
 
+def barrar(pasta):
+    """Tira a pasta do dia do bronze e guarda em dados/barrados/, com a hora no nome. Devolve o caminho novo.
+    A próxima rodada do mesmo dia não acha a pasta e coleta tudo de novo."""
+    BARRADOS.mkdir(parents=True, exist_ok=True)
+    destino = BARRADOS / f"{Path(pasta).name}-{datetime.now():%H%M%S}"
+    Path(pasta).rename(destino)
+    return destino
+
+
 def conferir(pasta=None):
     pasta = pasta or pasta_do_dia()
     produtos = ler_dia(pasta)
@@ -81,7 +93,9 @@ def conferir(pasta=None):
     anotar({"dia": Path(pasta).name, "lidos": len(produtos), "diferentes": len(ids), "repetidos": len(repetidos),
             "declarado": declarado, "loja": loja, "cobertura": f"{cobertura:.3f}"})
     if cobertura < COBERTURA_MINIMA:
-        raise SystemExit(f"A cobertura ficou em {cobertura * 100:.1f}%, abaixo de {COBERTURA_MINIMA * 100:.0f}%. Confira os repetidos antes de seguir.")
+        destino = barrar(pasta)
+        raise RuntimeError(f"A cobertura ficou em {cobertura * 100:.1f}%, abaixo de {COBERTURA_MINIMA * 100:.0f}%. "
+                           f"Nada foi publicado. A coleta foi para {destino}; rode de novo para coletar o dia outra vez.")
     return len(ids)
 
 
