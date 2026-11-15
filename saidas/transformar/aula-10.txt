@@ -1,0 +1,24 @@
+$ uv run python tabela.py
+00:27:23 INFO gravei 953 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
+$ uv run python silver.py
+00:27:26 INFO silver: 953 linhas e 16 colunas
+00:27:26 INFO em oferta: 136 linhas; nelas, o preço final é o da oferta
+00:27:26 INFO as ofertas terminam em: 24/11 10:00, 26/11 10:00, 26/11 10:59, 26/11 11:00 (horário de Brasília)
+00:27:26 INFO preço final abaixo do Pix: 134 linhas; igual ao Pix: 819
+$ uv run pytest
+============================= test session starts ==============================
+platform darwin -- Python 3.13.5, pytest-9.2.0, pluggy-1.7.0
+rootdir: /tmp/run/aula-10
+configfile: pyproject.toml
+testpaths: testes
+plugins: anyio-4.16.0
+collected 16 items
+
+testes/test_coletar.py .                                                 [  6%]
+testes/test_conferir.py ...                                              [ 25%]
+testes/test_ler.py ....                                                  [ 50%]
+testes/test_perfil.py ..                                                 [ 62%]
+testes/test_silver.py .....                                              [ 93%]
+testes/test_tabela.py .                                                  [100%]
+
+============================== 16 passed in 0.09s ==============================

@@ -1,0 +1,49 @@
+$ uv run python tabela.py
+00:27:33 INFO gravei 953 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
+$ uv run python validar.py
+00:27:36 INFO lidos 953 = válidos 953 + rejeitados 0
+00:27:36 INFO id_dia_unico       erro   0 falhas
+00:27:36 INFO titulo_obrigatorio erro   0 falhas
+00:27:36 INFO preco_faixa        erro   0 falhas
+00:27:36 INFO pix_menor          erro   0 falhas
+00:27:36 INFO desconto_confere   erro   0 falhas
+00:27:36 INFO oferta_menor       aviso  2 falhas
+00:27:36 INFO placa_com_modelo   aviso  74 falhas
+00:27:36 INFO preco_mediana      aviso  4 falhas
+00:27:36 INFO gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+$ uv run python historico.py
+00:27:36 INFO gold: 1 mudanças, 2 sumiços e 108 linhas de modelo por dia, em dados/gold
+┌────────────┬────────┬────────┬────────┬──────────────┐
+│    dia     │   id   │ antes  │ depois │ variacao_pct │
+│    date    │ int64  │ double │ double │    double    │
+├────────────┼────────┼────────┼────────┼──────────────┤
+│ 2026-11-15 │ 507266 │  73.36 │   79.9 │          8.9 │
+└────────────┴────────┴────────┴────────┴──────────────┘
+
+┌────────────┬────────┬──────────────┬───────────┐
+│    dia     │   id   │ ultimo_preco │ cobertura │
+│    date    │ int64  │    double    │  double   │
+├────────────┼────────┼──────────────┼───────────┤
+│ 2026-11-15 │ 690411 │        479.0 │     0.996 │
+│ 2026-11-15 │ 714565 │     15999.99 │     0.996 │
+└────────────┴────────┴──────────────┴───────────┘
+
+$ uv run pytest
+============================= test session starts ==============================
+platform darwin -- Python 3.13.5, pytest-9.2.0, pluggy-1.7.0
+rootdir: /tmp/run/aula-13
+configfile: pyproject.toml
+testpaths: testes
+plugins: anyio-4.16.0
+collected 27 items
+
+testes/test_coletar.py .                                                 [  3%]
+testes/test_conferir.py ...                                              [ 14%]
+testes/test_historico.py ...                                             [ 25%]
+testes/test_ler.py ....                                                  [ 40%]
+testes/test_perfil.py ..                                                 [ 48%]
+testes/test_silver.py .........                                          [ 81%]
+testes/test_tabela.py .                                                  [ 85%]
+testes/test_validar.py ....                                              [100%]
+
+============================== 27 passed in 0.15s ==============================

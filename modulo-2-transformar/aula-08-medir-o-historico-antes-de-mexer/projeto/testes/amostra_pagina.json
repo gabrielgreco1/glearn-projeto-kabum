@@ -1,0 +1,6 @@
+{"meta": {"total_items_count": 2, "total_pages_count": 1, "page": {"cursor": "", "number": 1, "size": 60, "is_current_page": true}},
+ "links": {"next": null},
+ "data": [
+  {"type": "product", "id": 111, "attributes": {"title": "Placa de vídeo inventada A", "price": 1000.0, "price_with_discount": 950.0, "old_price": 1100.0, "discount_percentage": 5, "available": true, "stock": 3, "manufacturer": {"id": 1, "name": "Fabricante A"}, "product_link": "placa-inventada-a", "offer": {"name": "Oferta inventada", "ends_at": 1795701540, "price": 900.0, "price_with_discount": 855.0}}},
+  {"type": "product", "id": 222, "attributes": {"title": "Placa de vídeo inventada B", "price": 500.0, "price_with_discount": 500.0, "old_price": 0.0, "discount_percentage": 0, "available": false, "stock": 0, "manufacturer": null, "product_link": "placa-inventada-b", "offer": null}}
+ ]}

@@ -1,0 +1,24 @@
+$ uv run python tabela.py
+00:27:20 INFO gravei 953 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
+$ uv run python perfil.py
+00:27:22 INFO 953 linhas e 17 colunas, de 2 dia(s): 2026-11-14, 2026-11-15
+00:27:22 INFO 478 produtos diferentes
+00:27:22 INFO vazios: {'oferta_price': 817, 'oferta_price_with_discount': 817, 'oferta_ends_at': 817, 'vendedor': 195}
+00:27:22 INFO colunas com um valor só: old_price, available
+00:27:22 INFO price_with_discount vai de 19.9 a 100000.0
+$ uv run pytest
+============================= test session starts ==============================
+platform darwin -- Python 3.13.5, pytest-9.2.0, pluggy-1.7.0
+rootdir: /tmp/run/aula-09
+configfile: pyproject.toml
+testpaths: testes
+plugins: anyio-4.16.0
+collected 11 items
+
+testes/test_coletar.py .                                                 [  9%]
+testes/test_conferir.py ...                                              [ 36%]
+testes/test_ler.py ....                                                  [ 72%]
+testes/test_perfil.py ..                                                 [ 90%]
+testes/test_tabela.py .                                                  [100%]
+
+============================== 11 passed in 0.08s ==============================

@@ -5,7 +5,8 @@ import sys
 from pathlib import Path
 
 CAMPOS = ["id", "title", "price", "price_with_discount", "old_price", "discount_percentage",
-          "oferta_price", "oferta_price_with_discount", "oferta_ends_at", "available", "stock", "fabricante", "product_link"]
+          "oferta_price", "oferta_price_with_discount", "oferta_ends_at", "available", "stock", "fabricante", "product_link",
+          "menu", "is_marketplace", "vendedor"]
 
 
 def ler_pagina(conteudo):
@@ -29,6 +30,9 @@ def ler_pagina(conteudo):
             "stock": atributos.get("stock"),
             "fabricante": (atributos.get("manufacturer") or {}).get("name"),
             "product_link": atributos.get("product_link"),
+            "menu": atributos.get("menu"),  # o caminho da categoria na loja, como "Hardware/Placa de vídeo (VGA)/Acessórios"
+            "is_marketplace": atributos.get("is_marketplace"),  # True quando quem vende é outra loja, pela Kabum
+            "vendedor": (atributos.get("marketplace") or {}).get("seller_name"),  # só os produtos de marketplace têm este bloco
         })
     return produtos
 
