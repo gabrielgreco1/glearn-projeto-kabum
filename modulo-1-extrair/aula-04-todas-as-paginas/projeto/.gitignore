@@ -1,6 +1,6 @@
 # O contato de verdade fica só no seu computador.
 .env
-# O que o programa baixa e gera. O bronze é refeito pela coleta; o histórico é seu, mas fica fora do repositório.
+# O que o programa baixa e gera. Fica fora do repositório, mas é o seu histórico: um dia apagado não volta.
 dados/
 # O ambiente que o uv cria e os restos do Python.
 .venv/

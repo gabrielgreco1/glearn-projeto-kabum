@@ -1,0 +1,54 @@
+# 2026-11-14 23:34:33 -03 · a prova da aula 7: um clone do repositório numa pasta temporária, só com o .env copiado.
+# O clone foi feito numa pasta temporária da máquina; na aula, o caminho aparece como /tmp/prova-kabum.
+$ git clone . /tmp/prova-kabum
+Cloning into '/tmp/prova-kabum'...
+done.
+$ cd /tmp/prova-kabum
+$ uv sync
+Using CPython 3.13.5
+Creating virtual environment at: .venv
+Resolved 15 packages in 0.53ms
+Prepared 13 packages in 121ms
+Installed 13 packages in 9ms
+ + anyio==4.16.0
+ + certifi==2026.10.23
+ + h11==0.16.0
+ + httpcore==1.0.9
+ + httpx==0.28.1
+ + idna==3.20
+ + iniconfig==2.3.1
+ + packaging==26.3
+ + pluggy==1.7.0
+ + pygments==2.21.0
+ + pytest==9.2.0
+ + python-dotenv==1.2.4
+ + typing-extensions==4.16.0
+$ uv run pytest -q
+# ainda sem .env: o test_coletar.py importa o coletar.py, e o pytest para na coleta dos testes
+INTERNALERROR> (várias linhas do traceback)
+INTERNALERROR> SystemExit: Falta KABUM_USER_AGENT no arquivo .env. Copie o .env.example para .env e preencha.
+no tests ran in 0.05s
+$ uv run python ler.py
+Ainda não há coleta em dados/bronze. Rode antes: uv run python coletar.py
+$ cp ../projeto-kabum/.env .  # na aula: cp .env /tmp/prova-kabum/, antes do cd
+$ uv run python rodar.py
+23:34:33 INFO etapa 1 de 3: as páginas da categoria
+23:34:37 INFO baixei a página 1: 843744 bytes em dados/bronze/2026-11-14/pagina-001.json
+23:34:41 INFO baixei a página 2: 959631 bytes em dados/bronze/2026-11-14/pagina-002.json
+23:34:45 INFO baixei a página 3: 908974 bytes em dados/bronze/2026-11-14/pagina-003.json
+23:34:49 INFO baixei a página 4: 988566 bytes em dados/bronze/2026-11-14/pagina-004.json
+23:34:49 INFO coleta do dia: 4 páginas em dados/bronze/2026-11-14
+23:34:49 INFO etapa 2 de 3: conferir a coleta
+23:34:49 INFO coleta: 478 produtos lidos, 477 diferentes; a API declara 478
+23:34:49 INFO repetidos entre páginas: 714565 (2 vezes)
+23:34:53 INFO a página da loja mostra 478 produtos
+23:34:53 INFO cobertura: 477 de 478, 99.8%; faltaram 1
+23:34:53 INFO etapa 3 de 3: o histórico de preços
+23:34:53 INFO gravei 477 linhas em dados/precos.csv, de 1 dia(s): 2026-11-14
+uv run python rodar.py  0.28s user 0.05s system 1% cpu 20.227 total
+$ cat dados/conferencia.csv
+dia,lidos,diferentes,repetidos,declarado,loja,cobertura
+2026-11-14,478,477,1,478,478,0.998
+$ uv run pytest -q
+........                                                                 [100%]
+8 passed in 0.03s
