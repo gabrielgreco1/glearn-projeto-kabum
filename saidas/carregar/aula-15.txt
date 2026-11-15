@@ -1,0 +1,77 @@
+$ uv run python banco.py
+O banco não respondeu. Ele está de pé? Rode: docker compose up -d --wait
+connection failed: connection to server at "127.0.0.1", port 5434 failed: could not receive data from server: Connection refused
+Multiple connection attempts failed. All failures were:
+- host: 'localhost', port: '5434', hostaddr: '::1': connection failed: connection to server at "::1", port 5434 failed: could not receive data from server: Connection refused
+- host: 'localhost', port: '5434', hostaddr: '127.0.0.1': connection failed: connection to server at "127.0.0.1", port 5434 failed: could not receive data from server: Connection refused
+$ docker compose up -d --wait
+ Network projeto-kabum_default Creating 
+ Volume projeto-kabum_banco Creating 
+ Volume projeto-kabum_banco Created 
+ Network projeto-kabum_default Created 
+ Container projeto-kabum-banco-1 Creating 
+ Container projeto-kabum-banco-1 Created 
+ Container projeto-kabum-banco-1 Starting 
+ Container projeto-kabum-banco-1 Started 
+ Container projeto-kabum-banco-1 Waiting 
+ Container projeto-kabum-banco-1 Healthy 
+$ docker compose ps
+NAME                    IMAGE         COMMAND                  SERVICE   CREATED         STATUS                   PORTS
+projeto-kabum-banco-1   postgres:18   "docker-entrypoint.s…"   banco     3 seconds ago   Up 2 seconds (healthy)   0.0.0.0:5434->5432/tcp, [::]:5434->5432/tcp
+$ uv run python banco.py
+05:23:05 INFO a tabela precos tem 20 colunas
+05:23:05 INFO   dia             date
+05:23:05 INFO   id              bigint
+05:23:05 INFO   titulo          text
+05:23:05 INFO   e_placa         boolean
+05:23:05 INFO   chip            text
+05:23:05 INFO   modelo          text
+05:23:05 INFO   marca           text
+05:23:05 INFO   fabricante      text
+05:23:05 INFO   preco_cartao    integer
+05:23:05 INFO   preco_pix       integer
+05:23:05 INFO   desconto_pix    smallint
+05:23:05 INFO   preco_oferta    integer
+05:23:05 INFO   oferta_termina  timestamp with time zone
+05:23:05 INFO   em_oferta       boolean
+05:23:05 INFO   preco_final     integer
+05:23:05 INFO   estoque         integer
+05:23:05 INFO   is_marketplace  boolean
+05:23:05 INFO   vendedor        text
+05:23:05 INFO   link            text
+05:23:05 INFO   avisos          text
+$ uv run python banco.py
+05:23:05 INFO a tabela precos tem 20 colunas
+$ docker compose exec banco psql -U postgres -c '\d precos'
+                           Table "public.precos"
+     Column     |           Type           | Collation | Nullable | Default 
+----------------+--------------------------+-----------+----------+---------
+ dia            | date                     |           | not null | 
+ id             | bigint                   |           | not null | 
+ titulo         | text                     |           | not null | 
+ e_placa        | boolean                  |           | not null | 
+ chip           | text                     |           |          | 
+ modelo         | text                     |           |          | 
+ marca          | text                     |           |          | 
+ fabricante     | text                     |           |          | 
+ preco_cartao   | integer                  |           | not null | 
+ preco_pix      | integer                  |           | not null | 
+ desconto_pix   | smallint                 |           | not null | 
+ preco_oferta   | integer                  |           |          | 
+ oferta_termina | timestamp with time zone |           |          | 
+ em_oferta      | boolean                  |           | not null | 
+ preco_final    | integer                  |           | not null | 
+ estoque        | integer                  |           |          | 
+ is_marketplace | boolean                  |           | not null | 
+ vendedor       | text                     |           |          | 
+ link           | text                     |           | not null | 
+ avisos         | text                     |           |          | 
+Indexes:
+    "precos_pkey" PRIMARY KEY, btree (dia, id)
+Check constraints:
+    "precos_check" CHECK (preco_pix <= preco_cartao)
+    "precos_preco_cartao_check" CHECK (preco_cartao >= 100 AND preco_cartao <= 50000000)
+    "precos_preco_final_check" CHECK (preco_final > 0)
+
+$ uv run pytest
+============================== 32 passed in 3.01s ==============================

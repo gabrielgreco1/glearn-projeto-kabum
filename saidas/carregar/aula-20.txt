@@ -1,0 +1,30 @@
+$ uv run python rodar.py
+05:23:16 INFO etapa 1 de 5: as páginas da categoria
+05:23:16 INFO já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+05:23:16 INFO já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+05:23:16 INFO já tenho dados/bronze/2026-11-15/pagina-003.json, não peço de novo
+05:23:16 INFO já tenho dados/bronze/2026-11-15/pagina-004.json, não peço de novo
+05:23:16 INFO coleta do dia: 4 páginas em dados/bronze/2026-11-15
+05:23:16 INFO etapa 2 de 5: conferir a coleta
+05:23:16 INFO coleta: 478 produtos lidos, 476 diferentes; a API declara 478
+05:23:16 INFO repetidos entre páginas: 1078274 (2 vezes), 1013926 (2 vezes)
+05:23:16 INFO já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+05:23:16 INFO a página da loja mostra 478 produtos
+05:23:16 INFO cobertura: 476 de 478, 99.6%; faltaram 2
+05:23:16 INFO etapa 3 de 5: o histórico de preços
+05:23:16 INFO gravei 953 linhas em dados/precos.csv, de 2 dia(s): 2026-11-14, 2026-11-15
+05:23:16 INFO etapa 4 de 5: transformar
+05:23:16 INFO transformar 1 de 3: montar e conferir a silver
+05:23:16 INFO lidos 953 = válidos 953 + rejeitados 0
+05:23:16 INFO transformar 2 de 3: o relatório de qualidade
+05:23:16 INFO relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+05:23:16 INFO gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+05:23:16 INFO transformar 3 de 3: a gold
+05:23:16 INFO gold: 1 mudanças, 2 sumiços e 108 linhas na tabela dos modelos, em dados/gold
+05:23:16 INFO etapa 5 de 5: carregar no banco
+05:23:16 INFO coletas: 2 dias conferidos, do dados/conferencia.csv
+05:23:16 INFO dias na silver: 2; a carregar: 0 novos e 0 que mudaram
+
+
+$ uv run pytest
+============================== 40 passed in 0.19s ==============================

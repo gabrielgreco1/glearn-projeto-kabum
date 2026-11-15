@@ -1,0 +1,48 @@
+$ uv run python carregar.py
+05:23:15 INFO coletas: 2 dias conferidos, do dados/conferencia.csv
+05:23:15 INFO dias na silver: 2; a carregar: 0 novos e 0 que mudaram
+$ docker compose exec banco psql -U postgres -c "SELECT * FROM coletas ORDER BY dia"
+    dia     | diferentes | declarado | loja | cobertura 
+------------+------------+-----------+------+-----------
+ 2026-11-14 |        477 |       478 |  478 |     0.998
+ 2026-11-15 |        476 |       478 |  478 |     0.996
+(2 rows)
+
+$ docker compose exec banco psql -U postgres -c "SELECT count(*) AS produtos, count(*) FILTER (WHERE ultimo_dia = '2026-11-15') AS no_ultimo_dia FROM produtos"
+ produtos | no_ultimo_dia 
+----------+---------------
+      478 |           476
+(1 row)
+
+$ docker compose exec banco psql -U postgres -c "SELECT * FROM sumidos"
+   id   |                                                                titulo                                                                | ultimo_dia | ultimo_preco | faltou_em  | cobertura 
+--------+--------------------------------------------------------------------------------------------------------------------------------------+------------+--------------+------------+-----------
+ 690411 | Placa De Vídeo Nvidia Geforce Gt740, GDDR5 4g, Clock 5.000mhz, PCi Express 3.0, Saídas De Vídeo HDMI Vga E Dvi, Resolução 2560x1600p | 2026-11-14 |        47900 | 2026-11-15 |     0.996
+ 714565 | Placa de Vídeo Gigabyte RTX 5070 Ti GAMING OC 16G NVIDIA GeForce, 16GB GDDR7, 256bits, RGB, DLSS, Ray Tracing - 9VN507TGO-00-G10     | 2026-11-14 |      1599999 | 2026-11-15 |     0.996
+(2 rows)
+
+$ docker compose exec banco psql -U postgres -c "SELECT id, titulo, primeiro_dia, ultimo_dia, ultimo_preco FROM produtos WHERE id IN (SELECT id FROM sumidos)"
+   id   |                                                                titulo                                                                | primeiro_dia | ultimo_dia | ultimo_preco 
+--------+--------------------------------------------------------------------------------------------------------------------------------------+--------------+------------+--------------
+ 690411 | Placa De Vídeo Nvidia Geforce Gt740, GDDR5 4g, Clock 5.000mhz, PCi Express 3.0, Saídas De Vídeo HDMI Vga E Dvi, Resolução 2560x1600p | 2026-11-14   | 2026-11-14 |        47900
+ 714565 | Placa de Vídeo Gigabyte RTX 5070 Ti GAMING OC 16G NVIDIA GeForce, 16GB GDDR7, 256bits, RGB, DLSS, Ray Tracing - 9VN507TGO-00-G10     | 2026-11-14   | 2026-11-14 |      1599999
+(2 rows)
+
+$ docker compose exec banco psql -U postgres -c "SELECT p.dia, p.id, p.preco_final, p.em_oferta FROM precos p WHERE p.id IN (SELECT id FROM precos GROUP BY id HAVING count(DISTINCT preco_final) > 1) ORDER BY p.id, p.dia"
+    dia     |   id   | preco_final | em_oferta 
+------------+--------+-------------+-----------
+ 2026-11-14 | 507266 |        7336 | f
+ 2026-11-15 | 507266 |        7990 | f
+(2 rows)
+
+$ docker compose exec banco psql -U postgres -c "SELECT count(*) AS linhas, pg_size_pretty(sum(pg_column_size(p.*))) AS dados, pg_size_pretty(pg_total_relation_size('precos')) AS no_disco FROM precos p"
+ linhas | dados  | no_disco 
+--------+--------+----------
+    953 | 258 kB | 2152 kB
+(1 row)
+
+$ uv run python carregar.py
+05:23:15 INFO coletas: 2 dias conferidos, do dados/conferencia.csv
+05:23:15 INFO dias na silver: 2; a carregar: 0 novos e 0 que mudaram
+$ uv run pytest
+============================== 40 passed in 0.19s ==============================

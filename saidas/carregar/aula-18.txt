@@ -1,0 +1,103 @@
+## refazer um dia que passou, com o código da aula 17
+$ uv run python carregar.py 2026-11-14
+05:23:12 INFO dias pedidos: 2026-11-14
+05:23:12 INFO 2026-11-14: apaguei 477 linhas e gravei 477; conferido: 477 linhas e soma 217122953
+$ docker compose exec banco psql -U postgres -c "SELECT dia, count(*), sum(preco_final) FROM precos GROUP BY dia ORDER BY dia"
+    dia     | count |    sum    
+------------+-------+-----------
+ 2026-11-14 |   477 | 217122953
+ 2026-11-15 |   476 | 216105707
+(2 rows)
+
+## o que a marca não vê: a linha Power do fabricantes.csv
+$ uv run python transformar.py
+05:23:12 INFO lidos 953 = válidos 953 + rejeitados 0
+05:23:12 WARNING fabricantes fora do fabricantes.csv: Power. Acrescente uma linha para cada um.
+$ uv run python carregar.py 2026-11-14 2026-11-15
+05:23:12 INFO dias pedidos: 2026-11-14, 2026-11-15
+05:23:12 INFO 2026-11-14: apaguei 477 linhas e gravei 477; conferido: 477 linhas e soma 217122953
+05:23:12 INFO 2026-11-15: apaguei 476 linhas e gravei 476; conferido: 476 linhas e soma 216105707
+$ docker compose exec banco psql -U postgres -c "SELECT dia, id, fabricante, marca FROM precos WHERE id = 991784 ORDER BY dia"
+    dia     |   id   | fabricante | marca 
+------------+--------+------------+-------
+ 2026-11-14 | 991784 | Power      | 
+ 2026-11-15 | 991784 | Power      | 
+(2 rows)
+
+$ uv run python transformar.py
+05:23:13 INFO lidos 953 = válidos 953 + rejeitados 0
+$ uv run python carregar.py
+05:23:13 INFO marca d'água: 2026-11-15; dias a carregar: nenhum
+$ docker compose exec banco psql -U postgres -c "SELECT dia, id, fabricante, marca FROM precos WHERE id = 991784 ORDER BY dia"
+    dia     |   id   | fabricante | marca 
+------------+--------+------------+-------
+ 2026-11-14 | 991784 | Power      | 
+ 2026-11-15 | 991784 | Power      | 
+(2 rows)
+
+## com o hash do dia
+$ uv run python carregar.py
+05:23:13 INFO dias na silver: 2; a carregar: 0 novos e 2 que mudaram
+05:23:13 INFO 2026-11-14: apaguei 477 linhas e gravei 477; conferido: 477 linhas e soma 217122953
+05:23:13 INFO 2026-11-15: apaguei 476 linhas e gravei 476; conferido: 476 linhas e soma 216105707
+$ docker compose exec banco psql -U postgres -c "SELECT dia, id, fabricante, marca FROM precos WHERE id = 991784 ORDER BY dia"
+    dia     |   id   | fabricante |   marca    
+------------+--------+------------+------------
+ 2026-11-14 | 991784 | Power      | PowerColor
+ 2026-11-15 | 991784 | Power      | PowerColor
+(2 rows)
+
+$ uv run python carregar.py
+05:23:13 INFO dias na silver: 2; a carregar: 0 novos e 0 que mudaram
+## de novo sem a linha Power, e com ela
+$ uv run python transformar.py
+05:23:13 WARNING fabricantes fora do fabricantes.csv: Power. Acrescente uma linha para cada um.
+$ uv run python carregar.py
+05:23:13 INFO dias na silver: 2; a carregar: 0 novos e 2 que mudaram
+05:23:14 INFO 2026-11-14: apaguei 477 linhas e gravei 477; conferido: 477 linhas e soma 217122953
+05:23:14 INFO 2026-11-15: apaguei 476 linhas e gravei 476; conferido: 476 linhas e soma 216105707
+$ uv run python transformar.py
+05:23:14 INFO lidos 953 = válidos 953 + rejeitados 0
+$ uv run python carregar.py
+05:23:14 INFO dias na silver: 2; a carregar: 0 novos e 2 que mudaram
+05:23:14 INFO 2026-11-14: apaguei 477 linhas e gravei 477; conferido: 477 linhas e soma 217122953
+05:23:14 INFO 2026-11-15: apaguei 476 linhas e gravei 476; conferido: 476 linhas e soma 216105707
+$ docker compose exec banco psql -U postgres -c "SELECT dia, id, fabricante, marca FROM precos WHERE id = 991784 ORDER BY dia"
+    dia     |   id   | fabricante |   marca    
+------------+--------+------------+------------
+ 2026-11-14 | 991784 | Power      | PowerColor
+ 2026-11-15 | 991784 | Power      | PowerColor
+(2 rows)
+
+## refazer o dia 14 pedido pelo nome, e a rodada seguinte
+$ uv run python carregar.py 2026-11-14
+05:23:14 INFO dias pedidos: 2026-11-14
+05:23:14 INFO 2026-11-14: apaguei 477 linhas e gravei 477; conferido: 477 linhas e soma 217122953
+$ uv run python carregar.py
+05:23:14 INFO dias na silver: 2; a carregar: 0 novos e 0 que mudaram
+$ docker compose exec banco psql -U postgres -c "SELECT id, dia, apagadas, inseridas, soma_final, left(hash_dia, 12) AS hash FROM cargas ORDER BY id"
+ id |    dia     | apagadas | inseridas | soma_final |     hash     
+----+------------+----------+-----------+------------+--------------
+  1 | 2026-11-14 |      477 |       477 |  217122953 | 
+  2 | 2026-11-15 |        0 |       476 |  216105707 | 
+  3 | 2026-11-14 |      477 |       477 |  217122953 | 
+  4 | 2026-11-14 |      477 |       477 |  217122953 | 
+  5 | 2026-11-15 |      476 |       476 |  216105707 | 
+  6 | 2026-11-14 |      477 |       477 |  217122953 | 11d15d98e412
+  7 | 2026-11-15 |      476 |       476 |  216105707 | dddb04602229
+  8 | 2026-11-14 |      477 |       477 |  217122953 | 1ee3e3326a57
+  9 | 2026-11-15 |      476 |       476 |  216105707 | 9ea10d88855a
+ 10 | 2026-11-14 |      477 |       477 |  217122953 | 11d15d98e412
+ 11 | 2026-11-15 |      476 |       476 |  216105707 | dddb04602229
+ 12 | 2026-11-14 |      477 |       477 |  217122953 | 11d15d98e412
+(12 rows)
+
+$ docker compose exec banco psql -U postgres -c "SELECT dia, count(*), sum(preco_final) FROM precos GROUP BY dia ORDER BY dia"
+    dia     | count |    sum    
+------------+-------+-----------
+ 2026-11-14 |   477 | 217122953
+ 2026-11-15 |   476 | 216105707
+(2 rows)
+
+$ uv run pytest
+============================== 39 passed in 0.19s ==============================

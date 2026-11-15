@@ -1,6 +1,6 @@
 # Projeto Kabum (G learn)
 
-Repositório de referência do Projeto Kabum do curso G learn: um programa em Python que guarda, uma vez por dia, o preço de todas as placas de vídeo da Kabum, pela API de catálogo que a própria página da loja usa, e mede quanto da categoria cada coleta trouxe. Na segunda etapa, o mesmo programa limpa, confere e resume esse histórico: preços em centavos, regras escritas, um relatório por rodada e as mudanças de preço de um dia para o outro.
+Repositório de referência do Projeto Kabum do curso G learn: um programa em Python que guarda, uma vez por dia, o preço de todas as placas de vídeo da Kabum, pela API de catálogo que a própria página da loja usa, e mede quanto da categoria cada coleta trouxe. Na segunda etapa, o mesmo programa limpa, confere e resume esse histórico: preços em centavos, regras escritas, um relatório por rodada e as mudanças de preço de um dia para o outro. Na terceira, ele guarda o histórico num Postgres que roda no Docker, um dia por vez, só com os dias novos e os que mudaram.
 
 ## Como usar
 
@@ -30,7 +30,18 @@ Você faz o projeto na SUA pasta, `projeto-kabum/`, no SEU repositório, seguind
 | 13 | [O que mudou de um dia para o outro](modulo-2-transformar/aula-13-o-que-mudou-de-um-dia-para-o-outro) | `uv run python historico.py` |
 | 14 | [Extrair e transformar num comando só](modulo-2-transformar/aula-14-extrair-e-transformar-num-comando) | `uv run python rodar.py` e `uv run pytest` |
 
-O README de cada pasta diz a ordem dos comandos. As pastas são cumulativas: a de cada aula tem tudo o que veio antes. O projeto pronto está em [final/](final), igual à aula 14.
+### Etapa Carregar
+
+| Aula | Pasta | O que roda |
+|---|---|---|
+| 15 | [Um banco para o histórico](modulo-3-carregar/aula-15-um-banco-para-o-historico) | `docker compose up -d --wait` e `uv run python banco.py` |
+| 16 | [Um dia de cada vez](modulo-3-carregar/aula-16-um-dia-de-cada-vez) | `uv run python carregar.py AAAA-MM-DD` |
+| 17 | [A marca d'água: só os dias novos](modulo-3-carregar/aula-17-a-marca-dagua) | `uv run python carregar.py` |
+| 18 | [Um dia que passou](modulo-3-carregar/aula-18-um-dia-que-passou) | `uv run python carregar.py` e `uv run python carregar.py AAAA-MM-DD` |
+| 19 | [O que sumiu e o último preço](modulo-3-carregar/aula-19-o-que-sumiu-e-o-ultimo-preco) | `uv run python carregar.py` e as views no `psql` |
+| 20 | [Extrair, transformar e carregar num comando](modulo-3-carregar/aula-20-extrair-transformar-e-carregar) | `uv run python rodar.py` e `uv run pytest` |
+
+O README de cada pasta diz a ordem dos comandos. As pastas são cumulativas: a de cada aula tem tudo o que veio antes. O projeto pronto está em [final/](final), igual à aula 20. A partir da aula 15, o projeto precisa do Docker: o Postgres roda num container, na porta 5434.
 
 ## O que foi rodado
 
@@ -49,6 +60,16 @@ Em 15 de novembro de 2026, a etapa Transformar, com Polars 2.1.0 e DuckDB 2.0.0,
 - `uv run pytest`: 32 testes, sem internet.
 - A prova da aula 14 num clone limpo da pasta do aluno, só com o `.env` copiado, às 1h07 (`saidas/transformar/prova-copia-limpa.txt`): 4 pedidos à API e 1 à loja, 479 produtos, cobertura de 100%, a transformação de um dia só (479 linhas, 0 mudanças, 0 sumiços), em 26 segundos; 32 testes passando. Uma primeira prova, às 0h51, antes da correção do portão para olhar só o dia novo (`prova-copia-limpa-0h51.txt`), mostrou os dois produtos que tinham sumido às 0h07 de volta, cada um em duas páginas.
 - Cada pasta `aula-08` a `aula-14` foi rodada numa cópia limpa, com o mesmo bronze (`saidas/transformar/aula-NN.txt`).
+
+Em 15 de novembro de 2026, a etapa Carregar, com Docker 29.5.2, Postgres 18.7 (imagem `postgres:18`) e psycopg 3.3.9, sobre o mesmo bronze de 14 e 15 de novembro (`saidas/carregar/`):
+
+- As seis aulas rodadas na ordem, numa pasta de aluno nova e com o banco zerado, às 5h23 (`aula-15.txt` a `aula-20.txt`): 953 linhas em 2 dias (477 e 476), cada dia conferido pela contagem e pela soma dos preços finais (217.122.953 e 216.105.707 centavos). Carregar o dia 14 de novo apagou 477 linhas e gravou 477, e o banco ficou igual.
+- A carga caiu no meio de propósito, com uma regra posta só no dia 15: o dia 14 ficou confirmado na tabela `cargas`, e a rodada seguinte começou no dia 15 (`aula-17.txt`).
+- Sem a linha `Power` do `fabricantes.csv` e com ela de volta, a marca d'água disse que não havia nada a carregar, e o banco ficou com a marca vazia no produto 991784; o hash de cada dia achou os dois dias e recarregou (`aula-18.txt`).
+- `uv run pytest`: 40 testes no fim da aula 20, sem internet e sem banco.
+- A prova da aula 20 num clone da pasta do aluno, só com o `.env` copiado, contra a loja ao vivo, às 5h23 (`prova-copia-limpa.txt`): 5 pedidos à API e 1 à loja (a categoria tinha 481 produtos, 5 páginas de 120), cobertura de 100%, 481 linhas carregadas num banco novo; a segunda rodada sem pedido e sem carga.
+- O `final/` num `git clone` deste repositório, numa pasta temporária, contra a loja ao vivo, às 5h44 (`prova-final-clone-do-repositorio.txt`): 5 páginas, 481 produtos lidos e 458 diferentes (cobertura de 95,2%: a paginação da aula 5 de novo), 458 linhas carregadas; a segunda rodada sem pedido e sem carga; o dia pedido pelo nome apagou 458 e gravou 458, com a mesma soma; 40 testes.
+- Cada pasta `aula-15` a `aula-20` rodada numa cópia limpa, com o mesmo bronze e o banco zerado (`limpas.txt`).
 
 ## Regras do projeto
 
