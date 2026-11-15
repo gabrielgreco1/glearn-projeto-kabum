@@ -1,0 +1,55 @@
+$ uv run python fluxo.py agendar
+Your flow 'projeto-kabum' is being served and polling for scheduled runs!
+
+To trigger a run for this flow, use the following command:
+
+        $ prefect deployment run 'projeto-kabum/duas-vezes-por-dia'
+
+You can also run your flow via the Prefect UI: http://127.0.0.1:4200/deployments/deployment/4b4b9722-3a71-46c4-b066-238d33bc21cf
+
+10:10:29.112 | INFO    | Flow run 'cordial-emu' - Beginning flow run 'cordial-emu' for flow 'projeto-kabum'
+10:10:29.114 | INFO    | Flow run 'cordial-emu' - View at http://127.0.0.1:4200/runs/flow-run/a755e65a-1b9b-41e8-868a-ef62140595db
+10:10:29.194 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-001.json, não peço de novo
+10:10:29.219 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-002.json, não peço de novo
+10:10:29.222 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-003.json, não peço de novo
+10:10:29.224 | INFO    | kabum - já tenho dados/bronze/2026-11-15/pagina-004.json, não peço de novo
+10:10:29.226 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-15
+10:10:29.227 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+10:10:29.228 | INFO    | Task run 'coletar-c4c' - Finished in state Completed()
+10:10:29.239 | INFO    | kabum - coleta: 479 produtos lidos, 475 diferentes; a API declara 479
+10:10:29.240 | INFO    | kabum - repetidos entre páginas: 922131 (2 vezes), 1062236 (2 vezes), 543498 (2 vezes), 717772 (2 vezes)
+10:10:29.240 | INFO    | kabum - já tenho dados/bronze/2026-11-15/loja.html, não peço de novo
+10:10:29.246 | INFO    | kabum - a página da loja mostra 479 produtos
+10:10:29.246 | INFO    | kabum - cobertura: 475 de 479, 99.2%; faltaram 4
+10:10:29.247 | INFO    | Task run 'conferir-0d4' - Finished in state Completed()
+10:10:29.259 | INFO    | kabum - gravei 475 linhas em dados/precos.csv, de 1 dia(s): 2026-11-15
+10:10:29.260 | INFO    | Task run 'historico-66e' - Finished in state Completed()
+10:10:29.261 | INFO    | kabum - transformar 1 de 3: montar e conferir a silver
+10:10:29.269 | INFO    | kabum - lidos 475 = válidos 475 + rejeitados 0
+10:10:29.271 | INFO    | kabum - transformar 2 de 3: o relatório de qualidade
+10:10:29.272 | INFO    | kabum - relatório de qualidade em dados/qualidade/2026-11-15.json: nenhuma regra de erro acima de 2%
+10:10:29.274 | INFO    | kabum - gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+10:10:29.274 | INFO    | kabum - transformar 3 de 3: a gold
+10:10:29.296 | INFO    | Task run 'transformar-dbc' - ┌──────┬───────┬────────┬────────┬──────────────┐
+│ dia  │  id   │ antes  │ depois │ variacao_pct │
+│ date │ int64 │ double │ double │    double    │
+└──────┴───────┴────────┴────────┴──────────────┘
+                     0 rows
+10:10:29.297 | INFO    | Task run 'transformar-dbc' - ┌──────┬───────┬──────────────┬───────────┐
+│ dia  │  id   │ ultimo_preco │ cobertura │
+│ date │ int64 │    double    │  double   │
+└──────┴───────┴──────────────┴───────────┘
+                  0 rows
+10:10:29.298 | INFO    | kabum - gold: 0 mudanças, 0 sumiços e 54 linhas na tabela dos modelos, em dados/gold
+10:10:29.298 | INFO    | Task run 'transformar-dbc' - Finished in state Completed()
+10:10:29.311 | INFO    | kabum - coletas: 1 dias conferidos, do dados/conferencia.csv
+10:10:29.311 | INFO    | kabum - dias na silver: 1; a carregar: 0 novos e 0 que mudaram
+10:10:29.312 | INFO    | Task run 'carregar-055' - Finished in state Completed()
+10:10:29.319 | INFO    | kabum - vigia: 1 dias no banco, o último 2026-11-15; 0 avisos
+10:10:29.320 | INFO    | Task run 'vigiar-3f1' - Finished in state Completed()
+10:10:29.338 | INFO    | Flow run 'cordial-emu' - coleta de 2026-11-15 no banco
+10:10:29.501 | INFO    | Flow run 'cordial-emu' - Finished in state Completed()
+10:10:48.065 | INFO    | prefect.runner - Pausing all deployments...
+10:10:48.085 | INFO    | prefect.runner - All deployments have been paused!
+10:10:48.087 | INFO    | prefect.flows - Received KeyboardInterrupt, shutting down...
+^C

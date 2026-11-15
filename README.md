@@ -91,6 +91,7 @@ Em 15 de novembro de 2026, a etapa Orquestrar, com Prefect 3.9.3 (servidor local
 - A prova da aula 26 num clone da pasta do aluno, com Ctrl+C depois da página 2 e uma execução pedida ao agendamento (`a6-prova-*.txt`): 99,0% de cobertura, 475 linhas, a rodada do agendamento sem pedido e sem carga.
 - Uma vaga do limite presa: com o servidor do Prefect morto no meio de uma execução e ligado de novo, `active_slots` ficou em 1 por mais de 7 minutos (`vaga-presa-servidor-reiniciado.txt`); o runbook diz como soltar.
 - Cada pasta `aula-21` a `aula-26` rodada numa cópia limpa, com banco novo e a loja ao vivo, duas vezes (`limpas.txt`).
+- O `final/` num `git clone` deste repositório, numa pasta temporária, contra a loja ao vivo, às 10h09 (`prova-final-clone-do-repositorio.txt`): 47 testes; Ctrl+C depois da página 2 (Crashed e aviso); a retomada pediu só as páginas 3 e 4, cobertura de 99,2%, 475 linhas no banco vazio; uma execução pedida ao agendamento não pediu nada e não carregou nada, com as próximas marcadas para 21:00 e 09:00 de UTC.
 
 ## Regras do projeto
 
