@@ -1,6 +1,8 @@
 """O projeto Kabum como um flow do Prefect: as cinco etapas do rodar.py, uma task cada, na ordem, sobre a pasta do
 dia. A task que pede à Kabum é tentada de novo quando a rede falha; uma recusa da loja para sem nova tentativa.
 Se a execução termina mal, fica um aviso em avisos.log. Se termina bem, mas a vigia vê algo estranho no banco, também.
+Uma execução por vez: a segunda espera a vaga do limite projeto-kabum, criado uma vez no servidor do Prefect com
+uv run prefect gcl create projeto-kabum --limit 1
 
 Uso: uv run python fluxo.py            roda uma vez, agora
      uv run python fluxo.py agendar    fica ligado e roda todo dia às 6h e às 18h (Ctrl+C para parar)
@@ -10,6 +12,7 @@ import sys
 from datetime import date, datetime
 
 from prefect import flow, task
+from prefect.concurrency.sync import concurrency
 from prefect.schedules import Cron
 
 import carregar as carga
@@ -61,13 +64,16 @@ def vigiar():
 
 @flow(log_prints=True, on_failure=[avisar], on_crashed=[avisar])
 def projeto_kabum():
-    pasta = pasta_do_dia(date.today())  # o dia é decidido uma vez: coletar e conferir olham a mesma pasta
-    coletar(pasta)
-    conferir(pasta)
-    historico()
-    transformar()
-    carregar()
-    vigiar()
+    # Uma execução por vez, da coleta à vigia: duas ao mesmo tempo pediriam as mesmas páginas duas vezes à loja e
+    # escreveriam os mesmos arquivos. strict=True: sem o limite criado no servidor, para aqui, em vez de seguir sem ele.
+    with concurrency("projeto-kabum", occupy=1, timeout_seconds=900, strict=True):
+        pasta = pasta_do_dia(date.today())  # o dia é decidido uma vez: coletar e conferir olham a mesma pasta
+        coletar(pasta)
+        conferir(pasta)
+        historico()
+        transformar()
+        carregar()
+        vigiar()
     print(f"coleta de {pasta.name} no banco")
 
 
