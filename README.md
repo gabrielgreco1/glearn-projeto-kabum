@@ -1,7 +1,7 @@
 # Projeto Kabum
 
 Objetivo: guardar, um dia depois do outro, o preço de todas as placas de vídeo da Kabum, para ter o histórico de cada produto.
-Plano: a página da categoria busca os produtos numa API de catálogo. O programa pede essa mesma API, página por página, com pausa, e guarda cada resposta como veio. Se o site recusar, o programa para. Depois, a etapa Transformar limpa, confere e resume o histórico, sem pedir nada ao site, e a etapa Carregar guarda esse histórico num Postgres que roda no Docker, um dia por vez.
+Plano: a página da categoria busca os produtos numa API de catálogo. O programa pede essa mesma API, página por página, com pausa, e guarda cada resposta como veio. Se o site recusar, o programa para. Depois, a etapa Transformar limpa, confere e resume o histórico, sem pedir nada ao site, e a etapa Carregar guarda esse histórico num Postgres que roda no Docker, um dia por vez. A etapa Orquestrar põe tudo num flow do [Prefect](https://docs.prefect.io/), que roda sozinho às 6h e às 18h, só publica um dia inteiro e avisa quando algo sai do normal.
 
 ## Como rodar
 
@@ -16,11 +16,20 @@ Abra o `.env` e troque o contato pelo seu. Depois:
 ```
 docker compose up -d --wait
 uv sync
-uv run python rodar.py
 uv run pytest
 ```
 
-Rode uma vez por dia. A rodada faz um pedido à API para cada 120 produtos (4 ou 5 em novembro de 2026) e 1 à página da loja, com 3 segundos de pausa entre eles, e leva cerca de 20 segundos. Rodar de novo no mesmo dia não pede nada de novo: as páginas da API e a página da loja já estão na pasta do dia. A etapa Transformar roda em seguida, em menos de um segundo, sobre todos os dias guardados, e a etapa Carregar leva ao banco só os dias novos e os que mudaram.
+Os testes não precisam do banco, do `.env` nem da pasta `dados/`: é assim que eles rodam no GitHub, a cada push (`.github/workflows/testes.yml`).
+
+O projeto roda de três jeitos. Os dois primeiros precisam do servidor do Prefect ligado, num terminal só dele: `uv run prefect server start`. Uma vez na sua máquina: `uv run prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api` e `uv run prefect gcl create projeto-kabum --limit 1`, o limite de uma execução por vez. O painel fica em http://127.0.0.1:4200.
+
+| Comando | O que faz |
+|---|---|
+| `uv run python fluxo.py agendar` | fica ligado e roda o projeto todo dia às 6h e às 18h, no horário de Brasília. Para rodar agora, noutro terminal: `uv run prefect deployment run projeto-kabum/duas-vezes-por-dia` |
+| `uv run python fluxo.py` | roda uma vez, agora, como um flow do Prefect |
+| `uv run python rodar.py` | roda as cinco etapas sem o Prefect, sem aviso, sem vigia e sem o limite |
+
+Uma rodada por dia basta; a das 18h é a segunda chance. A rodada faz um pedido à API para cada 120 produtos (4 ou 5 em novembro de 2026) e 1 à página da loja, com 3 segundos de pausa entre eles, e leva cerca de 20 segundos. Rodar de novo no mesmo dia não pede nada de novo: as páginas da API e a página da loja já estão na pasta do dia. A etapa Transformar roda em seguida, em menos de um segundo, sobre todos os dias guardados, e a etapa Carregar leva ao banco só os dias novos e os que mudaram.
 
 O banco fica de pé até você desligar o computador ou rodar `docker compose stop`. Se o `rodar.py` disser que o banco não respondeu, suba de novo com `docker compose up -d --wait`: os dados ficam no volume do Docker.
 
@@ -41,8 +50,10 @@ No Windows, os comandos são os mesmos no PowerShell.
 | Transformar | `historico.py` | A gold, em SQL: mudanças de preço, produtos que sumiram e o menor preço de cada modelo por dia |
 | Carregar | `banco.py` | Conecta ao Postgres do `compose.yaml` e cria as tabelas do `schema.sql` que ainda não existem |
 | Carregar | `carregar.py` | Leva ao banco os dias novos e os que mudaram, um dia por transação, e confere cada dia contra a silver |
+| Orquestrar | `fluxo.py` | As etapas como tasks de um flow do Prefect, com novas tentativas na coleta, aviso de falha, uma execução por vez e o agendamento |
+| Orquestrar | `vigiar.py` | Depois da carga, olha no banco a cobertura, os sumiços e os dias que faltam, e devolve os avisos |
 
-O `rodar.py` chama as três etapas da extração, depois o `transformar.py`, que chama as quatro da transformação, e por último o `carregar.py`.
+O `rodar.py` chama as três etapas da extração, depois o `transformar.py`, que chama as quatro da transformação, e por último o `carregar.py`. O `fluxo.py` faz o mesmo, uma task por etapa, e acrescenta a vigia.
 
 ## O que sai
 
@@ -111,6 +122,25 @@ A tabela `fabricantes.csv`, na raiz, troca o fabricante como a loja escreve pela
 - Com uma marca d'água (o último dia carregado), a carga seguinte só olhava os dias depois dela. Quando a linha `Power` do `fabricantes.csv` mudou a marca do produto 991784 nos dois dias, a marca d'água disse que não havia nada a carregar, e o banco ficou com a marca vazia. O hash de cada dia vê a mudança e recarrega os dois.
 - 478 produtos diferentes; 2 não vieram no dia 15, que teve cobertura de 99,6%: os mesmos dois que a prova da etapa Transformar mostrou de volta uma hora depois.
 
+## A orquestração
+
+- A coleta é a única task que fala com a loja, e é tentada de novo 3 vezes, com 10 segundos entre elas, quando a rede falha. Uma recusa da loja (403, 429, uma página de desafio) para a execução sem nova tentativa.
+- Uma execução que termina em `Failed` ou `Crashed` deixa uma linha `AVISO` em `avisos.log`. Uma que termina bem, mas com algo estranho no banco, deixa uma linha `ATENÇÃO`. O `runbook.md` diz o que fazer com cada uma.
+- A cobertura abaixo de 90% é um portão: nada é publicado, e a coleta do dia vai para `dados/barrados/`, para a próxima rodada coletar de novo.
+- A conferência deixa um selo, `conferida.txt`, na pasta do dia. Só um dia com selo entra no histórico: uma coleta interrompida que ninguém terminou fica fora.
+- Uma coleta interrompida no mesmo dia continua de onde parou: o que está na pasta do dia não é pedido de novo.
+- Uma execução por vez, pelo limite `projeto-kabum` do Prefect. A segunda espera a primeira terminar, até 15 minutos.
+- A API só devolve o preço de hoje. Um dia sem coleta não volta: o que se refaz é a transformação e a carga de um dia guardado (`uv run python carregar.py 2026-11-14`).
+
+## O que a etapa Orquestrar mostrou, em 15 de novembro de 2026
+
+- Duas rodadas ao mesmo tempo, sem o limite, pediram as mesmas 4 páginas e a página da loja duas vezes, 10 pedidos em vez de 5, e as duas terminaram em `Failed` no DuckDB, escrevendo a mesma gold. Com o limite, a segunda esperou 20 segundos e não pediu nada.
+- Uma página repetida de propósito derrubou a cobertura para 74,9%. Sem o portão novo, a rodada parava com `SystemExit`, e a seguinte, no mesmo dia, achava as mesmas páginas e parava de novo. Com ele, a coleta foi para `dados/barrados/`, e a rodada seguinte coletou o dia de novo, com 100%.
+- A cobertura mudou de uma coleta para outra, no mesmo dia: 100%, 94,2%, 95,4% e 98,8%. A página 2 veio de dois jeitos diferentes. É o empate da ordenação que a etapa Extrair mediu.
+- Com 94,2%, o dia passou pelo portão, e a vigia avisou duas vezes: a cobertura perto do mínimo e 28 produtos sumidos, o mesmo número que a paginação perdeu.
+- Uma execução morta com `kill -9` segurou a vaga do limite por cerca de 5 minutos. Com Ctrl+C, ela voltou em poucos segundos, e a rodada que esperava continuou a coleta de onde a outra parou.
+- Sem fuso, o Prefect lê o cron em UTC. O `Cron("0 6,18 * * *", timezone="America/Sao_Paulo")` marcou as execuções para as 21:00 e as 09:00 de UTC: 18h e 6h em Brasília.
+
 ## O que o projeto não faz
 
 - O preço Prime, que a loja mostra só para assinantes com login, não entra. O projeto não entra em conta nenhuma.
@@ -119,4 +149,4 @@ A tabela `fabricantes.csv`, na raiz, troca o fabricante como a loja escreve pela
 - A oferta vale pelo dia: o histórico guarda o dia da coleta, e não a hora. Uma oferta que termina às 10h59 conta como em oferta na coleta das 15h do mesmo dia.
 - O banco guarda os dias que a silver tem. Um dia que saiu da silver não sai do banco sozinho.
 - O banco é de treino: a senha do `.env` é simples, e o Docker abre a porta 5434 também para a sua rede local. Não guarde nele nada que precise de proteção.
-- Nada roda sozinho: o programa roda quando você manda.
+- O agendamento roda enquanto o `fluxo.py agendar` e o servidor do Prefect estão ligados, na sua máquina. Com o computador desligado às 6h e às 18h, o dia não é coletado.
