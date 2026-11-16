@@ -1,0 +1,157 @@
+
+===== as regras e a configuração, conferidas antes de subir =====
+
+$ promtool check rules /infra/regras/kabum.yml
+Checking /infra/regras/kabum.yml
+  SUCCESS: 10 rules found
+
+
+$ docker run --rm -v $PWD/infra:/i --entrypoint amtool prom/alertmanager:v0.35.0 check-config /i/alertmanager.yml
+Checking '/i/alertmanager.yml'  SUCCESS
+Found:
+ - global config
+ - route
+ - 1 inhibit rules
+ - 1 receivers
+ - 0 templates
+
+
+$ promtool test rules /infra/testes_alertas.yml
+Processing test file: /infra/testes_alertas.yml
+  SUCCESS
+
+
+===== o alerta que pisca: o mesmo teste sem o for: 5m =====
+
+$ promtool test rules /infra/testes_alertas.yml 2>&1 | head -12
+Processing test file: /infra/testes_alertas.yml
+  FAILED:
+    alertname: KabumDadoVelho, time: 13h3m, 
+        exp:[], 
+        got:[
+            0:
+              Labels:{alertname="KabumDadoVelho", servico="kabum", severidade="critico"}
+              Annotations:{oque_fazer="A última rodada não deu certo e o dado passou de 13 horas. Abra o painel Kabum · saúde e o runbook.md.", resumo="O preço no banco tem 13.1 horas"}
+            ]
+
+
+
+===== subir tudo, o receptor e uma execução boa =====
+
+$ compose_prova up -d --wait 2>&1 | grep -E 'Healthy|Started' | sort
+ Container p05-prova-alertmanager-1 Healthy 
+ Container p05-prova-alertmanager-1 Started 
+ Container p05-prova-banco-1 Healthy 
+ Container p05-prova-banco-1 Started 
+ Container p05-prova-grafana-1 Healthy 
+ Container p05-prova-grafana-1 Started 
+ Container p05-prova-prometheus-1 Healthy 
+ Container p05-prova-prometheus-1 Started 
+ Container p05-prova-pushgateway-1 Healthy 
+ Container p05-prova-pushgateway-1 Started 
+
+$ docker stats --no-stream --format '{{.Name}} {{.MemUsage}}' | grep p05-prova | sort
+p05-prova-alertmanager-1 12.89MiB / 11.65GiB
+p05-prova-banco-1 25.8MiB / 11.65GiB
+p05-prova-grafana-1 260.8MiB / 11.65GiB
+p05-prova-prometheus-1 33.3MiB / 11.65GiB
+p05-prova-pushgateway-1 5.465MiB / 11.65GiB
+
+$ uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'Flow run .* Finished'
+19:32:03.069 | INFO    | Flow run 'denim-poodle' - Finished in state Completed()
+
+$ curl -s 127.0.0.1:32090/api/v1/rules | jq -r '.data.groups[].rules[] | "\(.type) \(.name) \(.health)"'
+alerting KabumExecucaoFalhou ok
+alerting KabumDadoVelho ok
+alerting KabumOrcamentoQueimando ok
+alerting KabumErroNosPedidos ok
+alerting KabumSemMetricas ok
+recording kabum:horas_desde_ok ok
+recording kabum:fresco ok
+recording kabum:erro_ratio ok
+recording kabum:queima_1h ok
+recording kabum:queima_5m ok
+
+$ promql kabum:horas_desde_ok
+{"servico":"kabum"} 0.0030085370275709363
+
+$ promql kabum:fresco
+{"servico":"kabum"} 1
+
+===== a loja recusa: dois alertas, uma notificação =====
+
+$ date +%T; uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'recusou|Flow run .* Finished' | cut -c1-150
+19:32:25
+19:32:35.823 | ERROR   | kabum - a loja recusou: /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=3&page_size=120 respondeu 42
+19:32:35.887 | INFO    | Flow run 'hulking-rat' - Finished in state Crashed('Execution was aborted by Python system exit call.')
+
+$ curl -s 127.0.0.1:32090/api/v1/alerts | jq -r '.data.alerts[] | "\(.labels.alertname) \(.labels.coluna // "") \(.state) desde \(.activeAt[11:19]) UTC, valor \(.value)"'
+KabumExecucaoFalhou  firing desde 22:32:50 UTC, valor 0e+00
+KabumErroNosPedidos  firing desde 22:32:50 UTC, valor 3.333333333333333e-01
+
+$ grep ALERTA -A3 avisos.log
+2026-11-16 19:33:20 ALERTA (firing, 2 no grupo {'servico': 'kabum'})
+2026-11-16 19:33:20   firing   KabumExecucaoFalhou: A última execução do Kabum falhou (o que fazer: Veja a linha nova em avisos.log e o runbook.md, checagem 1.)
+2026-11-16 19:33:20   firing   KabumErroNosPedidos: 33.33% dos pedidos da última execução deram erro (o que fazer: Veja o status dos pedidos no painel. 429 é recusa: não rode de novo agora.)
+
+===== a última execução boa empurrada para 14 horas antes: o sintoma calado pela causa =====
+
+$ date +%T; echo "glearn_ultima_execucao_ok_timestamp{servico=\"kabum\"} $(( $(date +%s) - 14*3600 ))" | curl -s --data-binary @- 127.0.0.1:32091/metrics/job/kabum/grupo/sucesso
+19:33:21
+
+$ curl -s 127.0.0.1:32090/api/v1/alerts | jq -r '.data.alerts[] | "\(.labels.alertname) \(.labels.coluna // "") \(.state) desde \(.activeAt[11:19]) UTC, valor \(.value)"'
+KabumExecucaoFalhou  firing desde 22:32:50 UTC, valor 0e+00
+KabumDadoVelho  pending desde 22:33:35 UTC, valor 1.4014688055581516e+01
+KabumErroNosPedidos  firing desde 22:32:50 UTC, valor 3.333333333333333e-01
+
+$ curl -s 127.0.0.1:32090/api/v1/alerts | jq -r '.data.alerts[] | "\(.labels.alertname) \(.labels.coluna // "") \(.state) desde \(.activeAt[11:19]) UTC, valor \(.value)"'
+KabumExecucaoFalhou  firing desde 22:32:50 UTC, valor 0e+00
+KabumDadoVelho  firing desde 22:33:35 UTC, valor 1.409802138891485e+01
+KabumOrcamentoQueimando  firing desde 22:36:35 UTC, valor 1.6551724137931032e+01
+KabumErroNosPedidos  firing desde 22:32:50 UTC, valor 3.333333333333333e-01
+
+$ curl -s 127.0.0.1:32093/api/v2/alerts | jq -c '.[] | {alerta: .labels.alertname, estado: .status.state, calado_por: .status.inhibitedBy}'
+{"alerta":"KabumOrcamentoQueimando","estado":"active","calado_por":[]}
+{"alerta":"KabumExecucaoFalhou","estado":"active","calado_por":[]}
+{"alerta":"KabumErroNosPedidos","estado":"active","calado_por":[]}
+{"alerta":"KabumDadoVelho","estado":"suppressed","calado_por":["91623e9c7bcf4548"]}
+
+$ promql kabum:queima_1h
+{"servico":"kabum"} 16.551724137931032
+
+===== a volta: uma execução boa e os alertas resolvidos =====
+
+$ date +%T; uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'Flow run .* Finished'
+19:39:23
+19:39:40.659 | INFO    | Flow run 'arboreal-griffin' - Finished in state Completed()
+
+$ grep -E 'ALERTA|firing|resolved' avisos.log
+2026-11-16 19:33:20 ALERTA (firing, 2 no grupo {'servico': 'kabum'})
+2026-11-16 19:33:20   firing   KabumExecucaoFalhou: A última execução do Kabum falhou (o que fazer: Veja a linha nova em avisos.log e o runbook.md, checagem 1.)
+2026-11-16 19:33:20   firing   KabumErroNosPedidos: 33.33% dos pedidos da última execução deram erro (o que fazer: Veja o status dos pedidos no painel. 429 é recusa: não rode de novo agora.)
+2026-11-16 19:38:20 ALERTA (firing, 3 no grupo {'servico': 'kabum'})
+2026-11-16 19:38:20   firing   KabumExecucaoFalhou: A última execução do Kabum falhou (o que fazer: Veja a linha nova em avisos.log e o runbook.md, checagem 1.)
+2026-11-16 19:38:20   firing   KabumErroNosPedidos: 33.33% dos pedidos da última execução deram erro (o que fazer: Veja o status dos pedidos no painel. 429 é recusa: não rode de novo agora.)
+2026-11-16 19:38:20   firing   KabumOrcamentoQueimando: O orçamento de erro do mês está acabando rápido (o que fazer: Congele mudanças no coletor até o dado voltar a ficar fresco.)
+2026-11-16 19:43:20 ALERTA (resolved, 4 no grupo {'servico': 'kabum'})
+2026-11-16 19:43:20   resolved KabumExecucaoFalhou: A última execução do Kabum falhou (o que fazer: Veja a linha nova em avisos.log e o runbook.md, checagem 1.)
+2026-11-16 19:43:20   resolved KabumDadoVelho: O preço no banco tem 14.1 horas (o que fazer: A última rodada não deu certo e o dado passou de 13 horas. Abra o painel Kabum · saúde e o runbook.md.)
+2026-11-16 19:43:20   resolved KabumErroNosPedidos: 33.33% dos pedidos da última execução deram erro (o que fazer: Veja o status dos pedidos no painel. 429 é recusa: não rode de novo agora.)
+2026-11-16 19:43:20   resolved KabumOrcamentoQueimando: O orçamento de erro do mês está acabando rápido (o que fazer: Congele mudanças no coletor até o dado voltar a ficar fresco.)
+
+$ promql avg_over_time(kabum:fresco[30d])
+{"servico":"kabum"} 0.4222222222222222
+
+$ promql clamp_min(1 - (1 - avg_over_time(kabum:fresco[30d])) / 0.05, 0)
+{"servico":"kabum"} 0
+
+$ curl -s '127.0.0.1:32030/api/search?type=dash-db' | jq -r '.[].title'
+Kabum · saúde
+Kabum · SLO
+
+$ docker stats --no-stream --format '{{.Name}} {{.MemUsage}}' | grep p05-prova | sort
+p05-prova-alertmanager-1 12.67MiB / 11.65GiB
+p05-prova-banco-1 30.73MiB / 11.65GiB
+p05-prova-grafana-1 252.1MiB / 11.65GiB
+p05-prova-prometheus-1 45MiB / 11.65GiB
+p05-prova-pushgateway-1 15.11MiB / 11.65GiB

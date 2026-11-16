@@ -1,0 +1,43 @@
+# Pasta de aluno, 16/11/2026 (macOS, Colima). Primeiro o projeto como o PKO deixou (final/, aula 26), contra a loja de verdade;
+# depois, já com o logs.py desta aula, a pasta do dia apagada e coletada de novo, também na loja de verdade.
+
+## 17:12, o final/ do PKO: uv run python fluxo.py
+17:12:41.320 | INFO    | Flow run 'idealistic-pillbug' - Beginning flow run 'idealistic-pillbug' for flow 'projeto-kabum'
+17:12:41.323 | INFO    | Flow run 'idealistic-pillbug' - View at http://127.0.0.1:32420/runs/flow-run/93400623-50de-40ed-b9b5-da4963b9a296
+17:12:45.928 | INFO    | kabum - baixei a página 1: 862707 bytes em dados/bronze/2026-11-16/pagina-001.json
+17:12:51.273 | INFO    | kabum - baixei a página 2: 901675 bytes em dados/bronze/2026-11-16/pagina-002.json
+17:12:55.047 | INFO    | kabum - baixei a página 3: 943719 bytes em dados/bronze/2026-11-16/pagina-003.json
+17:12:59.402 | INFO    | kabum - baixei a página 4: 911142 bytes em dados/bronze/2026-11-16/pagina-004.json
+17:12:59.410 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-16
+17:13:03.952 | INFO    | kabum - coleta: 469 produtos lidos, 461 diferentes; a API declara 469
+17:13:03.953 | INFO    | kabum - repetidos entre páginas: 816883 (2 vezes), 565376 (2 vezes), 347012 (2 vezes), 270478 (2 vezes), 1012509 (2 vezes), 1088292 (2 vezes), 928107 (2 vezes), 997061 (2 vezes)
+17:13:03.953 | INFO    | kabum - já tenho dados/bronze/2026-11-16/loja.html, não peço de novo
+17:13:03.987 | INFO    | kabum - a página da loja mostra 469 produtos
+17:13:03.989 | INFO    | kabum - cobertura: 461 de 469, 98.3%; faltaram 8
+17:13:04.060 | INFO    | kabum - gravei 461 linhas em dados/precos.csv, de 1 dia(s): 2026-11-16
+17:13:04.070 | INFO    | kabum - transformar 1 de 3: montar e conferir a silver
+17:13:04.376 | INFO    | kabum - lidos 461 = válidos 461 + rejeitados 0
+17:13:04.393 | INFO    | kabum - transformar 2 de 3: o relatório de qualidade
+17:13:04.406 | INFO    | kabum - relatório de qualidade em dados/qualidade/2026-11-16.json: nenhuma regra de erro acima de 2%
+17:13:04.428 | INFO    | kabum - gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+17:13:04.430 | INFO    | kabum - transformar 3 de 3: a gold
+17:13:04.852 | INFO    | kabum - gold: 0 mudanças, 0 sumiços e 54 linhas na tabela dos modelos, em dados/gold
+17:13:05.461 | INFO    | kabum - coletas: 1 dias conferidos, do dados/conferencia.csv
+17:13:05.463 | INFO    | kabum - dias na silver: 1; a carregar: 1 novos e 0 que mudaram
+17:13:05.599 | INFO    | kabum - 2026-11-16: apaguei 0 linhas e gravei 461; conferido: 461 linhas e soma 208582469
+17:13:05.689 | INFO    | kabum - vigia: 1 dias no banco, o último 2026-11-16; 0 avisos
+17:13:05.877 | INFO    | Flow run 'idealistic-pillbug' - coleta de 2026-11-16 no banco
+17:13:05.952 | INFO    | Flow run 'idealistic-pillbug' - Finished in state Completed()
+
+## 17:15, com o logs.py (saidas-loja-de-verdade.txt tem a execução inteira)
+
+## 17:17, psql: SELECT id, dia, inseridas, execucao_id FROM cargas ORDER BY id
+ id |    dia     | inseridas |             execucao_id              
+----+------------+-----------+--------------------------------------
+  1 | 2026-11-16 |       461 | 
+  2 | 2026-11-16 |       460 | 62b355ca-96c5-452a-aadc-16be9e199a99
+(2 rows)
+
+## jq -r 'select(.msg | startswith("cobertura")) | [.ts[11:19], .execucao_id[0:8], .msg] | @tsv' logs/kabum.jsonl | head -2
+20:16:05	62b355ca	cobertura: 460 de 468, 98.3%; faltaram 8
+20:17:26	d68b0130	cobertura: 460 de 468, 98.3%; faltaram 8

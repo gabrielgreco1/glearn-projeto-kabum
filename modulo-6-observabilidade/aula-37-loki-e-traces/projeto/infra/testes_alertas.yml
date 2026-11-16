@@ -1,0 +1,57 @@
+# Testes das regras de alerta, sem esperar 13 horas: o promtool inventa as séries e o relógio.
+# Rode: docker run --rm -v ./infra:/infra --entrypoint promtool prom/prometheus:v3.16.0 test rules /infra/testes_alertas.yml
+rule_files:
+  - regras/kabum.yml
+
+evaluation_interval: 1m
+
+tests:
+  # A última execução boa foi no instante 0 e nenhuma outra deu certo depois.
+  - interval: 1m
+    input_series:
+      - series: 'glearn_ultima_execucao_ok_timestamp{servico="kabum", job="kabum"}'
+        values: '0x900'
+      - series: 'glearn_execucao_ok{servico="kabum", job="kabum"}'
+        values: '1x900'
+    alert_rule_test:
+      - eval_time: 12h
+        alertname: KabumDadoVelho
+        exp_alerts: []
+      # Passou de 13 horas às 13h, mas o "for: 5m" ainda segura: o alerta está pendente, não disparado.
+      - eval_time: 13h03m
+        alertname: KabumDadoVelho
+        exp_alerts: []
+      - eval_time: 13h10m
+        alertname: KabumDadoVelho
+        exp_alerts:
+          - exp_labels: {servico: kabum, severidade: critico}
+            exp_annotations:
+              resumo: "O preço no banco tem 13.2 horas"
+              oque_fazer: "A última rodada não deu certo e o dado passou de 13 horas. Abra o painel Kabum · saúde e o runbook.md."
+      # Às 13h30 o dado está velho há meia hora: a queima da última hora ainda não chegou a 14,4.
+      - eval_time: 13h30m
+        alertname: KabumOrcamentoQueimando
+        exp_alerts: []
+      # Às 14h10, velho há mais de uma hora: as duas janelas acima de 14,4.
+      - eval_time: 14h10m
+        alertname: KabumOrcamentoQueimando
+        exp_alerts:
+          - exp_labels: {servico: kabum, severidade: critico}
+            exp_annotations:
+              resumo: "O orçamento de erro do mês está acabando rápido"
+              oque_fazer: "Congele mudanças no coletor até o dado voltar a ficar fresco."
+
+  # Nenhuma métrica do Kabum: as regras de comparação ficam quietas, e o absent() avisa.
+  - interval: 1m
+    input_series: []
+    alert_rule_test:
+      - eval_time: 11m
+        alertname: KabumSemMetricas
+        exp_alerts:
+          - exp_labels: {servico: kabum, severidade: aviso}
+            exp_annotations:
+              resumo: "O Prometheus não tem nenhuma execução boa do Kabum"
+              oque_fazer: "O projeto ainda não rodou, o Pushgateway reiniciou ou o envio das métricas falhou (veja logs/kabum.jsonl)."
+      - eval_time: 11m
+        alertname: KabumDadoVelho
+        exp_alerts: []

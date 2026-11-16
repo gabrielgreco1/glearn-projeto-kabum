@@ -1,0 +1,98 @@
+# Testes das regras de alerta, sem esperar 13 horas: o promtool inventa as séries e o relógio.
+# Rode: docker run --rm -v ./infra:/infra --entrypoint promtool prom/prometheus:v3.16.0 test rules /infra/testes_alertas.yml
+rule_files:
+  - regras/kabum.yml
+
+evaluation_interval: 1m
+
+tests:
+  # A última execução boa foi no instante 0 e nenhuma outra deu certo depois.
+  - interval: 1m
+    input_series:
+      - series: 'glearn_ultima_execucao_ok_timestamp{servico="kabum", job="kabum"}'
+        values: '0x900'
+      - series: 'glearn_execucao_ok{servico="kabum", job="kabum"}'
+        values: '1x900'
+    alert_rule_test:
+      - eval_time: 12h
+        alertname: KabumDadoVelho
+        exp_alerts: []
+      # Passou de 13 horas às 13h, mas o "for: 5m" ainda segura: o alerta está pendente, não disparado.
+      - eval_time: 13h03m
+        alertname: KabumDadoVelho
+        exp_alerts: []
+      - eval_time: 13h10m
+        alertname: KabumDadoVelho
+        exp_alerts:
+          - exp_labels: {servico: kabum, severidade: critico}
+            exp_annotations:
+              resumo: "O preço no banco tem 13.2 horas"
+              oque_fazer: "A última rodada não deu certo e o dado passou de 13 horas. Abra o painel Kabum · saúde e o runbook.md."
+      # Às 13h30 o dado está velho há meia hora: a queima da última hora ainda não chegou a 14,4.
+      - eval_time: 13h30m
+        alertname: KabumOrcamentoQueimando
+        exp_alerts: []
+      # Às 14h10, velho há mais de uma hora: as duas janelas acima de 14,4.
+      - eval_time: 14h10m
+        alertname: KabumOrcamentoQueimando
+        exp_alerts:
+          - exp_labels: {servico: kabum, severidade: critico}
+            exp_annotations:
+              resumo: "O orçamento de erro do mês está acabando rápido"
+              oque_fazer: "Congele mudanças no coletor até o dado voltar a ficar fresco."
+
+  # Nenhuma métrica do Kabum: as regras de comparação ficam quietas, e o absent() avisa.
+  - interval: 1m
+    input_series: []
+    alert_rule_test:
+      - eval_time: 11m
+        alertname: KabumSemMetricas
+        exp_alerts:
+          - exp_labels: {servico: kabum, severidade: aviso}
+            exp_annotations:
+              resumo: "O Prometheus não tem nenhuma execução boa do Kabum"
+              oque_fazer: "O projeto ainda não rodou, o Pushgateway reiniciou ou o envio das métricas falhou (veja logs/kabum.jsonl)."
+      - eval_time: 11m
+        alertname: KabumDadoVelho
+        exp_alerts: []
+
+  # Volume: 460 linhas por dia, e no oitavo dia 300. Contra o mesmo dia da semana anterior (460), caiu: alerta.
+  - interval: 1d
+    input_series:
+      - series: 'glearn_dado_linhas{servico="kabum", tabela="precos", job="kabum"}'
+        values: '460x6 300'
+    alert_rule_test:
+      - eval_time: 7d
+        alertname: KabumVolumeCaiu
+        exp_alerts:
+          - exp_labels: {servico: kabum, tabela: precos, job: kabum, severidade: aviso}
+            exp_annotations:
+              resumo: "O dia novo tem 300 linhas, menos de 70% da semana passada"
+              oque_fazer: "Compare a conferência (dados/conferencia.csv) dos dois dias. A loja tirou produtos ou a API mudou o total."
+
+  # O mesmo 300, mas o mesmo dia da semana anterior também teve 300 (um domingo, por exemplo): não é queda.
+  - interval: 1d
+    input_series:
+      - series: 'glearn_dado_linhas{servico="kabum", tabela="precos", job="kabum"}'
+        values: '300 460x5 300'
+    alert_rule_test:
+      - eval_time: 7d
+        alertname: KabumVolumeCaiu
+        exp_alerts: []
+
+  # Vazios: preco_oferta vazia em 82,6% das linhas o dia todo (quem não está em oferta), e de repente em 100%.
+  - interval: 1h
+    input_series:
+      - series: 'glearn_dado_nulos_ratio{servico="kabum", tabela="precos", coluna="preco_oferta", job="kabum"}'
+        values: '0.826x24 1'
+    alert_rule_test:
+      - eval_time: 24h
+        alertname: KabumVaziosSubiram
+        exp_alerts: []
+      - eval_time: 25h
+        alertname: KabumVaziosSubiram
+        exp_alerts:
+          - exp_labels: {servico: kabum, tabela: precos, coluna: preco_oferta, job: kabum, severidade: aviso}
+            exp_annotations:
+              resumo: "A coluna preco_oferta ficou com 17.4% a mais de vazios que a média da semana"
+              oque_fazer: "Abra uma página do bronze de hoje e procure o campo. A fonte mudou o formato sem quebrar a rodada."

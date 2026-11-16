@@ -1,0 +1,9 @@
+# Pasta de aluno, 16/11/2026, 17:55: a linha do dia 16 gravada às 17:16 (carga 2), e a pasta do dia refeita pela loja de
+# ensaio às 17:54, numa rodada em que o dado não mudou (a carga não gravou nada). Saída real:
+
+$ uv run python linhagem.py 506094 2026-11-16
+banco     precos: 2026-11-16 · Placa de Vídeo Quadro A800 PNY Nvidia, 40GB HBM2, 5120bits - · R$ 89.999,99
+          gravada pela execução 62b355ca-96c5-452a-aadc-16be9e199a99, carga 2 às 17:16:05
+bronze    dados/bronze/2026-11-16/pagina-001.json, página 1 da API: /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=1&page_size=120
+log       baixada pela execução 95dc8f07-0c39-459a-940a-60fcb9d731fe em 2026-11-16T20:54:29.909+00:00 (tentativa 1)
+trace     77d22aa02f65bf0ecc22d47160f65fab

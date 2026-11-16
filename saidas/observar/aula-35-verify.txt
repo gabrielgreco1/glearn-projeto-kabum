@@ -1,0 +1,166 @@
+
+===== versões e testes =====
+
+$ uv run python -c 'import prometheus_client, importlib.metadata as m; print("prometheus-client", m.version("prometheus-client"))'
+prometheus-client 0.26.0
+
+$ uv run pytest -q | tail -1
+53 passed in 8.46s
+
+===== subir o banco, o Pushgateway, o Prometheus e o Grafana =====
+
+$ compose_prova up -d --wait 2>&1 | grep -E 'Healthy|Started' | sort
+ Container p05-prova-banco-1 Healthy 
+ Container p05-prova-banco-1 Started 
+ Container p05-prova-grafana-1 Healthy 
+ Container p05-prova-grafana-1 Started 
+ Container p05-prova-prometheus-1 Healthy 
+ Container p05-prova-prometheus-1 Started 
+ Container p05-prova-pushgateway-1 Healthy 
+ Container p05-prova-pushgateway-1 Started 
+
+$ docker stats --no-stream --format '{{.Name}} {{.MemUsage}}' | grep p05-prova | sort
+p05-prova-banco-1 25.72MiB / 11.65GiB
+p05-prova-grafana-1 50.89MiB / 11.65GiB
+p05-prova-prometheus-1 31.98MiB / 11.65GiB
+p05-prova-pushgateway-1 5.324MiB / 11.65GiB
+
+===== a loja de ensaio e uma execução contra ela =====
+
+$ ls dados/ensaio/2026-11-16
+loja.html
+pagina-001.json
+pagina-002.json
+pagina-003.json
+pagina-004.json
+
+$ uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'pedi |Flow run .* Finished'
+18:28:56.998 | INFO    | kabum - pedi /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=1&page_size=120: 200 em 24 ms
+18:29:00.044 | INFO    | kabum - pedi /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=2&page_size=120: 200 em 26 ms
+18:29:03.079 | INFO    | kabum - pedi /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=3&page_size=120: 200 em 23 ms
+18:29:06.112 | INFO    | kabum - pedi /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=4&page_size=120: 200 em 22 ms
+18:29:12.888 | INFO    | Flow run 'cautious-goshawk' - Finished in state Completed()
+
+$ curl -s 127.0.0.1:32091/metrics | grep '^glearn' | grep -v _bucket
+glearn_execucao_ok{instance="",job="kabum",servico="kabum"} 1
+glearn_execucao_segundos{instance="",job="kabum",servico="kabum"} 15.976741075515747
+glearn_itens_total{etapa="carregar",instance="",job="kabum",servico="kabum"} 460
+glearn_itens_total{etapa="conferir",instance="",job="kabum",servico="kabum"} 460
+glearn_pedido_segundos_sum{etapa="coletar",instance="",job="kabum",servico="kabum"} 0.1186442500911653
+glearn_pedido_segundos_count{etapa="coletar",instance="",job="kabum",servico="kabum"} 5
+glearn_pedidos_total{etapa="coletar",instance="",job="kabum",servico="kabum",status="200"} 5
+glearn_ultima_execucao_ok_timestamp{grupo="sucesso",instance="",job="kabum",servico="kabum"} 1.794864552819309e+09
+
+$ curl -s 127.0.0.1:32090/api/v1/targets | jq -c '.data.activeTargets[] | {job: .labels.job, health}'
+{"job":"prometheus","health":"up"}
+{"job":"pushgateway","health":"up"}
+
+$ promql sum by (status) (glearn_pedidos_total{servico="kabum"})
+{"status":"200"} 5
+
+$ promql sum(glearn_pedidos_total{servico="kabum", status!="200"}) / sum(glearn_pedidos_total{servico="kabum"})
+
+$ promql (time() - glearn_ultima_execucao_ok_timestamp{servico="kabum"}) / 3600
+{"grupo":"sucesso","servico":"kabum"} 0.005685469706853231
+
+$ curl -s '127.0.0.1:32030/api/search?type=dash-db' | jq -r '.[].title'
+Kabum · saúde
+
+$ docker stats --no-stream --format '{{.Name}} {{.MemUsage}}' | grep p05-prova | sort
+p05-prova-banco-1 30.3MiB / 11.65GiB
+p05-prova-grafana-1 287.2MiB / 11.65GiB
+p05-prova-prometheus-1 33.7MiB / 11.65GiB
+p05-prova-pushgateway-1 8.688MiB / 11.65GiB
+
+===== uma execução recusada (429 depois de 2 pedidos): o grupo da execução trocado inteiro, a última boa fica =====
+
+$ uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'recusou|Flow run .* Finished' | cut -c1-160
+18:29:48.894 | ERROR   | kabum - a loja recusou: /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=3&page_size=120 respondeu 429 (text/ht
+18:29:48.972 | INFO    | Flow run 'enthusiastic-phoenix' - Finished in state Crashed('Execution was aborted by Python system exit call.')
+
+$ curl -s 127.0.0.1:32091/metrics | grep '^glearn' | grep -v _bucket
+glearn_execucao_ok{instance="",job="kabum",servico="kabum"} 0
+glearn_execucao_segundos{instance="",job="kabum",servico="kabum"} 9.26181697845459
+glearn_pedido_segundos_sum{etapa="coletar",instance="",job="kabum",servico="kabum"} 0.07933529210276902
+glearn_pedido_segundos_count{etapa="coletar",instance="",job="kabum",servico="kabum"} 3
+glearn_pedidos_total{etapa="coletar",instance="",job="kabum",servico="kabum",status="200"} 2
+glearn_pedidos_total{etapa="coletar",instance="",job="kabum",servico="kabum",status="429"} 1
+glearn_ultima_execucao_ok_timestamp{grupo="sucesso",instance="",job="kabum",servico="kabum"} 1.794864552819309e+09
+
+$ promql sum by (status) (glearn_pedidos_total{servico="kabum"})
+{"status":"200"} 2
+{"status":"429"} 1
+
+$ promql sum(glearn_pedidos_total{servico="kabum", status!="200"}) / sum(glearn_pedidos_total{servico="kabum"})
+{} 0.3333333333333333
+
+$ promql glearn_execucao_ok{servico="kabum"}
+{"servico":"kabum"} 0
+
+===== a média esconde a cauda: só a página 3 demora 6 s =====
+
+$ uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'pedi |Flow run .* Finished' | cut -c1-160
+18:30:13.638 | INFO    | kabum - pedi /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=1&page_size=120: 200 em 22 ms
+18:30:16.679 | INFO    | kabum - pedi /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=2&page_size=120: 200 em 19 ms
+18:30:25.716 | INFO    | kabum - pedi /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=3&page_size=120: 200 em 6019 ms
+18:30:28.791 | INFO    | kabum - pedi /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=4&page_size=120: 200 em 13 ms
+18:30:35.228 | INFO    | Flow run 'augmented-coyote' - Finished in state Completed()
+
+$ promql histogram_quantile(0.5, sum by (le) (glearn_pedido_segundos_bucket{servico="kabum"}))
+{} 0.15625
+
+$ promql histogram_quantile(0.95, sum by (le) (glearn_pedido_segundos_bucket{servico="kabum"}))
+{} 6.999999999999999
+
+$ promql sum(glearn_pedido_segundos_sum{servico="kabum"}) / sum(glearn_pedido_segundos_count{servico="kabum"})
+{} 1.2173522499855607
+
+$ promql glearn_pedido_segundos_bucket{servico="kabum"}
+{"etapa":"coletar","le":"0.25","servico":"kabum"} 4
+{"etapa":"coletar","le":"0.5","servico":"kabum"} 4
+{"etapa":"coletar","le":"1.0","servico":"kabum"} 4
+{"etapa":"coletar","le":"2.0","servico":"kabum"} 4
+{"etapa":"coletar","le":"4.0","servico":"kabum"} 4
+{"etapa":"coletar","le":"8.0","servico":"kabum"} 5
+{"etapa":"coletar","le":"16.0","servico":"kabum"} 5
+{"etapa":"coletar","le":"+Inf","servico":"kabum"} 5
+
+===== contador por execução: o increase() de uma hora contra a soma real =====
+
+$ uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'Flow run .* Finished'
+18:31:15.465 | INFO    | Flow run 'cryptic-wren' - Finished in state Completed()
+
+$ promql increase(glearn_pedidos_total{status="200"}[1h])
+{"etapa":"coletar","servico":"kabum","status":"200"} 5.707083333333333
+
+$ promql changes(push_time_seconds{job="kabum", grupo=""}[1h])
+{} 3
+
+===== cardinalidade: o preço de cada placa como rótulo =====
+
+$ promql count({__name__=~"glearn_.*"})
+{} 15
+
+$ promql prometheus_tsdb_head_series
+{} 842
+
+$ uv run python rascunho_cardinalidade.py
+460 séries de glearn_preco_reais
+
+$ promql count({__name__=~"glearn_.*"})
+{} 475
+
+$ promql prometheus_tsdb_head_series
+{} 1304
+
+$ curl -s 127.0.0.1:32090/api/v1/status/tsdb | jq -c '.data.seriesCountByMetricName[0:2], .data.labelValueCountByLabelName[0:2]'
+[{"name":"glearn_preco_reais","value":460},{"name":"prometheus_http_requests_total","value":64}]
+[{"name":"produto","value":460},{"name":"__name__","value":351}]
+
+$ curl -s -X DELETE 127.0.0.1:32091/metrics/job/kabum-rascunho; rm rascunho_cardinalidade.py
+
+$ docker stats --no-stream --format '{{.Name}} {{.MemUsage}}' | grep p05-prova | sort
+p05-prova-banco-1 30.53MiB / 11.65GiB
+p05-prova-grafana-1 294.7MiB / 11.65GiB
+p05-prova-prometheus-1 36.32MiB / 11.65GiB
+p05-prova-pushgateway-1 14.73MiB / 11.65GiB

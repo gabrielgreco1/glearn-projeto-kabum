@@ -1,0 +1,18 @@
+== 8cd4896e6e87fd818c004c89ffb380ea
+prefect grinning-jackal +0 ms, 16168 ms ERROR
+prefect coletar-09c +395 ms, 15098 ms OK
+httpx GET +398 ms, 10 ms 
+httpx GET +3423 ms, 3 ms 
+httpx GET +6449 ms, 2 ms 
+httpx GET +9467 ms, 3 ms 
+httpx GET +12484 ms, 2 ms 
+prefect conferir-a62 +15495 ms, 63 ms OK
+prefect historico-9db +15561 ms, 65 ms OK
+prefect transformar-5e3 +15629 ms, 267 ms OK
+prefect carregar-ed9 +15898 ms, 87 ms ERROR
+== 538619746eef2c89a44c7070fa385ba
+prefect wakeful-bullfrog +0 ms, 9174 ms ERROR
+prefect coletar-55f +74 ms, 9046 ms ERROR
+httpx GET +75 ms, 1 ms 
+httpx GET +3088 ms, 2 ms 
+httpx GET +6109 ms, 0 ms ERROR

@@ -1,0 +1,70 @@
+# As regras do Kabum, avaliadas pelo Prometheus a cada 15 segundos.
+# Regras de gravação (record) calculam uma série nova e guardam; regras de alerta (alert) disparam quando a conta dá
+# resultado por mais tempo que o "for".
+groups:
+  - name: kabum-slo
+    rules:
+      # Quantas horas desde a última execução que deu certo, com o rótulo servico (o Alertmanager agrupa por ele). O projeto roda às 6h e às 18h: o normal fica abaixo de 12.
+      - record: kabum:horas_desde_ok
+        expr: (time() - max by (servico) (glearn_ultima_execucao_ok_timestamp{servico="kabum"})) / 3600
+      # O SLI: 1 quando o dado do banco tem até 13 horas (uma rodada pode atrasar uma hora), 0 quando está velho.
+      - record: kabum:fresco
+        expr: kabum:horas_desde_ok <= bool 13
+      # A fração de pedidos com erro na última execução.
+      - record: kabum:erro_ratio
+        expr: sum by (servico) (glearn_pedidos_total{servico="kabum", status!="200"}) / sum by (servico) (glearn_pedidos_total{servico="kabum"})
+      # O SLO é 95% do tempo com dado fresco, em 30 dias: o orçamento de erro é 5% do tempo, 36 horas no mês.
+      # A taxa de queima diz em que ritmo o orçamento está sendo gasto agora: 1 gasta o mês inteiro em 30 dias;
+      # 20 é o máximo (dado velho o tempo todo) e gasta o orçamento do mês em um dia e meio.
+      - record: kabum:queima_1h
+        expr: (1 - avg_over_time(kabum:fresco[1h])) / 0.05
+      - record: kabum:queima_5m
+        expr: (1 - avg_over_time(kabum:fresco[5m])) / 0.05
+
+  - name: kabum-alertas
+    rules:
+      - alert: KabumExecucaoFalhou
+        expr: glearn_execucao_ok{servico="kabum"} == 0
+        labels:
+          severidade: aviso
+        annotations:
+          resumo: "A última execução do Kabum falhou"
+          oque_fazer: "Veja a linha nova em avisos.log e o runbook.md, checagem 1."
+
+      - alert: KabumDadoVelho
+        expr: kabum:horas_desde_ok > 13
+        for: 5m
+        labels:
+          severidade: critico
+        annotations:
+          resumo: "O preço no banco tem {{ $value | printf \"%.1f\" }} horas"
+          oque_fazer: "A última rodada não deu certo e o dado passou de 13 horas. Abra o painel Kabum · saúde e o runbook.md."
+
+      # Queima rápida: 14,4 vezes o ritmo normal na última hora gasta 2% do orçamento do mês só nela (o limiar do livro
+      # de SRE do Google para 30 dias). A janela curta, de 5 minutos, faz o alerta parar logo depois do conserto, em vez
+      # de continuar disparando até a hora inteira passar.
+      - alert: KabumOrcamentoQueimando
+        expr: kabum:queima_1h > 14.4 and kabum:queima_5m > 14.4
+        labels:
+          severidade: critico
+        annotations:
+          resumo: "O orçamento de erro do mês está acabando rápido"
+          oque_fazer: "Congele mudanças no coletor até o dado voltar a ficar fresco."
+
+      - alert: KabumErroNosPedidos
+        expr: kabum:erro_ratio > 0.05
+        labels:
+          severidade: aviso
+        annotations:
+          resumo: "{{ $value | humanizePercentage }} dos pedidos da última execução deram erro"
+          oque_fazer: "Veja o status dos pedidos no painel. 429 é recusa: não rode de novo agora."
+
+      # Quando a métrica some, as regras acima não têm o que comparar e ficam quietas. absent() avisa o silêncio.
+      - alert: KabumSemMetricas
+        expr: absent(glearn_ultima_execucao_ok_timestamp{servico="kabum"})
+        for: 10m
+        labels:
+          severidade: aviso
+        annotations:
+          resumo: "O Prometheus não tem nenhuma execução boa do Kabum"
+          oque_fazer: "O projeto ainda não rodou, o Pushgateway reiniciou ou o envio das métricas falhou (veja logs/kabum.jsonl)."

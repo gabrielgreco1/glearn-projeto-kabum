@@ -1,0 +1,8 @@
+# Os painéis que são arquivos: o Grafana lê cada .json de /etc/grafana/paineis (a pasta infra/grafana/paineis).
+apiVersion: 1
+providers:
+  - name: kabum
+    folder: Kabum
+    type: file
+    options:
+      path: /etc/grafana/paineis

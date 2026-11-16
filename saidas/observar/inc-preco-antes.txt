@@ -1,0 +1,26 @@
+--- métricas
+sum by (status) (glearn_pedidos_total{servico="kabum"}) => 200=5
+glearn_execucao_ok{servico="kabum"} => =0
+glearn_execucao_segundos{servico="kabum"} => =15.530634880065918
+glearn_dado_linhas{servico="kabum"} => 
+--- alertas
+KabumExecucaoFalhou firing
+KabumEsquemaMudou firing
+--- logs WARNING/ERROR
+transformar WARNING a etapa transformar falhou na tentativa 1: InvalidOperationError("arithmetic on dtypes str and dyn int is not allowed (lhs: column 'price_with_discount', rhs: expression `dyn int: 100`); try an explic
+fluxo ERROR a execução terminou em Failed: Flow run encountered an exception: InvalidOperationError: arithmetic on dtypes str and dyn int is not allowed (lhs: column 'price_with_discount', rhs: expression `dyn in
+--- trace com erro
+ +rIplW prefect vigilant-grouse 15921ms STATUS_CODE_ERROR
++rIplW +hnfQz prefect coletar-0ba 15128ms STATUS_CODE_OK
++hnfQz Jdc42R httpx GET 18ms 
++hnfQz U77h3H httpx GET 12ms 
++hnfQz QNqSPw httpx GET 13ms 
++hnfQz A0Nio7 httpx GET 11ms 
++hnfQz qW7bBX httpx GET 2ms 
++rIplW pKWKTk prefect conferir-d52 53ms STATUS_CODE_OK
++rIplW EGcN1m prefect historico-2fa 35ms STATUS_CODE_OK
++rIplW PY1+Hj prefect transformar-4e6 31ms STATUS_CODE_ERROR
+transformar-4e6 exception.type=polars.exceptions.InvalidOperationError
+transformar-4e6 exception.message=arithmetic on dtypes str and dyn int is not allowed (lhs: column 'price_with_discount', rhs: expression `dyn int: 100`); try an explicit cast first
+vigilant-grouse exception.type=polars.exceptions.InvalidOperationError
+vigilant-grouse exception.message=arithmetic on dtypes str and dyn int is not allowed (lhs: column 'price_with_discount', rhs: expression `dyn int: 100`); try an explicit cast first

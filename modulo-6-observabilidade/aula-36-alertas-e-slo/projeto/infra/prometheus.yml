@@ -1,0 +1,27 @@
+# O que o Prometheus raspa, e de quanto em quanto tempo.
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s  # de quanto em quanto tempo as regras são avaliadas
+
+# As regras de gravação e de alerta.
+rule_files:
+  - /etc/prometheus/regras/*.yml
+
+# Para onde vão os alertas que disparam.
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]
+
+scrape_configs:
+  # As métricas do projeto, que cada execução deixa no Pushgateway. honor_labels: os rótulos que o projeto mandou
+  # (job="kabum") ficam como vieram, em vez de virarem exported_job.
+  - job_name: pushgateway
+    honor_labels: true
+    static_configs:
+      - targets: ["pushgateway:9091"]
+
+  # O próprio Prometheus: quantas séries guarda, quanto tempo cada raspagem leva.
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

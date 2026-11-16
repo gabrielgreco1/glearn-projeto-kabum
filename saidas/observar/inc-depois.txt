@@ -1,0 +1,13 @@
+=== senha
+--- logs WARNING/ERROR
+carregar ERROR a etapa carregar parou: O banco recusou a senha do DATABASE_URL (.env). Ela foi trocada no banco?
+connection failed: connection to server at "127.0.0.1", port 32434 failed: FATAL:  password authentica
+fluxo ERROR a execução terminou em Crashed: Execution was aborted by Python system exit call.
+--- trace com erro
+O incidente foi: a senha do banco foi trocada, e o .env ficou com a antiga. Desfeito, e o projeto rodou de novo às 18:16:39.
+=== preco
+--- logs WARNING/ERROR
+transformar ERROR a etapa transformar parou: Nada foi publicado: preco_obrigatorio: 38.0% das linhas rejeitadas, acima de 2%. A silver e a gold da rodada anterior continuam em dados/.
+fluxo ERROR a execução terminou em Crashed: Execution was aborted by Python system exit call.
+--- trace com erro
+O incidente foi: a API mandou o preço como texto ("R$ 1.299,90") em 40% dos produtos. Desfeito, e o projeto rodou de novo às 18:17:57.

@@ -1,0 +1,30 @@
+--- métricas
+sum by (status) (glearn_pedidos_total{servico="kabum"}) => 200=5
+glearn_execucao_ok{servico="kabum"} => =0
+glearn_execucao_segundos{servico="kabum"} => =15.850607872009277
+glearn_dado_linhas{servico="kabum"} => 
+--- alertas
+KabumExecucaoFalhou firing
+KabumEsquemaMudou firing
+--- logs WARNING/ERROR
+fluxo ERROR a execução terminou em Crashed: Execution was aborted by Python system exit call.
+--- trace com erro
+ PV8mIa prefect grinning-jackal 16168ms STATUS_CODE_ERROR
+PV8mIa s9+gfx prefect coletar-09c 15098ms STATUS_CODE_OK
+s9+gfx ivcvDx httpx GET 10ms 
+s9+gfx 7FLVh3 httpx GET 3ms 
+s9+gfx /TeTAW httpx GET 2ms 
+s9+gfx OG+OSi httpx GET 3ms 
+s9+gfx advKfo httpx GET 2ms 
+PV8mIa ttk6wd prefect conferir-a62 63ms STATUS_CODE_OK
+PV8mIa 5v9CfG prefect historico-9db 65ms STATUS_CODE_OK
+PV8mIa JT9AYL prefect transformar-5e3 267ms STATUS_CODE_OK
+PV8mIa ojwU31 prefect carregar-ed9 87ms STATUS_CODE_ERROR
+carregar-ed9 exception.type=SystemExit
+carregar-ed9 exception.message=O banco não respondeu. Ele está de pé? Rode: docker compose up -d --wait
+connection failed: connection to server at "127.0.0.1", port 32434 failed: FATAL:  password authentication failed for user "postgres"
+Multiple conn
+grinning-jackal exception.type=SystemExit
+grinning-jackal exception.message=O banco não respondeu. Ele está de pé? Rode: docker compose up -d --wait
+connection failed: connection to server at "127.0.0.1", port 32434 failed: FATAL:  password authentication failed for user "postgres"
+Multiple conn

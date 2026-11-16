@@ -1,0 +1,194 @@
+
+===== versões e testes =====
+
+$ uv run python -c 'import importlib.metadata as m; [print(p, m.version(p)) for p in ("opentelemetry-sdk", "opentelemetry-exporter-otlp-proto-http", "opentelemetry-instrumentation-httpx", "opentelemetry-instrumentation-psycopg")]'
+opentelemetry-sdk 1.45.2
+opentelemetry-exporter-otlp-proto-http 1.45.2
+opentelemetry-instrumentation-httpx 0.66b2
+opentelemetry-instrumentation-psycopg 0.66b2
+
+$ uv run pytest -q | tail -1
+53 passed in 10.13s
+
+===== subir tudo =====
+
+$ compose_prova up -d --wait 2>&1 | grep -E 'Healthy|Started' | sort
+ Container p05-prova-alertmanager-1 Healthy 
+ Container p05-prova-alertmanager-1 Started 
+ Container p05-prova-banco-1 Healthy 
+ Container p05-prova-banco-1 Started 
+ Container p05-prova-grafana-1 Healthy 
+ Container p05-prova-grafana-1 Started 
+ Container p05-prova-loki-1 Healthy 
+ Container p05-prova-loki-1 Started 
+ Container p05-prova-otel-collector-1 Healthy 
+ Container p05-prova-otel-collector-1 Started 
+ Container p05-prova-prometheus-1 Healthy 
+ Container p05-prova-prometheus-1 Started 
+ Container p05-prova-pushgateway-1 Healthy 
+ Container p05-prova-pushgateway-1 Started 
+ Container p05-prova-tempo-1 Healthy 
+ Container p05-prova-tempo-1 Started 
+
+$ docker stats --no-stream --format '{{.Name}} {{.MemUsage}}' | grep p05-prova | sort
+p05-prova-alertmanager-1 12.48MiB / 11.65GiB
+p05-prova-banco-1 25.88MiB / 11.65GiB
+p05-prova-grafana-1 53.34MiB / 11.65GiB
+p05-prova-loki-1 32.58MiB / 11.65GiB
+p05-prova-otel-collector-1 39.25MiB / 11.65GiB
+p05-prova-prometheus-1 32.11MiB / 11.65GiB
+p05-prova-pushgateway-1 5.434MiB / 11.65GiB
+p05-prova-tempo-1 17.37MiB / 11.65GiB
+
+$ compose_prova logs otel-collector 2>&1 | grep -ciE 'deprecated|error'
+0
+
+===== uma execução contra a loja de ensaio, e o mesmo id no log, no Loki e no Tempo =====
+
+$ uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'Flow run .* Finished|execução '
+19:29:19.012 | INFO    | Flow run 'uncovered-whale' - coleta de 2026-11-16 no banco, execução 62bc9019-d67f-460c-a447-fe8ee6c4d70a
+19:29:19.069 | INFO    | Flow run 'uncovered-whale' - Finished in state Completed()
+
+$ tail -1 logs/kabum.jsonl
+{"ts": "2026-11-16T22:29:18.848+00:00", "nivel": "INFO", "servico": "kabum", "execucao_id": "62bc9019-d67f-460c-a447-fe8ee6c4d70a", "etapa": "vigiar", "tentativa": 1, "msg": "vigia: 1 dias no banco, o último 2026-11-16; 0 avisos", "trace_id": "1d82a4695255a7858bff317f4d1aa567", "span_id": "00792b978e0f4b3b"}
+
+$ curl -s 127.0.0.1:32100/loki/api/v1/labels | jq -c .data
+["service_name"]
+
+$ logql {service_name="kabum"} | etapa="carregar"
+carregar INFO coletas: 1 dias conferidos, do dados/conferencia.csv
+carregar INFO dias na silver: 1; a carregar: 1 novos e 0 que mudaram
+carregar INFO 2026-11-16: apaguei 0 linhas e gravei 460; conferido: 460 linhas e soma 207807198
+
+$ logql sum by (etapa) (count_over_time({service_name="kabum"} [5m]))
+{"etapa":"carregar"} 3
+{"etapa":"coletar"} 9
+{"etapa":"conferir"} 4
+{"etapa":"historico"} 1
+{"etapa":"transformar"} 7
+{"etapa":"vigiar"} 1
+
+$ curl -s -G 127.0.0.1:32100/loki/api/v1/query_range --data-urlencode 'query={service_name="kabum"} | json | etapa="carregar"' --data-urlencode since=5m --data-urlencode limit=1 | jq -c '.data.result[0].stream | {__error__, __error_details__}'
+{"__error__":"JSONParserErr","__error_details__":"Value looks like object, but can't find closing '}' symbol"}
+
+$ traceql {resource.service.name="kabum"}
+1d82a4695255a7858bff317f4d1aa567 uncovered-whale 16239 ms
+
+$ árvore do trace 1d82a4695255a7858bff317f4d1aa567
+prefect uncovered-whale +0 ms, 16239 ms OK
+  prefect coletar-098 +307 ms, 15114 ms OK
+  httpx GET +312 ms, 5 ms 
+  httpx GET +3340 ms, 6 ms 
+  httpx GET +6363 ms, 2 ms 
+  httpx GET +9381 ms, 3 ms 
+  httpx GET +12408 ms, 3 ms 
+  prefect conferir-5a4 +15424 ms, 51 ms OK
+  prefect historico-65e +15476 ms, 25 ms OK
+  prefect transformar-1c4 +15503 ms, 337 ms OK
+  prefect carregar-a03 +15842 ms, 145 ms OK
+  psycopg -- +15895 ms, 22 ms 
+  psycopg INSERT +15930 ms, 4 ms 
+  psycopg SELECT +15935 ms, 2 ms 
+  kabum carregar dia +15944 ms, 41 ms 
+  psycopg DELETE +15961 ms, 5 ms 
+  psycopg SELECT +15977 ms, 1 ms 
+  psycopg INSERT +15979 ms, 3 ms 
+  prefect vigiar-f7d +15989 ms, 32 ms OK
+  psycopg SELECT +16009 ms, 3 ms 
+  psycopg SELECT +16012 ms, 4 ms 
+
+$ os atributos de um pedido à loja (o primeiro span httpx)
+http.method=GET
+http.url=http://127.0.0.1:32099/catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=3&page_size=120
+http.status_code=200
+
+$ jq -r 'select(.etapa == "carregar") | [.execucao_id, .trace_id] | @tsv' logs/kabum.jsonl | tail -1
+62bc9019-d67f-460c-a447-fe8ee6c4d70a	1d82a4695255a7858bff317f4d1aa567
+
+===== o trace partido: traces.configurar() dentro do flow, tarde demais =====
+
+$ diff fluxo.py.certo fluxo.py
+33d32
+< traces.configurar()
+100a100
+>     traces.configurar()
+
+$ uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'Flow run .* Finished'
+19:29:51.674 | INFO    | Flow run 'vengeful-binturong' - Finished in state Completed()
+
+$ traceql {resource.service.name="kabum"}
+48704836a892b1c880565cd4ef53d7c vigiar-535 14 ms
+ffed41e179eeb399bf0c49f39d72fff6 carregar-748 40 ms
+13f2ae380658fb9bac96320a9de574b6 transformar-94f 69 ms
+d408bbee36fdebae7c42c1fc3822323c historico-620 22 ms
+55bd51cc06b406dca4bb32522c36b014 conferir-734 43 ms
+1ac34c9da1f63fe2e0f041c4b3e720aa coletar-a75 15108 ms
+
+===== uma execução recusada: o erro no Loki e no Tempo =====
+
+$ uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'recusou|Flow run .* Finished' | cut -c1-150
+19:30:34.856 | ERROR   | kabum - a loja recusou: /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=3&page_size=120 respondeu 42
+19:30:34.920 | INFO    | Flow run 'luminous-eel' - Finished in state Crashed('Execution was aborted by Python system exit call.')
+
+$ logql {service_name="kabum"} | nivel=~"WARNING|ERROR"
+coletar ERROR a loja recusou: /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=3&page_size=120 respondeu 429 (text/html)
+fluxo ERROR a execução terminou em Crashed: Execution was aborted by Python system exit call.
+
+$ logql sum by (etapa, nivel) (count_over_time({service_name="kabum"} | nivel=~"WARNING|ERROR" [15m]))
+{"etapa":"coletar","nivel":"ERROR"} 1
+{"etapa":"fluxo","nivel":"ERROR"} 1
+
+$ traceql {resource.service.name="kabum" && status=error}
+96a6b90a817d9fb3ba626d8e6d4b18a1 luminous-eel 9182 ms
+
+$ árvore do trace 96a6b90a817d9fb3ba626d8e6d4b18a1
+prefect luminous-eel +0 ms, 9182 ms ERROR
+  prefect coletar-678 +87 ms, 9037 ms ERROR
+  httpx GET +89 ms, 1 ms 
+  httpx GET +3103 ms, 2 ms 
+  httpx GET +6113 ms, 0 ms ERROR
+
+$ jq -r 'select(.nivel == "ERROR" and .trace_id != null) | .trace_id' logs/kabum.jsonl | tail -1
+96a6b90a817d9fb3ba626d8e6d4b18a1
+
+$ docker stats --no-stream --format '{{.Name}} {{.MemUsage}}' | grep p05-prova | sort
+p05-prova-alertmanager-1 12.29MiB / 11.65GiB
+p05-prova-banco-1 30.62MiB / 11.65GiB
+p05-prova-grafana-1 304.2MiB / 11.65GiB
+p05-prova-loki-1 59.86MiB / 11.65GiB
+p05-prova-otel-collector-1 53.36MiB / 11.65GiB
+p05-prova-prometheus-1 36.15MiB / 11.65GiB
+p05-prova-pushgateway-1 11.64MiB / 11.65GiB
+p05-prova-tempo-1 66.11MiB / 11.65GiB
+
+===== rótulo errado: execucao_id como rótulo num Loki com limite de 3 streams (o padrão é 5000) =====
+
+$ grep max_global_streams ~/orca/workspaces/portifolio/wt-p05/g-learn/pesquisa/praticas/p05-04/exp/loki-limite.yaml
+  max_global_streams_per_user: 3  # só no experimento: o padrão é 5000
+
+$ printf '{"streams":[{"stream":{"service_name":"kabum","execucao_id":"62bc9019-d67f-460c-a447-fe8ee6c4d70a"},"values":[["%s","uma linha"]]}]}' $(date +%s)000000000 | curl -s -w ' HTTP %{http_code}' -H 'Content-Type: application/json' --data-binary @- 127.0.0.1:32110/loki/api/v1/push; echo
+ HTTP 204
+
+$ printf '{"streams":[{"stream":{"service_name":"kabum","execucao_id":"c325288d-7f36-41cf-ae7b-6ec7506acd26"},"values":[["%s","uma linha"]]}]}' $(date +%s)000000000 | curl -s -w ' HTTP %{http_code}' -H 'Content-Type: application/json' --data-binary @- 127.0.0.1:32110/loki/api/v1/push; echo
+ HTTP 204
+
+$ printf '{"streams":[{"stream":{"service_name":"kabum","execucao_id":"f3433426-2bfb-44e1-a09a-ec065c5cf9d7"},"values":[["%s","uma linha"]]}]}' $(date +%s)000000000 | curl -s -w ' HTTP %{http_code}' -H 'Content-Type: application/json' --data-binary @- 127.0.0.1:32110/loki/api/v1/push; echo
+ HTTP 204
+
+$ printf '{"streams":[{"stream":{"service_name":"kabum","execucao_id":"9b9e6ad5-bf7b-42aa-a077-58ad9b4a6e27"},"values":[["%s","uma linha"]]}]}' $(date +%s)000000000 | curl -s -w ' HTTP %{http_code}' -H 'Content-Type: application/json' --data-binary @- 127.0.0.1:32110/loki/api/v1/push; echo
+maximum active stream limit exceeded when trying to create stream {execucao_id="9b9e6ad5-bf7b-42aa-a077-58ad9b4a6e27", service_name="kabum"}, reduce the number of active streams (reduce labels or reduce label values), or contact your Loki administrator to see if the limit can be increased, user: 'fake'
+ HTTP 429
+
+# o mesmo id como metadado estruturado, o terceiro item de cada valor
+
+$ printf '{"streams":[{"stream":{"service_name":"kabum"},"values":[["%s","uma linha",{"execucao_id":"62bc9019-d67f-460c-a447-fe8ee6c4d70a"}]]}]}' $(date +%s)000000000 | curl -s -w ' HTTP %{http_code}' -H 'Content-Type: application/json' --data-binary @- 127.0.0.1:32110/loki/api/v1/push; echo
+ HTTP 204
+
+$ printf '{"streams":[{"stream":{"service_name":"kabum"},"values":[["%s","uma linha",{"execucao_id":"c325288d-7f36-41cf-ae7b-6ec7506acd26"}]]}]}' $(date +%s)000000000 | curl -s -w ' HTTP %{http_code}' -H 'Content-Type: application/json' --data-binary @- 127.0.0.1:32110/loki/api/v1/push; echo
+ HTTP 204
+
+$ printf '{"streams":[{"stream":{"service_name":"kabum"},"values":[["%s","uma linha",{"execucao_id":"f3433426-2bfb-44e1-a09a-ec065c5cf9d7"}]]}]}' $(date +%s)000000000 | curl -s -w ' HTTP %{http_code}' -H 'Content-Type: application/json' --data-binary @- 127.0.0.1:32110/loki/api/v1/push; echo
+ HTTP 204
+
+$ curl -s -G 127.0.0.1:32110/loki/api/v1/series --data-urlencode 'match[]={service_name="kabum"}' | jq '.data | length'
+1
