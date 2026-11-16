@@ -1,0 +1,154 @@
+
+===== testes e as regras de dado no promtool =====
+
+$ uv run pytest -q | tail -1
+56 passed in 5.73s
+
+$ promtool test rules /infra/testes_alertas.yml
+Processing test file: /infra/testes_alertas.yml
+  SUCCESS
+
+
+===== subir tudo, o receptor e as execuções de base =====
+
+$ compose_prova up -d --wait 2>&1 | grep -E 'Healthy|Started' | sort
+ Container p05-prova-alertmanager-1 Healthy 
+ Container p05-prova-alertmanager-1 Started 
+ Container p05-prova-banco-1 Healthy 
+ Container p05-prova-banco-1 Started 
+ Container p05-prova-grafana-1 Healthy 
+ Container p05-prova-grafana-1 Started 
+ Container p05-prova-loki-1 Healthy 
+ Container p05-prova-loki-1 Started 
+ Container p05-prova-otel-collector-1 Healthy 
+ Container p05-prova-otel-collector-1 Started 
+ Container p05-prova-prometheus-1 Healthy 
+ Container p05-prova-prometheus-1 Started 
+ Container p05-prova-pushgateway-1 Healthy 
+ Container p05-prova-pushgateway-1 Started 
+ Container p05-prova-tempo-1 Healthy 
+ Container p05-prova-tempo-1 Started 
+
+$ date +%T
+18:50:24
+
+$ uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'medidas|cobertura:|lidos|Flow run .* Finished|atenção' | cut -c1-220
+18:50:42.996 | INFO    | kabum - coleta: 468 produtos lidos, 460 diferentes; a API declara 468
+18:50:43.004 | INFO    | kabum - cobertura: 460 de 468, 98.3%; faltaram 8
+18:50:43.118 | INFO    | kabum - lidos 460 = válidos 460 + rejeitados 0
+18:50:43.324 | INFO    | kabum - medidas de 2026-11-16: 460 linhas, 40 campos na fonte, vazios: preco_oferta 82.6%, fabricante 0.0%, chip 12.6%, modelo 19.6%, estoque 0.0%
+18:50:43.381 | INFO    | Flow run 'ebony-trogon' - Finished in state Completed()
+
+$ promql glearn_dado_linhas{servico="kabum"}
+{"servico":"kabum","tabela":"precos"} 460
+
+$ promql glearn_dado_nulos_ratio{servico="kabum"}
+{"coluna":"chip","servico":"kabum","tabela":"precos"} 0.12608695652173912
+{"coluna":"estoque","servico":"kabum","tabela":"precos"} 0
+{"coluna":"fabricante","servico":"kabum","tabela":"precos"} 0
+{"coluna":"modelo","servico":"kabum","tabela":"precos"} 0.1956521739130435
+{"coluna":"preco_oferta","servico":"kabum","tabela":"precos"} 0.8260869565217391
+
+$ promql glearn_dado_campos{servico="kabum"}
+{"fonte":"api","servico":"kabum"} 40
+
+===== um campo novo na fonte: verde, o esquema muda =====
+
+$ date +%T
+18:51:05
+
+$ uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'medidas|cobertura:|lidos|Flow run .* Finished|atenção' | cut -c1-220
+18:51:22.000 | INFO    | kabum - coleta: 468 produtos lidos, 460 diferentes; a API declara 468
+18:51:22.010 | INFO    | kabum - cobertura: 460 de 468, 98.3%; faltaram 8
+18:51:22.130 | INFO    | kabum - lidos 460 = válidos 460 + rejeitados 0
+18:51:22.310 | INFO    | kabum - medidas de 2026-11-16: 460 linhas, 41 campos na fonte, vazios: preco_oferta 82.6%, fabricante 0.0%, chip 12.6%, modelo 19.6%, estoque 0.0%
+18:51:22.368 | INFO    | Flow run 'skilled-mastodon' - Finished in state Completed()
+
+$ promql glearn_dado_campos{servico="kabum"}
+{"fonte":"api","servico":"kabum"} 41
+
+$ promql changes(glearn_dado_esquema_hash{servico="kabum"}[1d])
+{"fonte":"api","servico":"kabum"} 1
+
+===== a categoria encolhe pela metade: verde, o volume cai =====
+
+$ date +%T
+18:51:44
+
+$ uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'medidas|cobertura:|lidos|Flow run .* Finished|atenção' | cut -c1-220
+18:51:54.860 | INFO    | kabum - coleta: 240 produtos lidos, 233 diferentes; a API declara 240
+18:51:54.871 | INFO    | kabum - cobertura: 233 de 240, 97.1%; faltaram 7
+18:51:54.898 | INFO    | kabum - lidos 233 = válidos 233 + rejeitados 0
+18:51:55.062 | INFO    | kabum - medidas de 2026-11-16: 233 linhas, 40 campos na fonte, vazios: preco_oferta 84.1%, fabricante 0.0%, chip 18.0%, modelo 24.9%, estoque 0.0%
+18:51:55.117 | INFO    | Flow run 'discerning-tuna' - Finished in state Completed()
+
+$ promql glearn_dado_linhas{servico="kabum"}
+{"servico":"kabum","tabela":"precos"} 233
+
+$ date +%T
+18:52:17
+
+$ uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'medidas|cobertura:|lidos|Flow run .* Finished|atenção' | cut -c1-220
+18:52:33.634 | INFO    | kabum - coleta: 468 produtos lidos, 460 diferentes; a API declara 468
+18:52:33.645 | INFO    | kabum - cobertura: 460 de 468, 98.3%; faltaram 8
+18:52:33.764 | INFO    | kabum - lidos 460 = válidos 460 + rejeitados 0
+18:52:33.986 | INFO    | kabum - medidas de 2026-11-16: 460 linhas, 40 campos na fonte, vazios: preco_oferta 82.6%, fabricante 0.0%, chip 12.6%, modelo 19.6%, estoque 0.0%
+18:52:34.046 | INFO    | Flow run 'furious-cheetah' - Finished in state Completed()
+
+===== dez minutos de base para a média dos vazios =====
+
+===== o fabricante some da API: verde, e a coluna vazia =====
+
+$ date +%T
+19:02:36
+
+$ uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'medidas|cobertura:|lidos|Flow run .* Finished|atenção' | cut -c1-220
+19:02:54.951 | INFO    | kabum - coleta: 468 produtos lidos, 460 diferentes; a API declara 468
+19:02:55.019 | INFO    | kabum - cobertura: 460 de 468, 98.3%; faltaram 8
+19:02:56.107 | INFO    | kabum - lidos 460 = válidos 460 + rejeitados 0
+19:02:57.140 | INFO    | kabum - medidas de 2026-11-16: 460 linhas, 39 campos na fonte, vazios: preco_oferta 82.6%, fabricante 100.0%, chip 12.6%, modelo 19.6%, estoque 0.0%
+19:02:57.619 | INFO    | Flow run 'splendid-ferret' - Finished in state Completed()
+
+$ curl -s 127.0.0.1:32090/api/v1/alerts | jq -r '.data.alerts[] | "\(.labels.alertname) \(.labels.coluna // "") \(.state) desde \(.activeAt[11:19]) UTC, valor \(.value)"'
+KabumVaziosSubiram fabricante firing desde 22:03:14 UTC, valor 1e+00
+KabumEsquemaMudou  firing desde 21:51:44 UTC, valor 3e+00
+
+$ curl -s 127.0.0.1:32093/api/v2/alerts | jq -c '.[] | {alerta: .labels.alertname, para: .receivers[0].name}'
+{"alerta":"KabumEsquemaMudou","para":"so-anotar"}
+{"alerta":"KabumVaziosSubiram","para":"avisos"}
+
+$ compose_prova exec -T banco psql -U postgres -c "SELECT count(*) AS linhas, count(fabricante) AS com_fabricante FROM precos WHERE dia = current_date"
+ linhas | com_fabricante 
+--------+----------------
+    460 |              0
+(1 row)
+
+
+===== a linhagem de um preço =====
+
+$ date +%T
+19:03:42
+
+$ uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'medidas|cobertura:|lidos|Flow run .* Finished|atenção' | cut -c1-220
+19:04:01.017 | INFO    | kabum - coleta: 468 produtos lidos, 460 diferentes; a API declara 468
+19:04:01.035 | INFO    | kabum - cobertura: 460 de 468, 98.3%; faltaram 8
+19:04:01.315 | INFO    | kabum - lidos 460 = válidos 460 + rejeitados 0
+19:04:01.673 | INFO    | kabum - medidas de 2026-11-16: 460 linhas, 40 campos na fonte, vazios: preco_oferta 82.6%, fabricante 0.0%, chip 12.6%, modelo 19.6%, estoque 0.0%
+19:04:01.846 | INFO    | Flow run 'festive-gaur' - Finished in state Completed()
+
+$ uv run python linhagem.py 506094
+banco     precos: 2026-11-16 · Placa de Vídeo Quadro A800 PNY Nvidia, 40GB HBM2, 5120bits - · R$ 89.999,99
+          gravada pela execução 3c8d37f9-2528-416a-888a-a89669cd4ba9, carga 5 às 19:04:01
+bronze    dados/bronze/2026-11-16/pagina-001.json, página 1 da API: /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=1&page_size=120
+log       baixada pela execução 3c8d37f9-2528-416a-888a-a89669cd4ba9 em 2026-11-16T22:03:48.906+00:00 (tentativa 1)
+trace     f4ea242f92b18dcec551a91db2197425
+
+$ docker stats --no-stream --format '{{.Name}} {{.MemUsage}}' | grep p05-prova | sort
+p05-prova-alertmanager-1 12.26MiB / 11.65GiB
+p05-prova-banco-1 30.98MiB / 11.65GiB
+p05-prova-grafana-1 255.8MiB / 11.65GiB
+p05-prova-loki-1 56.14MiB / 11.65GiB
+p05-prova-otel-collector-1 58.23MiB / 11.65GiB
+p05-prova-prometheus-1 42.19MiB / 11.65GiB
+p05-prova-pushgateway-1 15.84MiB / 11.65GiB
+p05-prova-tempo-1 36.71MiB / 11.65GiB

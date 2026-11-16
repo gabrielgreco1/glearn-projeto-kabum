@@ -1,0 +1,64 @@
+# O OpenTelemetry Collector: recebe, trata e entrega. Cada pipeline é receivers -> processors -> exporters.
+extensions:
+  # Guarda até onde já leu cada arquivo de log: reiniciar o Collector não manda as mesmas linhas de novo ao Loki.
+  file_storage:
+    directory: /var/lib/otelcol
+
+receivers:
+  # Os spans que o projeto manda (traces.py), por OTLP: 4317 é gRPC, 4318 é HTTP (o que o Python usa).
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+  # As linhas de logs/kabum.jsonl, à medida que são escritas.
+  file_log:
+    include: [/logs/kabum.jsonl]
+    start_at: beginning
+    storage: file_storage
+    operators:
+      - type: json_parser  # cada linha vira atributos: ts, nivel, etapa, execucao_id, msg...
+        timestamp:
+          parse_from: attributes.ts
+          layout_type: gotime
+          layout: "2006-01-02T15:04:05.000Z07:00"
+        severity:
+          parse_from: attributes.nivel
+      - type: trace_parser  # o trace_id e o span_id da linha viram o contexto do log: o Grafana liga o log ao trace
+        trace_id:
+          parse_from: attributes.trace_id
+        span_id:
+          parse_from: attributes.span_id
+      - type: move  # o texto da linha vira o corpo do log
+        from: attributes.msg
+        to: body
+
+processors:
+  # Toda linha de log é do serviço kabum: no Loki, o rótulo service_name.
+  resource:
+    attributes:
+      - key: service.name
+        value: kabum
+        action: upsert
+  batch: {}  # junta em lotes antes de mandar
+
+exporters:
+  otlp_http/loki:
+    endpoint: http://loki:3100/otlp
+  otlp_grpc/tempo:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+
+service:
+  extensions: [file_storage]
+  pipelines:
+    logs:
+      receivers: [file_log]
+      processors: [resource, batch]
+      exporters: [otlp_http/loki]
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp_grpc/tempo]

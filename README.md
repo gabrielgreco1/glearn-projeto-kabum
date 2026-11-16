@@ -52,7 +52,20 @@ Você faz o projeto na SUA pasta, `projeto-kabum/`, no SEU repositório, seguind
 | 25 | [Uma execução por vez](modulo-4-orquestrar/aula-25-uma-execucao-por-vez) | `uv run prefect gcl create projeto-kabum --limit 1` e `uv run python fluxo.py` |
 | 26 | [Os testes no GitHub e a prova final](modulo-4-orquestrar/aula-26-os-testes-no-github-e-a-prova-final) | `uv run pytest` e `uv run python fluxo.py` |
 
-O README de cada pasta diz a ordem dos comandos. As pastas são cumulativas: a de cada aula tem tudo o que veio antes. O projeto pronto está em [final/](final), igual à aula 26. A partir da aula 15, o projeto precisa do Docker: o Postgres roda num container, na porta 5434. A partir da aula 21, ele precisa também do servidor do Prefect ligado (`uv run prefect server start`).
+### Etapa Observar (módulo 6)
+
+Depois da etapa Orquestrar, antes do módulo 5 na trilha do curso. Parte da aula 26.
+
+| Aula | Pasta | O que roda |
+|---|---|---|
+| 34 | [Um id que segue a execução](modulo-6-observabilidade/aula-34-logs-com-id) | `uv run python fluxo.py` e `jq` em `logs/kabum.jsonl` |
+| 35 | [Métricas do pipeline](modulo-6-observabilidade/aula-35-metricas) | `uv run python ensaio/loja.py AAAA-MM-DD` e `uv run python ensaio/rodada.py` |
+| 36 | [Alertas, SLO e orçamento de erro](modulo-6-observabilidade/aula-36-alertas-e-slo) | `uv run python alertas/receptor.py` e o `promtool` |
+| 37 | [Loki e traces](modulo-6-observabilidade/aula-37-loki-e-traces) | o Grafana em http://127.0.0.1:3000, Explore |
+| 38 | [Observabilidade de dados](modulo-6-observabilidade/aula-38-observabilidade-de-dados) | `uv run python linhagem.py <id>` |
+| 39 | [O incidente](modulo-6-observabilidade/aula-39-o-incidente) | `uv run python incidente/provocar.py` e `uv run python incidente/desfazer.py` |
+
+O README de cada pasta diz a ordem dos comandos. As pastas são cumulativas: a de cada aula tem tudo o que veio antes. O projeto pronto está em [final/](final), igual à aula 26. O módulo 6 não muda o `final/`: as pastas dele estão em [modulo-6-observabilidade/](modulo-6-observabilidade). A partir da aula 15, o projeto precisa do Docker: o Postgres roda num container, na porta 5434. A partir da aula 21, ele precisa também do servidor do Prefect ligado (`uv run prefect server start`).
 
 ## O que foi rodado
 

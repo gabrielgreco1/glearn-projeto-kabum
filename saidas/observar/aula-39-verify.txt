@@ -1,0 +1,178 @@
+
+===== testes =====
+
+$ uv run pytest -q | tail -1
+59 passed in 14.00s
+
+===== subir tudo, o receptor e uma execução boa =====
+
+$ compose_prova up -d --wait 2>&1 | grep -E 'Healthy|Started' | sort
+ Container p05-prova-alertmanager-1 Healthy 
+ Container p05-prova-alertmanager-1 Started 
+ Container p05-prova-banco-1 Healthy 
+ Container p05-prova-banco-1 Started 
+ Container p05-prova-grafana-1 Healthy 
+ Container p05-prova-grafana-1 Started 
+ Container p05-prova-loki-1 Healthy 
+ Container p05-prova-loki-1 Started 
+ Container p05-prova-otel-collector-1 Healthy 
+ Container p05-prova-otel-collector-1 Started 
+ Container p05-prova-prometheus-1 Healthy 
+ Container p05-prova-prometheus-1 Started 
+ Container p05-prova-pushgateway-1 Healthy 
+ Container p05-prova-pushgateway-1 Started 
+ Container p05-prova-tempo-1 Healthy 
+ Container p05-prova-tempo-1 Started 
+
+$ uv run python ensaio/rodada.py 32099 2>&1 | grep -E 'Flow run .* Finished'
+19:05:18.603 | INFO    | Flow run 'wakeful-serval' - Finished in state Completed()
+
+===== incidente: recusa =====
+
+$ INCIDENTE=recusa uv run python incidente/provocar.py
+19:05:22 incidente provocado; rodando o projeto como às 6h...
+19:05:34 pronto. Espere o alerta no terminal do receptor e abra o Grafana.
+
+$ grep -E 'ALERTA|firing' avisos.log
+2026-11-16 19:06:21 ALERTA (firing, 2 no grupo {'servico': 'kabum'})
+2026-11-16 19:06:21   firing   KabumExecucaoFalhou: A última execução do Kabum falhou (o que fazer: Veja a linha nova em avisos.log e o runbook.md, checagem 1.)
+2026-11-16 19:06:21   firing   KabumErroNosPedidos: 33.33% dos pedidos da última execução deram erro (o que fazer: Veja o status dos pedidos no painel. 429 é recusa: não rode de novo agora.)
+
+$ promql sum by (status) (glearn_pedidos_total{servico="kabum"})
+{"status":"200"} 2
+{"status":"429"} 1
+
+$ promql glearn_execucao_ok{servico="kabum"}
+{"servico":"kabum"} 0
+
+$ promql glearn_dado_linhas{servico="kabum"}
+
+$ logql {service_name="kabum"} | nivel=~"WARNING|ERROR"
+coletar ERROR a loja recusou: /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=3&page_size=120 respondeu 429 (text/html)
+coletar ERROR a etapa coletar parou: /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=3&page_size=120 respondeu 429 (text/html). A resposta está em da
+fluxo ERROR a execução terminou em Crashed: Execution was aborted by Python system exit call.
+
+$ árvore do trace com erro a56d05ee9418b905d6b0bc0f3f9ed379
+prefect broad-gazelle +0 ms, 9464 ms ERROR
+  prefect coletar-26b +270 ms, 9057 ms ERROR
+  httpx GET +272 ms, 5 ms 
+  httpx GET +3296 ms, 2 ms 
+  httpx GET +6312 ms, 1 ms ERROR
+
+$ as exceções registradas nos spans com erro
+coletar-26b exception.type=SystemExit
+coletar-26b exception.message=/catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=3&page_size=120 respondeu 429 (text/html). A resposta está em dados/ultima_recusa.html. Pare e leia.
+broad-gazelle exception.type=SystemExit
+broad-gazelle exception.message=/catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=3&page_size=120 respondeu 429 (text/html). A resposta está em dados/ultima_recusa.html. Pare e leia.
+
+$ uv run python incidente/desfazer.py
+O incidente foi: a loja recusou com 429 depois de dois pedidos. Desfeito, e o projeto rodou de novo às 19:07:07.
+
+$ grep -E 'ALERTA|resolved' avisos.log
+2026-11-16 19:06:21 ALERTA (firing, 2 no grupo {'servico': 'kabum'})
+2026-11-16 19:11:20 ALERTA (resolved, 2 no grupo {'servico': 'kabum'})
+2026-11-16 19:11:20   resolved KabumExecucaoFalhou: A última execução do Kabum falhou (o que fazer: Veja a linha nova em avisos.log e o runbook.md, checagem 1.)
+2026-11-16 19:11:20   resolved KabumErroNosPedidos: 33.33% dos pedidos da última execução deram erro (o que fazer: Veja o status dos pedidos no painel. 429 é recusa: não rode de novo agora.)
+
+===== incidente: senha =====
+
+$ INCIDENTE=senha uv run python incidente/provocar.py
+19:11:25 incidente provocado; rodando o projeto como às 6h...
+19:11:46 pronto. Espere o alerta no terminal do receptor e abra o Grafana.
+
+$ grep -E 'ALERTA|firing' avisos.log
+2026-11-16 19:12:35 ALERTA (firing, 2 no grupo {'servico': 'kabum'})
+2026-11-16 19:12:35   firing   KabumExecucaoFalhou: A última execução do Kabum falhou (o que fazer: Veja a linha nova em avisos.log e o runbook.md, checagem 1.)
+
+$ promql sum by (status) (glearn_pedidos_total{servico="kabum"})
+{"status":"200"} 5
+
+$ promql glearn_execucao_ok{servico="kabum"}
+{"servico":"kabum"} 0
+
+$ promql glearn_dado_linhas{servico="kabum"}
+
+$ logql {service_name="kabum"} | nivel=~"WARNING|ERROR"
+carregar ERROR a etapa carregar parou: O banco recusou a senha do DATABASE_URL (.env). Ela foi trocada no banco?
+connection failed: connection to server at "127.0.0.1", port 3
+fluxo ERROR a execução terminou em Crashed: Execution was aborted by Python system exit call.
+
+$ árvore do trace com erro e8c226d5122586ae9c511723a742c6c6
+prefect lurking-crow +0 ms, 16620 ms ERROR
+  prefect coletar-df9 +461 ms, 15108 ms OK
+  httpx GET +464 ms, 7 ms 
+  httpx GET +3491 ms, 3 ms 
+  httpx GET +6513 ms, 2 ms 
+  httpx GET +9532 ms, 2 ms 
+  httpx GET +12559 ms, 4 ms 
+  prefect conferir-623 +15573 ms, 61 ms OK
+  prefect historico-3a8 +15637 ms, 41 ms OK
+  prefect transformar-e6a +15680 ms, 666 ms OK
+  prefect carregar-15f +16351 ms, 119 ms ERROR
+
+$ as exceções registradas nos spans com erro
+carregar-15f exception.type=SystemExit
+carregar-15f exception.message=O banco recusou a senha do DATABASE_URL (.env). Ela foi trocada no banco? ⏎ connection failed: connection to server at "127.0.0.1", port 32434 failed: FATAL:  password authentication failed for user "postgres" ⏎ Multiple connection attempts failed. All failure
+lurking-crow exception.type=SystemExit
+lurking-crow exception.message=O banco recusou a senha do DATABASE_URL (.env). Ela foi trocada no banco? ⏎ connection failed: connection to server at "127.0.0.1", port 32434 failed: FATAL:  password authentication failed for user "postgres" ⏎ Multiple connection attempts failed. All failure
+
+$ uv run python incidente/desfazer.py
+O incidente foi: a senha do banco foi trocada, e o .env ficou com a antiga. Desfeito, e o projeto rodou de novo às 19:13:25.
+
+$ grep -E 'ALERTA|resolved' avisos.log
+2026-11-16 19:12:35 ALERTA (firing, 2 no grupo {'servico': 'kabum'})
+2026-11-16 19:12:35   resolved KabumErroNosPedidos: 33.33% dos pedidos da última execução deram erro (o que fazer: Veja o status dos pedidos no painel. 429 é recusa: não rode de novo agora.)
+
+===== incidente: preco =====
+
+$ INCIDENTE=preco uv run python incidente/provocar.py
+19:13:27 incidente provocado; rodando o projeto como às 6h...
+19:13:53 pronto. Espere o alerta no terminal do receptor e abra o Grafana.
+
+$ grep -E 'ALERTA|firing' avisos.log
+
+$ promql sum by (status) (glearn_pedidos_total{servico="kabum"})
+{"status":"200"} 5
+
+$ promql glearn_execucao_ok{servico="kabum"}
+{"servico":"kabum"} 0
+
+$ promql glearn_dado_linhas{servico="kabum"}
+
+$ logql {service_name="kabum"} | nivel=~"WARNING|ERROR"
+
+$ árvore do trace com erro 52126dfe71a684ce76225df084a17f92
+prefect crazy-lyrebird +0 ms, 16865 ms ERROR
+  prefect coletar-c94 +638 ms, 15485 ms OK
+  httpx GET +646 ms, 79 ms 
+  httpx GET +3950 ms, 82 ms 
+  httpx GET +7058 ms, 8 ms 
+  httpx GET +10076 ms, 6 ms 
+  httpx GET +13105 ms, 7 ms 
+  prefect conferir-afc +16131 ms, 69 ms OK
+  prefect historico-b1a +16204 ms, 46 ms OK
+  prefect transformar-030 +16254 ms, 429 ms ERROR
+
+$ as exceções registradas nos spans com erro
+crazy-lyrebird exception.type=SystemExit
+crazy-lyrebird exception.message=Nada foi publicado: preco_obrigatorio: 38.0% das linhas rejeitadas, acima de 2%. A silver e a gold da rodada anterior continuam em dados/.
+transformar-030 exception.type=SystemExit
+transformar-030 exception.message=Nada foi publicado: preco_obrigatorio: 38.0% das linhas rejeitadas, acima de 2%. A silver e a gold da rodada anterior continuam em dados/.
+
+$ uv run python incidente/desfazer.py
+O incidente foi: a API mandou o preço como texto ("R$ 1.299,90") em 40% dos produtos. Desfeito, e o projeto rodou de novo às 19:25:11.
+
+$ grep -E 'ALERTA|resolved' avisos.log
+2026-11-16 19:27:35 ALERTA (resolved, 2 no grupo {'servico': 'kabum'})
+2026-11-16 19:27:35   resolved KabumExecucaoFalhou: A última execução do Kabum falhou (o que fazer: Veja a linha nova em avisos.log e o runbook.md, checagem 1.)
+2026-11-16 19:27:35   resolved KabumErroNosPedidos: 33.33% dos pedidos da última execução deram erro (o que fazer: Veja o status dos pedidos no painel. 429 é recusa: não rode de novo agora.)
+
+$ docker stats --no-stream --format '{{.Name}} {{.MemUsage}}' | grep p05-prova | sort
+p05-prova-alertmanager-1 12.54MiB / 11.65GiB
+p05-prova-banco-1 29.78MiB / 11.65GiB
+p05-prova-grafana-1 253.2MiB / 11.65GiB
+p05-prova-loki-1 60.8MiB / 11.65GiB
+p05-prova-otel-collector-1 52.63MiB / 11.65GiB
+p05-prova-prometheus-1 43.26MiB / 11.65GiB
+p05-prova-pushgateway-1 16.32MiB / 11.65GiB
+p05-prova-tempo-1 60.98MiB / 11.65GiB

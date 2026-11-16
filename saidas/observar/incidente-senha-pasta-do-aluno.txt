@@ -1,0 +1,13 @@
+# Pasta de aluno, 16/11/2026, código da aula 38 mais incidente/ (antes das correções), falha escolhida com INCIDENTE=senha
+# e a loja de ensaio na porta da prova. Saída real dos comandos; os sinais coletados logo depois estão em inc-senha-antes.txt
+# e as cascatas com os tempos de cada span em traces-antes.txt; o alerta, em receptor-pasta-do-aluno.log (18:12:50).
+
+$ date +%T; INCIDENTE=senha LOJA_PORTA=32099 uv run python incidente/provocar.py
+18:11:48
+18:11:50 incidente provocado; rodando o projeto como às 6h...
+18:12:10 pronto. Espere o alerta no terminal do receptor e abra o Grafana.
+
+# 40 s depois (18:12:50), a coleta dos sinais: inc-senha-antes.txt
+
+$ LOJA_PORTA=32099 uv run python incidente/desfazer.py
+O incidente foi: a senha do banco foi trocada, e o .env ficou com a antiga. Desfeito, e o projeto rodou de novo às 18:13:18.

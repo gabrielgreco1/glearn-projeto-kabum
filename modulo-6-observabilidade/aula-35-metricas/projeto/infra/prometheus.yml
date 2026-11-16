@@ -1,0 +1,16 @@
+# O que o Prometheus raspa, e de quanto em quanto tempo.
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  # As métricas do projeto, que cada execução deixa no Pushgateway. honor_labels: os rótulos que o projeto mandou
+  # (job="kabum") ficam como vieram, em vez de virarem exported_job.
+  - job_name: pushgateway
+    honor_labels: true
+    static_configs:
+      - targets: ["pushgateway:9091"]
+
+  # O próprio Prometheus: quantas séries guarda, quanto tempo cada raspagem leva.
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

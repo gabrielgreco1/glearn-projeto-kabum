@@ -1,0 +1,62 @@
+services:
+  banco:
+    image: postgres:18
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5434:5432"
+    volumes:
+      - banco:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "127.0.0.1"]
+      interval: 2s
+      retries: 15
+
+  # Guarda as métricas que cada execução manda no fim, até a próxima. O Prometheus raspa daqui.
+  pushgateway:
+    image: prom/pushgateway:v1.11.4
+    ports:
+      - "127.0.0.1:9091:9091"
+
+  # Raspa as métricas de 15 em 15 segundos e guarda a série de cada uma por 30 dias.
+  prometheus:
+    image: prom/prometheus:v3.16.0
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=30d
+    volumes:
+      - ./infra/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./infra/regras:/etc/prometheus/regras:ro
+      - prometheus:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"
+
+  # Recebe os alertas do Prometheus, agrupa, cala os repetidos e manda para o receptor da sua máquina.
+  alertmanager:
+    image: prom/alertmanager:v0.35.0
+    volumes:
+      - ./infra/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    ports:
+      - "127.0.0.1:9093:9093"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # no Linux, o nome da sua máquina vista do contêiner; Docker Desktop já tem
+
+  # Os painéis. Sem login, como administrador: por isso só escuta em 127.0.0.1, a sua máquina.
+  grafana:
+    image: grafana/grafana:13.3.1
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+    volumes:
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infra/grafana/paineis:/etc/grafana/paineis:ro
+      - grafana:/var/lib/grafana
+    ports:
+      - "127.0.0.1:3000:3000"
+
+volumes:
+  banco:
+  prometheus:
+  grafana:

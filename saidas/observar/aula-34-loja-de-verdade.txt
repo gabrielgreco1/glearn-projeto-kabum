@@ -1,0 +1,46 @@
+17:15:44.056 | INFO    | Flow run 'alchemical-mosquito' - Beginning flow run 'alchemical-mosquito' for flow 'projeto-kabum'
+17:15:44.065 | INFO    | Flow run 'alchemical-mosquito' - View at http://127.0.0.1:32420/runs/flow-run/62b355ca-96c5-452a-aadc-16be9e199a99
+17:15:45.319 | INFO    | kabum - pedi /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=1&page_size=120: 200 em 1067 ms
+17:15:48.324 | INFO    | kabum - baixei a página 1: 864333 bytes em dados/bronze/2026-11-16/pagina-001.json
+17:15:49.851 | INFO    | kabum - pedi /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=2&page_size=120: 200 em 1519 ms
+17:15:52.859 | INFO    | kabum - baixei a página 2: 895294 bytes em dados/bronze/2026-11-16/pagina-002.json
+17:15:53.882 | INFO    | kabum - pedi /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=3&page_size=120: 200 em 1017 ms
+17:15:56.890 | INFO    | kabum - baixei a página 3: 944708 bytes em dados/bronze/2026-11-16/pagina-003.json
+17:15:57.983 | INFO    | kabum - pedi /catalog/v2/products-by-category/hardware/placa-de-video-vga?page_number=4&page_size=120: 200 em 1081 ms
+17:16:00.990 | INFO    | kabum - baixei a página 4: 891109 bytes em dados/bronze/2026-11-16/pagina-004.json
+17:16:00.996 | INFO    | kabum - coleta do dia: 4 páginas em dados/bronze/2026-11-16
+17:16:05.049 | INFO    | Task run 'coletar-dcc' - Finished in state Completed()
+17:16:05.151 | INFO    | kabum - coleta: 468 produtos lidos, 460 diferentes; a API declara 468
+17:16:05.152 | INFO    | kabum - repetidos entre páginas: 903752 (2 vezes), 1062611 (2 vezes), 996572 (2 vezes), 161693 (2 vezes), 277927 (2 vezes), 1078282 (2 vezes), 882789 (2 vezes), 1063804 (2 vezes)
+17:16:05.153 | INFO    | kabum - já tenho dados/bronze/2026-11-16/loja.html, não peço de novo
+17:16:05.172 | INFO    | kabum - a página da loja mostra 468 produtos
+17:16:05.173 | INFO    | kabum - cobertura: 460 de 468, 98.3%; faltaram 8
+17:16:05.176 | INFO    | Task run 'conferir-c13' - Finished in state Completed()
+17:16:05.207 | INFO    | kabum - gravei 460 linhas em dados/precos.csv, de 1 dia(s): 2026-11-16
+17:16:05.214 | INFO    | Task run 'historico-b1a' - Finished in state Completed()
+17:16:05.217 | INFO    | kabum - transformar 1 de 3: montar e conferir a silver
+17:16:05.458 | INFO    | kabum - lidos 460 = válidos 460 + rejeitados 0
+17:16:05.470 | INFO    | kabum - transformar 2 de 3: o relatório de qualidade
+17:16:05.485 | INFO    | kabum - relatório de qualidade em dados/qualidade/2026-11-16.json: nenhuma regra de erro acima de 2%
+17:16:05.500 | INFO    | kabum - gravei dados/silver/precos.parquet e dados/silver/rejeitados.csv
+17:16:05.501 | INFO    | kabum - transformar 3 de 3: a gold
+17:16:05.717 | INFO    | Task run 'transformar-670' - ┌──────┬───────┬────────┬────────┬──────────────┐
+│ dia  │  id   │ antes  │ depois │ variacao_pct │
+│ date │ int64 │ double │ double │    double    │
+└──────┴───────┴────────┴────────┴──────────────┘
+                     0 rows
+17:16:05.721 | INFO    | Task run 'transformar-670' - ┌──────┬───────┬──────────────┬───────────┐
+│ dia  │  id   │ ultimo_preco │ cobertura │
+│ date │ int64 │    double    │  double   │
+└──────┴───────┴──────────────┴───────────┘
+                  0 rows
+17:16:05.721 | INFO    | kabum - gold: 0 mudanças, 0 sumiços e 54 linhas na tabela dos modelos, em dados/gold
+17:16:05.724 | INFO    | Task run 'transformar-670' - Finished in state Completed()
+17:16:05.812 | INFO    | kabum - coletas: 1 dias conferidos, do dados/conferencia.csv
+17:16:05.813 | INFO    | kabum - dias na silver: 1; a carregar: 0 novos e 1 que mudaram
+17:16:05.863 | INFO    | kabum - 2026-11-16: apaguei 461 linhas e gravei 460; conferido: 460 linhas e soma 207807198
+17:16:05.866 | INFO    | Task run 'carregar-714' - Finished in state Completed()
+17:16:05.886 | INFO    | kabum - vigia: 1 dias no banco, o último 2026-11-16; 0 avisos
+17:16:05.888 | INFO    | Task run 'vigiar-486' - Finished in state Completed()
+17:16:05.945 | INFO    | Flow run 'alchemical-mosquito' - coleta de 2026-11-16 no banco, execução 62b355ca-96c5-452a-aadc-16be9e199a99
+17:16:05.969 | INFO    | Flow run 'alchemical-mosquito' - Finished in state Completed()

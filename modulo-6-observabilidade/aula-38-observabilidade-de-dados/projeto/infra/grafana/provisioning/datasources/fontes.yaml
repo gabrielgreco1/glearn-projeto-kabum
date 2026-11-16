@@ -1,0 +1,34 @@
+# As fontes de dados que o Grafana já encontra prontas ao subir, pelo nome do serviço no compose.
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    uid: prometheus
+    type: prometheus
+    url: http://prometheus:9090
+    isDefault: true
+
+  - name: Loki
+    uid: loki
+    type: loki
+    url: http://loki:3100
+    jsonData:
+      # Em cada linha de log com trace_id, um botão que abre o trace no Tempo.
+      derivedFields:
+        - name: trace
+          matcherType: label
+          matcherRegex: trace_id
+          url: "${__value.raw}"
+          datasourceUid: tempo
+          urlDisplayLabel: Abrir o trace
+
+  - name: Tempo
+    uid: tempo
+    type: tempo
+    url: http://tempo:3200
+    jsonData:
+      # De um span, o botão que abre as linhas de log do mesmo trace no Loki.
+      tracesToLogsV2:
+        datasourceUid: loki
+        filterByTraceID: true
+        spanStartTimeShift: "-5m"
+        spanEndTimeShift: "5m"

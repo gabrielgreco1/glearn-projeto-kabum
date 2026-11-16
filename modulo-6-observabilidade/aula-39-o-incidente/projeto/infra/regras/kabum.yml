@@ -1,0 +1,103 @@
+# As regras do Kabum, avaliadas pelo Prometheus a cada 15 segundos.
+# Regras de gravação (record) calculam uma série nova e guardam; regras de alerta (alert) disparam quando a conta dá
+# resultado por mais tempo que o "for".
+groups:
+  - name: kabum-slo
+    rules:
+      # Quantas horas desde a última execução que deu certo, com o rótulo servico (o Alertmanager agrupa por ele). O projeto roda às 6h e às 18h: o normal fica abaixo de 12.
+      - record: kabum:horas_desde_ok
+        expr: (time() - max by (servico) (glearn_ultima_execucao_ok_timestamp{servico="kabum"})) / 3600
+      # O SLI: 1 quando o dado do banco tem até 13 horas (uma rodada pode atrasar uma hora), 0 quando está velho.
+      - record: kabum:fresco
+        expr: kabum:horas_desde_ok <= bool 13
+      # A fração de pedidos com erro na última execução.
+      - record: kabum:erro_ratio
+        expr: sum by (servico) (glearn_pedidos_total{servico="kabum", status!="200"}) / sum by (servico) (glearn_pedidos_total{servico="kabum"})
+      # O SLO é 95% do tempo com dado fresco, em 30 dias: o orçamento de erro é 5% do tempo, 36 horas no mês.
+      # A taxa de queima diz em que ritmo o orçamento está sendo gasto agora: 1 gasta o mês inteiro em 30 dias;
+      # 20 é o máximo (dado velho o tempo todo) e gasta o orçamento do mês em um dia e meio.
+      - record: kabum:queima_1h
+        expr: (1 - avg_over_time(kabum:fresco[1h])) / 0.05
+      - record: kabum:queima_5m
+        expr: (1 - avg_over_time(kabum:fresco[5m])) / 0.05
+
+  - name: kabum-alertas
+    rules:
+      - alert: KabumExecucaoFalhou
+        expr: glearn_execucao_ok{servico="kabum"} == 0
+        labels:
+          severidade: aviso
+        annotations:
+          resumo: "A última execução do Kabum falhou"
+          oque_fazer: "Veja a linha nova em avisos.log e o runbook.md, checagem 1."
+
+      - alert: KabumDadoVelho
+        expr: kabum:horas_desde_ok > 13
+        for: 5m
+        labels:
+          severidade: critico
+        annotations:
+          resumo: "O preço no banco tem {{ $value | printf \"%.1f\" }} horas"
+          oque_fazer: "A última rodada não deu certo e o dado passou de 13 horas. Abra o painel Kabum · saúde e o runbook.md."
+
+      # Queima rápida: 14,4 vezes o ritmo normal na última hora gasta 2% do orçamento do mês só nela (o limiar do livro
+      # de SRE do Google para 30 dias). A janela curta, de 5 minutos, faz o alerta parar logo depois do conserto, em vez
+      # de continuar disparando até a hora inteira passar.
+      - alert: KabumOrcamentoQueimando
+        expr: kabum:queima_1h > 14.4 and kabum:queima_5m > 14.4
+        labels:
+          severidade: critico
+        annotations:
+          resumo: "O orçamento de erro do mês está acabando rápido"
+          oque_fazer: "Congele mudanças no coletor até o dado voltar a ficar fresco."
+
+      - alert: KabumErroNosPedidos
+        expr: kabum:erro_ratio > 0.05
+        labels:
+          severidade: aviso
+        annotations:
+          resumo: "{{ $value | humanizePercentage }} dos pedidos da última execução deram erro"
+          oque_fazer: "Veja o status dos pedidos no painel. 429 é recusa: não rode de novo agora."
+
+      # Quando a métrica some, as regras acima não têm o que comparar e ficam quietas. absent() avisa o silêncio.
+      - alert: KabumSemMetricas
+        expr: absent(glearn_ultima_execucao_ok_timestamp{servico="kabum"})
+        for: 10m
+        labels:
+          severidade: aviso
+        annotations:
+          resumo: "O Prometheus não tem nenhuma execução boa do Kabum"
+          oque_fazer: "O projeto ainda não rodou, o Pushgateway reiniciou ou o envio das métricas falhou (veja logs/kabum.jsonl)."
+
+  # O dado que acabou de ser publicado (medir.py): o pipeline pode estar verde e o dado, errado.
+  - name: kabum-dados
+    rules:
+      # Volume: o dia novo tem menos de 70% das linhas que tinha na mesma hora, sete dias antes (o mesmo dia da semana).
+      - alert: KabumVolumeCaiu
+        expr: glearn_dado_linhas{servico="kabum"} < 0.7 * (glearn_dado_linhas{servico="kabum"} offset 7d)
+        labels:
+          severidade: aviso
+        annotations:
+          resumo: "O dia novo tem {{ $value }} linhas, menos de 70% da semana passada"
+          oque_fazer: "Compare a conferência (dados/conferencia.csv) dos dois dias. A loja tirou produtos ou a API mudou o total."
+
+      # Vazios: uma coluna com 10 pontos de vazio a mais que a média dos últimos 7 dias (sem os últimos 10 minutos,
+      # para a execução de agora não entrar na própria média).
+      - alert: KabumVaziosSubiram
+        expr: >
+          glearn_dado_nulos_ratio{servico="kabum"}
+          - avg_over_time(glearn_dado_nulos_ratio{servico="kabum"}[7d] offset 10m) > 0.1
+        labels:
+          severidade: aviso
+        annotations:
+          resumo: "A coluna {{ $labels.coluna }} ficou com {{ $value | humanizePercentage }} a mais de vazios que a média da semana"
+          oque_fazer: "Abra uma página do bronze de hoje e procure o campo. A fonte mudou o formato sem quebrar a rodada."
+
+      # Esquema: a fonte mandou outro conjunto de campos. Não acorda ninguém: fica anotado para quem olhar o painel.
+      - alert: KabumEsquemaMudou
+        expr: changes(glearn_dado_esquema_hash{servico="kabum"}[1d]) > 0
+        labels:
+          severidade: nota
+        annotations:
+          resumo: "A API mudou os campos que manda: agora são {{ with query \"glearn_dado_campos{servico='kabum'}\" }}{{ . | first | value }}{{ end }}"
+          oque_fazer: "Veja que campo entrou ou saiu (jq '.data[0].attributes | keys' na página 1) e se alguma etapa precisa dele."
